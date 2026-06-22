@@ -1,0 +1,111 @@
+{
+  "prompts": {},
+  "char_settings": {
+    "00000703": {
+      "prompts_per_value": 3,
+      "char_name": "Диаметр"
+    },
+    "00000705": {
+      "prompts_per_value": 3,
+      "char_name": "Марка материала"
+    },
+    "00000704": {
+      "prompts_per_value": 3,
+      "char_name": "Маркировка"
+    },
+    "9101": {
+      "prompts_per_value": 3,
+      "char_name": "ГОСТ"
+    },
+    "00000654": {
+      "prompts_per_value": 1,
+      "char_name": "Толщина"
+    },
+    "00000656": {
+      "prompts_per_value": 1,
+      "char_name": "Марка материала"
+    },
+    "9112361 02": {
+      "prompts_per_value": 1,
+      "char_name": "Поверхность"
+    },
+    "00003700": {
+      "prompts_per_value": 1,
+      "char_name": "Способ производства"
+    },
+    "00003701": {
+      "prompts_per_value": 1,
+      "char_name": "Упаковка"
+    },
+    "9112361 01": {
+      "prompts_per_value": 1,
+      "char_name": "Обозначение"
+    }
+  },
+  "other_blocks_settings": {
+    "description_template": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "new_block_1779776713": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "new_block_1779778327": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "new_block_1779778598": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "new_block_1779778817": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "new_block_1779778987": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "new_block_1779779151": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "new_block_1779779413": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "new_block_1779780432": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "new_block_1779781080": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "new_block_1779963133": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "new_block_1779963989": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "new_block_1780481514": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "new_block_1780481860": {
+      "enabled": true,
+      "prompts_count": 1
+    },
+    "product_header_template": {
+      "enabled": true,
+      "prompts_count": 1
+    }
+  },
+  "selected_regular_block_id": "new_block_1771409674",
+  "selected_unique_block_id": "new_block_1769685883",
+  "global_prompts": 1,
+  "global_other_prompts": 1
+}

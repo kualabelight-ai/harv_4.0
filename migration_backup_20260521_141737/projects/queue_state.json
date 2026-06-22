@@ -1,0 +1,17 @@
+[
+  {
+    "project_id": "6b32ff87-5ac0-41d2-8b24-277e8dfe6410",
+    "user_id": 2,
+    "project_name": "арматура",
+    "category": "Арматура гладкая",
+    "status": "failed",
+    "current_phase": 0,
+    "message": "Ошибка",
+    "progress": 0.0,
+    "started_at": "2026-05-21T13:58:18.139695",
+    "completed_at": "2026-05-21T13:58:18.176498",
+    "error": "Не удалось загрузить проект",
+    "site_name": "steelborg",
+    "domain_name": "kz"
+  }
+]

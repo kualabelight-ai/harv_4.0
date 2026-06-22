@@ -1,0 +1,28 @@
+{
+  "project_id": "f1b27e5a-8c19-40f2-978d-9faf96d087a4",
+  "project_name": "Восстановленный проект",
+  "category": "Восстановленная категория",
+  "current_phase": 5,
+  "app_data": {
+    "phase1": {},
+    "phase2": {},
+    "phase3": {},
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Восстановленная категория",
+    "project_name": "Восстановленный проект",
+    "created_at": "2026-05-26T14:24:55.223498",
+    "updated_at": "2026-05-26T14:24:55.223498",
+    "phase5_completed": false,
+    "site_name": "steelborg",
+    "domain_name": "kz"
+  },
+  "created_at": "2026-05-26T14:24:55.223498",
+  "updated_at": "2026-05-26T14:24:55.223498",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2,
+  "status": "queued"
+}

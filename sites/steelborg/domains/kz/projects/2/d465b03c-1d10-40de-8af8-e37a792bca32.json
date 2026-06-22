@@ -1,0 +1,31 @@
+{
+  "project_id": "d465b03c-1d10-40de-8af8-e37a792bca32",
+  "project_name": "s",
+  "category": "s",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "s"
+    },
+    "phase2": {},
+    "phase3": {},
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "s",
+    "project_name": "s",
+    "created_at": "2026-06-20T13:11:02.185315",
+    "updated_at": "2026-06-20T13:11:02.185315",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz"
+  },
+  "created_at": "2026-06-20T13:11:02.185315",
+  "updated_at": "2026-06-20T18:13:32.956056",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

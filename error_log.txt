@@ -1,0 +1,1 @@
+2026-06-09 16:19:00,151 - Synonymizer - ERROR - ❌ Ошибка автозаполнения всех форм: 'FastFormEditDialog' object has no attribute 'ngram'

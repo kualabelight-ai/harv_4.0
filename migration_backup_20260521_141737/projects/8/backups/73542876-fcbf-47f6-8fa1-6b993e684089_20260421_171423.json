@@ -1,0 +1,141 @@
+{
+  "project_id": "73542876-fcbf-47f6-8fa1-6b993e684089",
+  "project_name": "арматура",
+  "category": "Профнастил кровельный",
+  "current_phase": 1,
+  "app_data": {
+    "phase1": {
+      "category": "Профнастил кровельный",
+      "characteristics": [
+        {
+          "char_id": "00003526",
+          "char_name": "Марка",
+          "original_name": "Марка",
+          "unit": "",
+          "is_unique": true,
+          "values": [
+            {
+              "value": "С20",
+              "items_count": 274,
+              "offers_sum": 1397,
+              "percent": 100.0
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "00002887",
+          "char_name": "Толщина",
+          "original_name": "Толщина",
+          "unit": "мм",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "0.5",
+              "items_count": 38,
+              "offers_sum": 363,
+              "percent": 13.86861313868613
+            },
+            {
+              "value": "0.45",
+              "items_count": 36,
+              "offers_sum": 244,
+              "percent": 13.138686131386862
+            },
+            {
+              "value": "0.4",
+              "items_count": 35,
+              "offers_sum": 220,
+              "percent": 12.773722627737227
+            },
+            {
+              "value": "0.7",
+              "items_count": 40,
+              "offers_sum": 190,
+              "percent": 14.5985401459854
+            },
+            {
+              "value": "0.55",
+              "items_count": 25,
+              "offers_sum": 145,
+              "percent": 9.124087591240876
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "00002888",
+          "char_name": "Раскрой",
+          "original_name": "Раскрой",
+          "unit": "мм",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "1150",
+              "items_count": 45,
+              "offers_sum": 875,
+              "percent": 16.423357664233578
+            },
+            {
+              "value": "1100",
+              "items_count": 50,
+              "offers_sum": 310,
+              "percent": 18.248175182481752
+            },
+            {
+              "value": "500",
+              "items_count": 55,
+              "offers_sum": 55,
+              "percent": 20.072992700729927
+            },
+            {
+              "value": "1165",
+              "items_count": 26,
+              "offers_sum": 54,
+              "percent": 9.48905109489051
+            },
+            {
+              "value": "1051",
+              "items_count": 35,
+              "offers_sum": 35,
+              "percent": 12.773722627737227
+            }
+          ],
+          "is_duplicate": false
+        }
+      ],
+      "metadata": {
+        "source_file": "Профнастил кровельный.json",
+        "original_category": "Профнастил кровельный",
+        "total_items": 274,
+        "selected_characteristics_count": 3,
+        "export_timestamp": "2026-04-21T17:05:49.698057"
+      }
+    },
+    "phase2": {
+      "category": "Арматура",
+      "markers": [
+        "арматура стальная",
+        "стальная арматура",
+        "арматура металлическая"
+      ],
+      "source_category": "Арматура",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "blocks_count": 11,
+      "characteristic_blocks": 4,
+      "other_blocks": 7
+    },
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "category": "Профнастил кровельный",
+    "project_name": "арматура",
+    "queue_tasks": {},
+    "created_at": "2026-04-21T16:37:59.885067",
+    "updated_at": "2026-04-21T16:37:59.885067"
+  },
+  "created_at": "2026-04-21T16:37:59.885067",
+  "updated_at": "2026-04-21T17:14:06.127974"
+}

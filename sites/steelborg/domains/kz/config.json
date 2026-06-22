@@ -1,0 +1,31 @@
+{
+  "domain_name": "kz",
+  "system_name": "kz",
+  "display_name": "Казахстан",
+  "description": "Домен KZ",
+  "created_at": "2026-05-26T10:47:40.811269",
+  "blocks_copied": true,
+  "phases": {
+    "phase1": {
+      "data_file": "phase1_data.json"
+    },
+    "phase2": {
+      "data_file": "phase2_data.json"
+    },
+    "phase3": {
+      "blocks_file": "phase3_blocks.json"
+    },
+    "phase4": {
+      "prompts_file": "phase4_prompts.json"
+    },
+    "phase5": {
+      "texts_file": "phase5_texts.json"
+    },
+    "phase6": {
+      "synonyms_file": "phase6_synonyms.json"
+    },
+    "phase7": {
+      "final_file": "phase7_final.json"
+    }
+  }
+}

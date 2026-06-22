@@ -1,0 +1,6 @@
+{
+  "name": "Default",
+  "description": "Стандартная конфигурация по умолчанию",
+  "created_at": "system",
+  "is_default": true
+}

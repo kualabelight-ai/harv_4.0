@@ -1,0 +1,28 @@
+{
+  "город": {
+    "variants": [
+      {
+        "value": "{system городе}",
+        "context": "в [город]е"
+      },
+      {
+        "value": "{system по_городу}",
+        "context": "по [город]у"
+      },
+      {
+        "value": "{system город}",
+        "context": "[город]"
+      }
+    ],
+    "description": "Название города"
+  },
+  "название товара": {
+    "variants": [
+      {
+        "value": "{system название_товара}",
+        "context": ""
+      }
+    ],
+    "description": "Название товара"
+  }
+}

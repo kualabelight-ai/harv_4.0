@@ -1,0 +1,126 @@
+{
+  "category": "Прогон железобетонный",
+  "characteristics": [
+    {
+      "char_id": "00007026",
+      "char_name": "Маркировка",
+      "original_name": "Маркировка",
+      "unit": "",
+      "is_unique": false,
+      "values": [
+        {
+          "value": "ПРГ28.1.3-4Т",
+          "items_count": 5,
+          "offers_sum": 22,
+          "percent": 1.5337423312883436
+        },
+        {
+          "value": "ПРГ32-1.4-4Т",
+          "items_count": 5,
+          "offers_sum": 20,
+          "percent": 1.5337423312883436
+        },
+        {
+          "value": "ПРГ36.1.4-4Т",
+          "items_count": 5,
+          "offers_sum": 19,
+          "percent": 1.5337423312883436
+        },
+        {
+          "value": "ПРГ60.2.5-4Т",
+          "items_count": 3,
+          "offers_sum": 19,
+          "percent": 0.9202453987730062
+        },
+        {
+          "value": "ПРГ 60.2.5-4АIII",
+          "items_count": 4,
+          "offers_sum": 10,
+          "percent": 1.2269938650306749
+        }
+      ],
+      "is_duplicate": false
+    },
+    {
+      "char_id": "00007027",
+      "char_name": "Размеры",
+      "original_name": "Размеры",
+      "unit": "мм",
+      "is_unique": false,
+      "values": [
+        {
+          "value": "2780х120х300",
+          "items_count": 8,
+          "offers_sum": 16,
+          "percent": 2.4539877300613497
+        },
+        {
+          "value": "3180х120х400",
+          "items_count": 8,
+          "offers_sum": 15,
+          "percent": 2.4539877300613497
+        },
+        {
+          "value": "5980х200х500",
+          "items_count": 6,
+          "offers_sum": 15,
+          "percent": 1.8404907975460123
+        },
+        {
+          "value": "3580х120х400",
+          "items_count": 8,
+          "offers_sum": 13,
+          "percent": 2.4539877300613497
+        },
+        {
+          "value": "4480х380х440",
+          "items_count": 7,
+          "offers_sum": 7,
+          "percent": 2.147239263803681
+        }
+      ],
+      "is_duplicate": false
+    },
+    {
+      "char_id": "00007028",
+      "char_name": "Марка бетона",
+      "original_name": "Марка бетона",
+      "unit": "",
+      "is_unique": false,
+      "values": [
+        {
+          "value": "В20",
+          "items_count": 13,
+          "offers_sum": 13,
+          "percent": 3.9877300613496933
+        },
+        {
+          "value": "В25",
+          "items_count": 4,
+          "offers_sum": 4,
+          "percent": 1.2269938650306749
+        },
+        {
+          "value": "В15",
+          "items_count": 2,
+          "offers_sum": 2,
+          "percent": 0.6134969325153374
+        },
+        {
+          "value": "В22.5",
+          "items_count": 1,
+          "offers_sum": 1,
+          "percent": 0.3067484662576687
+        }
+      ],
+      "is_duplicate": false
+    }
+  ],
+  "metadata": {
+    "source_file": "Прогон железобетонный.json",
+    "original_category": "Прогон железобетонный",
+    "total_items": 326,
+    "selected_characteristics_count": 3,
+    "export_timestamp": "2026-05-20T15:20:46.847282"
+  }
+}

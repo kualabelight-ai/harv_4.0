@@ -1,0 +1,32 @@
+{
+  "project_id": "687e998d-e99a-434b-8d4c-f39e0ef4a36b",
+  "project_name": "лист с полимерным покрытием",
+  "category": "лист с полимерным покрытием",
+  "user_id": 12,
+  "site_name": "steelborg",
+  "domain_name": "default",
+  "current_phase": 1,
+  "status": "idle",
+  "progress": 0,
+  "message": "Новый проект",
+  "created_at": "2026-06-20T16:29:09.512091",
+  "updated_at": "2026-06-20T16:29:09.512091",
+  "app_data": {
+    "phase1": {},
+    "phase2": {},
+    "phase3": {},
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "лист с полимерным покрытием",
+    "project_name": "лист с полимерным покрытием",
+    "created_at": "2026-06-20T16:29:09.512091",
+    "updated_at": "2026-06-20T16:29:09.512091",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "default"
+  }
+}

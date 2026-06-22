@@ -1,0 +1,214 @@
+{
+  "category": "Арматура гладкая",
+  "characteristics": [
+    {
+      "char_id": "00000215",
+      "char_name": "Диаметр",
+      "original_name": "Диаметр",
+      "unit": "мм",
+      "is_unique": false,
+      "values": [
+        {
+          "value": "12",
+          "items_count": 156,
+          "offers_sum": 676,
+          "percent": 15.309126594700686
+        },
+        {
+          "value": "14",
+          "items_count": 139,
+          "offers_sum": 514,
+          "percent": 13.640824337585869
+        },
+        {
+          "value": "10",
+          "items_count": 104,
+          "offers_sum": 184,
+          "percent": 10.206084396467125
+        },
+        {
+          "value": "16",
+          "items_count": 87,
+          "offers_sum": 121,
+          "percent": 8.537782139352307
+        },
+        {
+          "value": "8",
+          "items_count": 62,
+          "offers_sum": 93,
+          "percent": 6.084396467124632
+        }
+      ],
+      "is_duplicate": false
+    },
+    {
+      "char_id": "00000223",
+      "char_name": "Класс",
+      "original_name": "Класс",
+      "unit": "",
+      "is_unique": false,
+      "values": [
+        {
+          "value": "Ат800",
+          "items_count": 466,
+          "offers_sum": 1277,
+          "percent": 45.73110893032385
+        },
+        {
+          "value": "Ат1000",
+          "items_count": 322,
+          "offers_sum": 438,
+          "percent": 31.599607458292446
+        },
+        {
+          "value": "А240 (А1)",
+          "items_count": 212,
+          "offers_sum": 424,
+          "percent": 20.80471050049068
+        }
+      ],
+      "is_duplicate": false
+    },
+    {
+      "char_id": "00000224",
+      "char_name": "Марка материала",
+      "original_name": "Марка материала",
+      "unit": "",
+      "is_unique": false,
+      "values": [
+        {
+          "value": "25Г2С",
+          "items_count": 282,
+          "offers_sum": 370,
+          "percent": 27.674190382728163
+        },
+        {
+          "value": "28С",
+          "items_count": 310,
+          "offers_sum": 352,
+          "percent": 30.42198233562316
+        },
+        {
+          "value": "Ст3пс",
+          "items_count": 51,
+          "offers_sum": 51,
+          "percent": 5.004906771344456
+        },
+        {
+          "value": "Ст3сп",
+          "items_count": 39,
+          "offers_sum": 43,
+          "percent": 3.8272816486751715
+        },
+        {
+          "value": "35ГС",
+          "items_count": 12,
+          "offers_sum": 12,
+          "percent": 1.1776251226692835
+        }
+      ],
+      "is_duplicate": false
+    },
+    {
+      "char_id": "00000225",
+      "char_name": "Длина",
+      "original_name": "Длина",
+      "unit": "м",
+      "is_unique": false,
+      "values": [
+        {
+          "value": "11.7",
+          "items_count": 114,
+          "offers_sum": 550,
+          "percent": 11.187438665358194
+        },
+        {
+          "value": "6.7",
+          "items_count": 34,
+          "offers_sum": 381,
+          "percent": 3.3366045142296366
+        },
+        {
+          "value": "12",
+          "items_count": 189,
+          "offers_sum": 189,
+          "percent": 18.54759568204122
+        },
+        {
+          "value": "4",
+          "items_count": 177,
+          "offers_sum": 177,
+          "percent": 17.369970559371932
+        },
+        {
+          "value": "6",
+          "items_count": 59,
+          "offers_sum": 127,
+          "percent": 5.789990186457311
+        }
+      ],
+      "is_duplicate": false
+    },
+    {
+      "char_id": "00003389",
+      "char_name": "Способ поставки",
+      "original_name": "Способ поставки",
+      "unit": "",
+      "is_unique": false,
+      "values": [
+        {
+          "value": "в бухте",
+          "items_count": 24,
+          "offers_sum": 24,
+          "percent": 2.355250245338567
+        },
+        {
+          "value": "в мотках",
+          "items_count": 4,
+          "offers_sum": 4,
+          "percent": 0.39254170755642787
+        }
+      ],
+      "is_duplicate": false
+    },
+    {
+      "char_id": "9101",
+      "char_name": "Поверхность",
+      "original_name": "Поверхность",
+      "unit": "",
+      "is_unique": false,
+      "values": [
+        {
+          "value": "гладкая",
+          "items_count": 1019,
+          "offers_sum": 2158,
+          "percent": 100.0
+        }
+      ],
+      "is_duplicate": false
+    },
+    {
+      "char_id": "9102",
+      "char_name": "Материал",
+      "original_name": "Материал",
+      "unit": "",
+      "is_unique": false,
+      "values": [
+        {
+          "value": "стальная",
+          "items_count": 1019,
+          "offers_sum": 2158,
+          "percent": 100.0
+        }
+      ],
+      "is_duplicate": false
+    }
+  ],
+  "metadata": {
+    "source_file": "Арматура гладкая.json",
+    "original_category": "Арматура гладкая",
+    "total_items": 1019,
+    "selected_characteristics_count": 7,
+    "export_timestamp": "2026-05-21T13:44:27.042593"
+  }
+}

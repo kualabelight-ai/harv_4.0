@@ -1,0 +1,26 @@
+{
+  "project_id": null,
+  "project_name": "Новый проект",
+  "category": "",
+  "current_phase": 1,
+  "app_data": {
+    "phase1": {},
+    "phase2": {},
+    "phase3": {},
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "",
+    "project_name": "Новый проект",
+    "created_at": "2026-05-12T12:53:26.718290",
+    "updated_at": "2026-05-12T12:53:26.718290",
+    "phase5_completed": false,
+    "phase5_settings": {},
+    "phase4_generated_prompts": {},
+    "phase5_prompts": [],
+    "phase6_logs": []
+  },
+  "created_at": "2026-05-12T12:53:26.718290",
+  "updated_at": "2026-05-12T12:53:36.765865"
+}

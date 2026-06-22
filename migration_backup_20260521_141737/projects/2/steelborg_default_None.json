@@ -1,0 +1,28 @@
+{
+  "project_id": null,
+  "project_name": "Новый проект",
+  "category": "",
+  "current_phase": 1,
+  "app_data": {
+    "phase1": {},
+    "phase2": {},
+    "phase3": {},
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "",
+    "project_name": "Новый проект",
+    "created_at": "2026-05-20T15:09:41.887398",
+    "updated_at": "2026-05-20T15:09:41.887398",
+    "phase5_completed": false,
+    "phase5_settings": {},
+    "phase4_generated_prompts": {},
+    "phase5_prompts": [],
+    "phase6_logs": []
+  },
+  "created_at": "2026-05-20T15:09:41.887398",
+  "updated_at": "2026-05-20T15:09:51.387031",
+  "site_name": "steelborg",
+  "domain_name": "default"
+}

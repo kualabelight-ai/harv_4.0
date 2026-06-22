@@ -1,0 +1,158 @@
+{
+  "project_id": "37efc391-f885-4c3e-ac6d-b6e8b8ce6a3c",
+  "project_name": "3",
+  "category": "Катанка медная",
+  "current_phase": 3,
+  "app_data": {
+    "phase1": {
+      "characteristics": [
+        {
+          "char_id": "00001029",
+          "char_name": "Диаметр",
+          "original_name": "Диаметр",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "8",
+              "count": 27,
+              "offers": 54
+            }
+          ]
+        }
+      ],
+      "category": "Катанка медная"
+    },
+    "phase2": {
+      "category": "Медная катанка",
+      "original_category": "Катанка медная",
+      "markers": [
+        "катанка медная",
+        "медная катанка",
+        "катанки медные",
+        "медные катанки"
+      ],
+      "source_category": "Катанка медная",
+      "custom_category_mode": false
+    },
+    "phase3": {},
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Катанка медная",
+    "project_name": "3",
+    "created_at": "2026-06-17T15:52:44.122224",
+    "updated_at": "2026-06-18T15:12:23.168981",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00001029": {
+          "prompts_per_value": 1,
+          "char_name": "Диаметр"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 1
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 1,
+      "global_other_prompts": 1
+    },
+    "phase4_configured": true,
+    "phase3_generated": false,
+    "phase6_completed": false,
+    "phase7_completed": false,
+    "phase2_data": {
+      "category": "Катанка медная"
+    },
+    "loaded_data": {
+      "characteristics": [
+        {
+          "char_id": "00001029",
+          "char_name": "Диаметр",
+          "original_name": "Диаметр",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "8",
+              "count": 27,
+              "offers": 54
+            }
+          ]
+        }
+      ],
+      "category": "Катанка медная"
+    }
+  },
+  "created_at": "2026-06-17T15:52:44.122224",
+  "updated_at": "2026-06-21T18:21:21.727369",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

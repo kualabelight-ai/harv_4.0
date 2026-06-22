@@ -1,0 +1,39 @@
+{
+  "version": "1.0",
+  "variables": {
+    "currency": "₽",
+    "currency_name": "руб.",
+    "currency_code": "RUB",
+    "units": {
+      "length": "м",
+      "weight": "кг",
+      "area": "м²"
+    },
+    "custom_system_vars": {}
+  },
+  "templates": {
+    "default_template_name": "Стандартный",
+    "allow_custom_templates": true
+  },
+  "processing": {
+    "auto_insert_brackets": true,
+    "remove_units": [
+      "шт",
+      "кг",
+      "м"
+    ],
+    "remove_symbols": [
+      "*",
+      "#",
+      "~"
+    ],
+    "city_variants": {
+      "in_form": "в {system городе}",
+      "by_form": "по {system по_городу}"
+    }
+  },
+  "export": {
+    "excel_format": "xlsx",
+    "include_html": true
+  }
+}

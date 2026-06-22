@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анализатор характеристик товаров</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,.1); }
+        .table-hover tbody tr:hover { background-color: rgba(0,0,0,.075); }
+        .characteristic-table th { position: sticky; top: 0; background-color: white; }
+        .badge.bg-secondary { cursor: pointer; }
+        .preview-panel { max-height: 500px; overflow-y: auto; }
+        .config-panel { background-color: #f8f9fa; border-radius: 5px; padding: 15px; }
+        .loading { display: none; }
+        .active-tab { font-weight: bold; }
+        .blacklist-item { display: inline-block; margin: 2px; }
+        .value-preview { max-height: 200px; overflow-y: auto; font-size: 0.9em; }
+        .stat-number { font-weight: bold; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-3">
+        <!-- Заголовок -->
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="display-6">Анализатор характеристик товаров</h1>
+                <p class="lead">Загрузите JSON файл для анализа характеристик товаров</p>
+            </div>
+        </div>
+
+        <!-- Шаги процесса -->
+        <div class="row mb-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="step step-1 active-tab">
+                                <i class="bi bi-upload"></i> Шаг 1: Загрузка данных
+                            </div>
+                            <div class="step step-2">
+                                <i class="bi bi-eye"></i> Шаг 2: Превью характеристик
+                            </div>
+                            <div class="step step-3">
+                                <i class="bi bi-sliders"></i> Шаг 3: Настройка
+                            </div>
+                            <div class="step step-4">
+                                <i class="bi bi-download"></i> Шаг 4: Результат
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Шаг 1: Загрузка файла -->
+        <div class="row mb-4" id="step1">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Загрузка JSON файла</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="jsonFile" class="form-label">Выберите JSON файл</label>
+                            <input class="form-control" type="file" id="jsonFile" accept=".json">
+                            <div class="form-text">Файл должен соответствовать заданной структуре</div>
+                        </div>
+                        <button class="btn btn-primary" onclick="uploadFile()">
+                            <i class="bi bi-upload"></i> Загрузить файл
+                        </button>
+                        <div class="mt-3">
+                            <div class="loading" id="loadingUpload">
+                                <div class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Загрузка...</span>
+                                </div>
+                                Обработка файла...
+                            </div>
+                            <div id="uploadResult"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Шаг 2: Превью характеристик -->
+        <div class="row mb-4" id="step2" style="display: none;">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Превью характеристик</h5>
+                        <button class="btn btn-sm btn-outline-primary" onclick="refreshPreview()">
+                            <i class="bi bi-arrow-clockwise"></i> Обновить
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="config-panel">
+                                    <h6><i class="bi bi-filter"></i> Фильтры</h6>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="includeAdditional" onchange="toggleAdditional()">
+                                        <label class="form-check-label" for="includeAdditional">Включать дополнительные характеристики</label>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-secondary mt-2" onclick="showBlacklistModal()">
+                                        <i class="bi bi-list-ul"></i> Управление черным списком
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="config-panel">
+                                    <h6><i class="bi bi-info-circle"></i> Статистика</h6>
+                                    <div id="previewStats">Загрузите файл для просмотра статистики</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="preview-panel">
+                            <table class="table table-hover characteristic-table" id="previewTable">
+                                <thead>
+                                    <tr>
+                                        <th width="30"><input type="checkbox" id="selectAll"></th>
+                                        <th>Характеристика</th>
+                                        <th>Уник. значений</th>
+                                        <th>Заполнено</th>
+                                        <th>Предложений</th>
+                                        <th>Приоритет</th>
+                                        <th>Доп.</th>
+                                        <th>В Имени</th>
+                                        <th>Значения (топ 3)</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="previewTableBody">
+                                    <!-- Данные будут загружены через JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-3">
+                            <button class="btn btn-primary" onclick="goToStep3()">
+                                <i class="bi bi-arrow-right"></i> Перейти к настройкам
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Шаг 3: Настройка характеристик -->
+        <div class="row mb-4" id="step3" style="display: none;">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Настройка характеристик</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="config-panel">
+                                    <h6><i class="bi bi-gear"></i> Глобальные настройки</h6>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Сортировка по умолчанию</label>
+                                            <select class="form-select form-select-sm" id="globalSortBy">
+                                                <option value="offers">По предложениям</option>
+                                                <option value="products">По товарам</option>
+                                                <option value="alphabetical">По алфавиту</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Количество значений по умолчанию</label>
+                                            <select class="form-select form-select-sm" id="globalValueCount">
+                                                <option value="all">Все значения</option>
+                                                <option value="topN">Топ N</option>
+                                            </select>
+                                            <input type="number" class="form-control form-control-sm mt-1" id="globalTopN" placeholder="N" value="5" style="display: none;">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Игнорировать пустые</label>
+                                            <select class="form-select form-select-sm" id="globalIgnoreEmpty">
+                                                <option value="true">Да</option>
+                                                <option value="false">Нет</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="applyGlobalSettings()">
+                                        <i class="bi bi-check-lg"></i> Применить ко всем
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="preview-panel">
+                            <table class="table table-hover" id="configTable">
+                                <thead>
+                                    <tr>
+                                        <th>Характеристика</th>
+                                        <th>Включить</th>
+                                        <th>Кол-во значений</th>
+                                        <th>Сортировка</th>
+                                        <th>Игнорировать пустые</th>
+                                        <th>Мин. предложений</th>
+                                        <th>Превью значений</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="configTableBody">
+                                    <!-- Данные будут загружены через JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-3">
+                            <button class="btn btn-primary" onclick="processData()">
+                                <i class="bi bi-play-circle"></i> Обработать данные
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="goToStep2()">
+                                <i class="bi bi-arrow-left"></i> Назад
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Шаг 4: Результат -->
+        <div class="row mb-4" id="step4" style="display: none;">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Результат обработки</h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-success" onclick="exportResult()">
+                                <i class="bi bi-download"></i> Экспорт результата
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary" onclick="exportConfig()">
+                                <i class="bi bi-save"></i> Сохранить конфигурацию
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i>
+                                    <span id="resultSummary">Обработано 0 характеристик</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="card-title mb-0">Сводная информация</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="resultStats"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="card-title mb-0">Экспорт</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Импорт конфигурации</label>
+                                            <input class="form-control form-control-sm" type="file" id="importConfig" accept=".json">
+                                            <button class="btn btn-sm btn-outline-primary mt-2" onclick="importConfig()">
+                                                <i class="bi bi-upload"></i> Импортировать
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-sm btn-outline-warning" onclick="resetApp()">
+                                                <i class="bi bi-x-circle"></i> Сбросить все
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <div class="preview-panel">
+                                <pre id="resultJson"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно черного списка -->
+        <div class="modal fade" id="blacklistModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Управление черным списком</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="blacklistSearch" placeholder="Поиск характеристики...">
+                                <button class="btn btn-outline-secondary" type="button" onclick="searchBlacklist()">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div id="blacklistItems">
+                                <!-- Элементы черного списка -->
+                            </div>
+                        </div>
+                        <div>
+                            <h6>Добавить в черный список:</h6>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="addToBlacklist" placeholder="ID характеристики">
+                                <button class="btn btn-outline-danger" type="button" onclick="addToBlacklist()">
+                                    <i class="bi bi-plus-circle"></i> Добавить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="button" class="btn btn-danger" onclick="clearBlacklist()">Очистить список</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно настройки значений -->
+        <div class="modal fade" id="valuesModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Настройка значений характеристики</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="currentCharId">
+                        <div class="mb-3">
+                            <h6 id="currentCharName"></h6>
+                            <div id="currentCharStats"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Способ выбора значений</label>
+                                <select class="form-select" id="modalValueSelection" onchange="toggleModalFields()">
+                                    <option value="all">Все значения</option>
+                                    <option value="topN">Топ N значений</option>
+                                    <option value="custom">Пользовательский выбор</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Количество значений (N)</label>
+                                <input type="number" class="form-control" id="modalTopN" value="5" min="1">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Выберите значения (для пользовательского выбора)</label>
+                            <div class="value-preview border p-2" id="customValuesList">
+                                <!-- Список значений -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Сортировка значений</label>
+                                <select class="form-select" id="modalSortBy">
+                                    <option value="offers">По предложениям</option>
+                                    <option value="products">По товарам</option>
+                                    <option value="alphabetical">По алфавиту</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mt-4">
+                                    <input class="form-check-input" type="checkbox" id="modalIgnoreEmpty" checked>
+                                    <label class="form-check-label">Игнорировать пустые значения</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="button" class="btn btn-primary" onclick="saveValuesSettings()">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Глобальные переменные
+        let currentStep = 1;
+        let characteristicsData = {};
+        let userSettings = {};
+        let blacklist = [];
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обработка изменения способа выбора значений
+            document.getElementById('globalValueCount').addEventListener('change', function() {
+                document.getElementById('globalTopN').style.display =
+                    this.value === 'topN' ? 'block' : 'none';
+            });
+        });
+
+        // Функции для шагов
+        function showStep(step) {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`step${i}`).style.display = i === step ? 'block' : 'none';
+                document.querySelector(`.step-${i}`).classList.toggle('active-tab', i === step);
+            }
+            currentStep = step;
+        }
+
+        // Шаг 1: Загрузка файла
+        async function uploadFile() {
+            const fileInput = document.getElementById('jsonFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Пожалуйста, выберите файл');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            showLoading('upload');
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('uploadResult').innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle"></i>
+                            Файл "${file.name}" успешно загружен!<br>
+                            Категория: ${result.category}<br>
+                            Товаров: ${result.totalProducts}, Предложений: ${result.totalOffers}
+                        </div>
+                    `;
+
+                    // Переходим к шагу 2
+                    setTimeout(() => {
+                        showStep(2);
+                        refreshPreview();
+                    }, 1000);
+                } else {
+                    document.getElementById('uploadResult').innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Ошибка: ${result.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('uploadResult').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Ошибка сети: ${error.message}
+                    </div>
+                `;
+            } finally {
+                hideLoading('upload');
+            }
+        }
+
+        // Шаг 2: Превью характеристик
+        async function refreshPreview() {
+            showLoading('preview');
+
+            try {
+                const response = await fetch('/preview');
+                const result = await response.json();
+
+                if (response.ok) {
+                    characteristicsData = result.characteristics;
+                    blacklist = result.summary.blacklist;
+
+                    // Обновляем статистику
+                    document.getElementById('previewStats').innerHTML = `
+                        Характеристик: <span class="stat-number">${result.summary.totalCharacteristics}</span> |
+                        В черном списке: <span class="stat-number">${result.summary.blacklistCount}</span> |
+                        Дополнительные: ${result.summary.includeAdditional ? 'включены' : 'исключены'}
+                    `;
+
+                    // Обновляем таблицу
+                    updatePreviewTable(result.characteristics);
+
+                    // Обновляем чекбокс дополнительных характеристик
+                    document.getElementById('includeAdditional').checked = result.summary.includeAdditional;
+                } else {
+                    alert('Ошибка при загрузке превью: ' + result.error);
+                }
+            } catch (error) {
+                alert('Ошибка сети: ' + error.message);
+            } finally {
+                hideLoading('preview');
+            }
+        }
+
+        function updatePreviewTable(data) {
+            const tbody = document.getElementById('previewTableBody');
+            tbody.innerHTML = '';
+
+            for (const charId in data) {
+                const char = data[charId];
+                const metadata = char.metadata;
+                const topValues = char.values.slice(0, 3).map(v => `${v.value} (${v.offers})`).join(', ');
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" class="char-checkbox" data-id="${charId}" checked></td>
+                    <td>
+                        <strong>${metadata.name}</strong><br>
+                        <small class="text-muted">ID: ${charId}</small>
+                    </td>
+                    <td>${char.uniqueValues}</td>
+                    <td>
+                        ${char.fillPercentage}%<br>
+                        <small>${char.filledProducts}/${char.totalProducts}</small>
+                    </td>
+                    <td>${char.totalOffers}</td>
+                    <td>${metadata.priority}</td>
+                    <td>${metadata.isAdditional ? '●' : '○'}</td>
+                    <td>${metadata.formsName ? '✓' : ''}</td>
+                    <td><small class="text-muted">${topValues}</small></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-info" onclick="viewCharDetails('${charId}')">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            }
+
+            // Назначаем обработчик для "Выбрать все"
+            document.getElementById('selectAll').onchange = function(e) {
+                const checkboxes = document.querySelectorAll('.char-checkbox');
+                checkboxes.forEach(cb => cb.checked = e.target.checked);
+            };
+        }
+
+        async function toggleAdditional() {
+            const include = document.getElementById('includeAdditional').checked;
+
+            try {
+                const response = await fetch('/toggle_additional', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ include: include })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    refreshPreview();
+                }
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
+            }
+        }
+
+        // Шаг 3: Настройка
+        function goToStep3() {
+            // Собираем выбранные характеристики
+            const checkboxes = document.querySelectorAll('.char-checkbox:checked');
+            const selectedChars = Array.from(checkboxes).map(cb => cb.dataset.id);
+
+            // Инициализируем настройки для выбранных характеристик
+            selectedChars.forEach(charId => {
+                if (!userSettings[charId]) {
+                    userSettings[charId] = {
+                        included: true,
+                        valueSelection: 'all',
+                        topN: 5,
+                        sortBy: 'offers',
+                        ignoreEmpty: true,
+                        minOffers: 0
+                    };
+                }
+            });
+
+            // Обновляем таблицу настроек
+            updateConfigTable();
+
+            showStep(3);
+        }
+
+        function goToStep2() {
+            showStep(2);
+        }
+
+        function updateConfigTable() {
+            const tbody = document.getElementById('configTableBody');
+            tbody.innerHTML = '';
+
+            for (const charId in characteristicsData) {
+                const char = characteristicsData[charId];
+                const settings = userSettings[charId] || {
+                    included: true,
+                    valueSelection: 'all',
+                    topN: 5,
+                    sortBy: 'offers',
+                    ignoreEmpty: true,
+                    minOffers: 0
+                };
+
+                // Получаем превью значений
+                let valuesPreview = 'Нет данных';
+                if (char.values && char.values.length > 0) {
+                    const previewCount = Math.min(3, char.values.length);
+                    valuesPreview = char.values.slice(0, previewCount)
+                        .map(v => `${v.value} (${v.offers})`)
+                        .join(', ');
+                    if (char.values.length > previewCount) {
+                        valuesPreview += `... (еще ${char.values.length - previewCount})`;
+                    }
+                }
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <strong>${char.metadata.name}</strong><br>
+                        <small class="text-muted">${charId}</small>
+                    </td>
+                    <td>
+                        <input type="checkbox" class="config-include" data-id="${charId}"
+                               ${settings.included ? 'checked' : ''}>
+                    </td>
+                    <td>
+                        <select class="form-select form-select-sm config-value-selection" data-id="${charId}">
+                            <option value="all" ${settings.valueSelection === 'all' ? 'selected' : ''}>Все</option>
+                            <option value="topN" ${settings.valueSelection === 'topN' ? 'selected' : ''}>Топ N</option>
+                            <option value="custom" ${settings.valueSelection === 'custom' ? 'selected' : ''}>Выбрать</option>
+                        </select>
+                        <input type="number" class="form-control form-control-sm mt-1 config-topn"
+                               data-id="${charId}" value="${settings.topN || 5}"
+                               style="display: ${settings.valueSelection === 'topN' ? 'block' : 'none'};">
+                        <button class="btn btn-sm btn-outline-secondary mt-1 config-custom-btn"
+                                data-id="${charId}"
+                                style="display: ${settings.valueSelection === 'custom' ? 'block' : 'none'};"
+                                onclick="showValuesModal('${charId}')">
+                            Выбрать
+                        </button>
+                    </td>
+                    <td>
+                        <select class="form-select form-select-sm config-sortby" data-id="${charId}">
+                            <option value="offers" ${settings.sortBy === 'offers' ? 'selected' : ''}>По предложениям</option>
+                            <option value="products" ${settings.sortBy === 'products' ? 'selected' : ''}>По товарам</option>
+                            <option value="alphabetical" ${settings.sortBy === 'alphabetical' ? 'selected' : ''}>По алфавиту</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select form-select-sm config-ignoreempty" data-id="${charId}">
+                            <option value="true" ${settings.ignoreEmpty ? 'selected' : ''}>Да</option>
+                            <option value="false" ${!settings.ignoreEmpty ? 'selected' : ''}>Нет</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control form-control-sm config-minoffers"
+                               data-id="${charId}" value="${settings.minOffers || 0}" min="0">
+                    </td>
+                    <td>
+                        <small class="text-muted">${valuesPreview}</small>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            }
+
+            // Назначаем обработчики
+            document.querySelectorAll('.config-value-selection').forEach(select => {
+                select.addEventListener('change', function() {
+                    const charId = this.dataset.id;
+                    const valueSelection = this.value;
+
+                    // Показываем/скрываем дополнительные поля
+                    const topnInput = document.querySelector(`.config-topn[data-id="${charId}"]`);
+                    const customBtn = document.querySelector(`.config-custom-btn[data-id="${charId}"]`);
+
+                    topnInput.style.display = valueSelection === 'topN' ? 'block' : 'none';
+                    customBtn.style.display = valueSelection === 'custom' ? 'block' : 'none';
+
+                    // Обновляем настройки
+                    if (!userSettings[charId]) userSettings[charId] = {};
+                    userSettings[charId].valueSelection = valueSelection;
+                });
+            });
+
+            document.querySelectorAll('.config-include').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const charId = this.dataset.id;
+                    if (!userSettings[charId]) userSettings[charId] = {};
+                    userSettings[charId].included = this.checked;
+                });
+            });
+
+            document.querySelectorAll('.config-sortby').forEach(select => {
+                select.addEventListener('change', function() {
+                    const charId = this.dataset.id;
+                    if (!userSettings[charId]) userSettings[charId] = {};
+                    userSettings[charId].sortBy = this.value;
+                });
+            });
+
+            document.querySelectorAll('.config-ignoreempty').forEach(select => {
+                select.addEventListener('change', function() {
+                    const charId = this.dataset.id;
+                    if (!userSettings[charId]) userSettings[charId] = {};
+                    userSettings[charId].ignoreEmpty = this.value === 'true';
+                });
+            });
+
+            document.querySelectorAll('.config-topn').forEach(input => {
+                input.addEventListener('change', function() {
+                    const charId = this.dataset.id;
+                    if (!userSettings[charId]) userSettings[charId] = {};
+                    userSettings[charId].topN = parseInt(this.value);
+                });
+            });
+
+            document.querySelectorAll('.config-minoffers').forEach(input => {
+                input.addEventListener('change', function() {
+                    const charId = this.dataset.id;
+                    if (!userSettings[charId]) userSettings[charId] = {};
+                    userSettings[charId].minOffers = parseInt(this.value);
+                });
+            });
+        }
+
+        function applyGlobalSettings() {
+            const sortBy = document.getElementById('globalSortBy').value;
+            const valueSelection = document.getElementById('globalValueCount').value;
+            const topN = document.getElementById('globalTopN').value;
+            const ignoreEmpty = document.getElementById('globalIgnoreEmpty').value === 'true';
+
+            // Обновляем все настройки
+            for (const charId in userSettings) {
+                userSettings[charId].sortBy = sortBy;
+                userSettings[charId].valueSelection = valueSelection;
+                userSettings[charId].ignoreEmpty = ignoreEmpty;
+
+                if (valueSelection === 'topN') {
+                    userSettings[charId].topN = parseInt(topN);
+                }
+            }
+
+            // Обновляем таблицу
+            updateConfigTable();
+        }
+
+        // Шаг 4: Обработка и результат
+        async function processData() {
+            // Сохраняем текущие настройки на сервере
+            try {
+                const response = await fetch('/update_settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userSettings)
+                });
+
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                alert('Ошибка при сохранении настроек: ' + error.message);
+                return;
+            }
+
+            // Обрабатываем данные
+            showLoading('process');
+
+            try {
+                const response = await fetch('/process');
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Показываем результат
+                    document.getElementById('resultSummary').textContent =
+                        `Обработано ${result.summary.totalProcessed} характеристик, выбрано ${result.summary.totalSelectedValues} значений`;
+
+                    // Статистика
+                    document.getElementById('resultStats').innerHTML = `
+                        <p><strong>Категория:</strong> ${result.configuration.categoryName}</p>
+                        <p><strong>Товаров:</strong> ${result.configuration.totalProducts}</p>
+                        <p><strong>Предложений:</strong> ${result.configuration.totalOffers}</p>
+                        <p><strong>В черном списке:</strong> ${result.configuration.blacklist.length} характеристик</p>
+                        <p><strong>Дополнительные:</strong> ${result.configuration.includeAdditional ? 'включены' : 'исключены'}</p>
+                    `;
+
+                    // JSON результат
+                    document.getElementById('resultJson').textContent =
+                        JSON.stringify(result, null, 2);
+
+                    // Сохраняем результат в глобальной переменной
+                    window.lastResult = result;
+
+                    // Переходим к шагу 4
+                    showStep(4);
+                } else {
+                    alert('Ошибка при обработке: ' + result.error);
+                }
+            } catch (error) {
+                alert('Ошибка сети: ' + error.message);
+            } finally {
+                hideLoading('process');
+            }
+        }
+
+        // Экспорт
+        async function exportResult() {
+            if (!window.lastResult) {
+                alert('Нет данных для экспорта');
+                return;
+            }
+
+            try {
+                const response = await fetch('/export', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(window.lastResult)
+                });
+
+                if (response.ok) {
+                    // Создаем ссылку для скачивания
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `characteristics_${new Date().toISOString().slice(0,10)}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    const result = await response.json();
+                    alert('Ошибка при экспорте: ' + result.error);
+                }
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
+            }
+        }
+
+        async function exportConfig() {
+            // Собираем конфигурацию для экспорта
+            const config = {
+                userSettings: userSettings,
+                blacklist: blacklist,
+                includeAdditional: document.getElementById('includeAdditional').checked
+            };
+
+            try {
+                const response = await fetch('/export', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+
+                if (response.ok) {
+                    // Создаем ссылку для скачивания
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `config_${new Date().toISOString().slice(0,10)}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    const result = await response.json();
+                    alert('Ошибка при экспорте: ' + result.error);
+                }
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
+            }
+        }
+
+        async function importConfig() {
+            const fileInput = document.getElementById('importConfig');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Пожалуйста, выберите файл конфигурации');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/import', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Конфигурация успешно импортирована!');
+                    // Обновляем превью
+                    refreshPreview();
+                } else {
+                    alert('Ошибка при импорте: ' + result.error);
+                }
+            } catch (error) {
+                alert('Ошибка сети: ' + error.message);
+            }
+        }
+
+        // Черный список
+        function showBlacklistModal() {
+            updateBlacklistModal();
+            new bootstrap.Modal(document.getElementById('blacklistModal')).show();
+        }
+
+        async function updateBlacklistModal() {
+            // Получаем все характеристики для отображения в модалке
+            const container = document.getElementById('blacklistItems');
+            container.innerHTML = '';
+
+            // Показываем текущий черный список
+            for (const charId of blacklist) {
+                const charName = characteristicsData[charId]?.metadata?.name || charId;
+                const item = document.createElement('div');
+                item.className = 'blacklist-item badge bg-danger me-2 mb-2';
+                item.innerHTML = `
+                    ${charName} (${charId})
+                    <button type="button" class="btn-close btn-close-white ms-1"
+                            onclick="removeFromBlacklist('${charId}')"></button>
+                `;
+                container.appendChild(item);
+            }
+        }
+
+        async function addToBlacklist() {
+            const input = document.getElementById('addToBlacklist');
+            const charId = input.value.trim();
+
+            if (!charId) {
+                alert('Введите ID характеристики');
+                return;
+            }
+
+            try {
+                const response = await fetch('/update_blacklist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'add', charId: charId })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    blacklist = result.blacklist;
+                    updateBlacklistModal();
+                    input.value = '';
+                    refreshPreview();
+                }
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
+            }
+        }
+
+        async function removeFromBlacklist(charId) {
+            try {
+                const response = await fetch('/update_blacklist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'remove', charId: charId })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    blacklist = result.blacklist;
+                    updateBlacklistModal();
+                    refreshPreview();
+                }
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
+            }
+        }
+
+        async function clearBlacklist() {
+            if (!confirm('Очистить черный список?')) return;
+
+            try {
+                const response = await fetch('/update_blacklist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'clear' })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    blacklist = result.blacklist;
+                    updateBlacklistModal();
+                    refreshPreview();
+                }
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
+            }
+        }
+
+        // Модальное окно значений
+        function showValuesModal(charId) {
+            const char = characteristicsData[charId];
+            if (!char) return;
+
+            document.getElementById('currentCharId').value = charId;
+            document.getElementById('currentCharName').textContent = char.metadata.name;
+
+            // Статистика
+            document.getElementById('currentCharStats').innerHTML = `
+                <small class="text-muted">
+                    Всего значений: ${char.uniqueValues} |
+                    Заполнено: ${char.fillPercentage}% |
+                    Предложений: ${char.totalOffers}
+                </small>
+            `;
+
+            // Текущие настройки
+            const settings = userSettings[charId] || {};
+            document.getElementById('modalValueSelection').value = settings.valueSelection || 'all';
+            document.getElementById('modalTopN').value = settings.topN || 5;
+            document.getElementById('modalSortBy').value = settings.sortBy || 'offers';
+            document.getElementById('modalIgnoreEmpty').checked = settings.ignoreEmpty !== false;
+
+            // Список значений для выбора
+            const valuesList = document.getElementById('customValuesList');
+            valuesList.innerHTML = '';
+
+            char.values.forEach(value => {
+                const div = document.createElement('div');
+                div.className = 'form-check';
+                div.innerHTML = `
+                    <input class="form-check-input value-checkbox" type="checkbox"
+                           value="${value.value}" id="value_${value.value}">
+                    <label class="form-check-label" for="value_${value.value}">
+                        ${value.value} (товаров: ${value.products}, предложений: ${value.offers}, ${value.percentage}%)
+                    </label>
+                `;
+                valuesList.appendChild(div);
+            });
+
+            // Показываем/скрываем поля
+            toggleModalFields();
+
+            new bootstrap.Modal(document.getElementById('valuesModal')).show();
+        }
+
+        function toggleModalFields() {
+            const valueSelection = document.getElementById('modalValueSelection').value;
+            document.getElementById('modalTopN').style.display =
+                valueSelection === 'topN' ? 'block' : 'none';
+            document.getElementById('customValuesList').style.display =
+                valueSelection === 'custom' ? 'block' : 'none';
+        }
+
+        function saveValuesSettings() {
+            const charId = document.getElementById('currentCharId').value;
+            if (!charId) return;
+
+            // Собираем настройки
+            const settings = {
+                valueSelection: document.getElementById('modalValueSelection').value,
+                topN: parseInt(document.getElementById('modalTopN').value),
+                sortBy: document.getElementById('modalSortBy').value,
+                ignoreEmpty: document.getElementById('modalIgnoreEmpty').checked
+            };
+
+            // Для пользовательского выбора собираем выбранные значения
+            if (settings.valueSelection === 'custom') {
+                const selectedValues = [];
+                document.querySelectorAll('.value-checkbox:checked').forEach(cb => {
+                    selectedValues.push(cb.value);
+                });
+                settings.customValues = selectedValues;
+            }
+
+            // Сохраняем в userSettings
+            if (!userSettings[charId]) userSettings[charId] = {};
+            Object.assign(userSettings[charId], settings);
+
+            // Закрываем модалку
+            bootstrap.Modal.getInstance(document.getElementById('valuesModal')).hide();
+
+            // Обновляем таблицу
+            updateConfigTable();
+        }
+
+        // Вспомогательные функции
+        function showLoading(elementId) {
+            document.getElementById(`loading${elementId.charAt(0).toUpperCase() + elementId.slice(1)}`)
+                .style.display = 'block';
+        }
+
+        function hideLoading(elementId) {
+            document.getElementById(`loading${elementId.charAt(0).toUpperCase() + elementId.slice(1)}`)
+                .style.display = 'none';
+        }
+
+        async function resetApp() {
+            if (confirm('Вы уверены, что хотите сбросить все настройки?')) {
+                try {
+                    const response = await fetch('/reset');
+                    const result = await response.json();
+                    if (response.ok) {
+                        location.reload();
+                    }
+                } catch (error) {
+                    alert('Ошибка: ' + error.message);
+                }
+            }
+        }
+
+        function viewCharDetails(charId) {
+            alert(`Детали характеристики: ${charId}\n` +
+                  JSON.stringify(characteristicsData[charId], null, 2));
+        }
+    </script>
+</body>
+</html>

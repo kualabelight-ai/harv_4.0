@@ -1,0 +1,21 @@
+{
+  "project_id": "e6bc50c0-5eda-4585-8524-6519b5e5c625",
+  "project_name": "Мой первый проект",
+  "category": "Мой первый проект",
+  "current_phase": 1,
+  "app_data": {
+    "phase1": {},
+    "phase2": {},
+    "phase3": {},
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "category": "Мой первый проект",
+    "project_name": "Мой первый проект",
+    "queue_tasks": {},
+    "created_at": "2026-04-21T16:37:35.633911",
+    "updated_at": "2026-04-21T16:37:35.633911"
+  },
+  "created_at": "2026-04-21T16:37:35.633911",
+  "updated_at": "2026-04-21T16:37:59.885067"
+}

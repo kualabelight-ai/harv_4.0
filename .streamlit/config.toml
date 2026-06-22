@@ -1,0 +1,24 @@
+[server]
+# Защита от CSRF (межсайтовой подделки запросов)
+enableXsrfProtection = true
+
+# Ограничение CORS (только с того же источника)
+enableCORS = true
+
+[theme]
+base = "light"
+
+# (Опционально) Чтобы пользователь не мог переключить тему через меню
+[client]
+toolbarMode = "minimal"
+
+
+
+# Принудительное использование HTTPS (если есть сертификаты)
+# enableHTTPS = true
+# sslCertFile = "cert.pem"
+# sslKeyFile = "key.pem"
+
+# Настройки сессии (по желанию)
+# maxUploadSize = 200
+# enableWebsocketCompression = true

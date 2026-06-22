@@ -1,0 +1,344 @@
+[
+  {
+    "id": "9112423 03",
+    "name": "Поверхность",
+    "unit": "",
+    "priority": 0,
+    "unique": false,
+    "values": [
+      {
+        "value": "рифленый",
+        "products": 3484,
+        "offers": 8023,
+        "fill": 100.0
+      }
+    ]
+  },
+  {
+    "id": "9112423 02",
+    "name": "Материал",
+    "unit": "",
+    "priority": 0,
+    "unique": false,
+    "values": [
+      {
+        "value": "алюминиевый",
+        "products": 3484,
+        "offers": 8023,
+        "fill": 100.0
+      }
+    ]
+  },
+  {
+    "id": "00000945",
+    "name": "Толщина",
+    "unit": "мм",
+    "priority": 1,
+    "unique": false,
+    "values": [
+      {
+        "value": "3",
+        "products": 960,
+        "offers": 1879,
+        "fill": 27.55
+      },
+      {
+        "value": "2",
+        "products": 746,
+        "offers": 1871,
+        "fill": 21.41
+      },
+      {
+        "value": "1.5",
+        "products": 660,
+        "offers": 1667,
+        "fill": 18.94
+      },
+      {
+        "value": "4",
+        "products": 374,
+        "offers": 989,
+        "fill": 10.73
+      },
+      {
+        "value": "1.2",
+        "products": 307,
+        "offers": 855,
+        "fill": 8.81
+      }
+    ]
+  },
+  {
+    "id": "00000946",
+    "name": "Раскрой",
+    "unit": "м",
+    "priority": 2,
+    "unique": false,
+    "values": [
+      {
+        "value": "1.2х3",
+        "products": 1196,
+        "offers": 3570,
+        "fill": 34.33
+      },
+      {
+        "value": "1.5х3",
+        "products": 751,
+        "offers": 2521,
+        "fill": 21.56
+      },
+      {
+        "value": "1.5х4",
+        "products": 90,
+        "offers": 173,
+        "fill": 2.58
+      },
+      {
+        "value": "1.25х2.5",
+        "products": 138,
+        "offers": 165,
+        "fill": 3.96
+      },
+      {
+        "value": "0.6х1.2",
+        "products": 86,
+        "offers": 146,
+        "fill": 2.47
+      }
+    ]
+  },
+  {
+    "id": "9112423 05",
+    "name": "Ширина",
+    "unit": "мм",
+    "priority": 2,
+    "unique": false,
+    "values": [
+      {
+        "value": "1200",
+        "products": 1362,
+        "offers": 3825,
+        "fill": 39.09
+      },
+      {
+        "value": "1500",
+        "products": 893,
+        "offers": 2814,
+        "fill": 25.63
+      },
+      {
+        "value": "1250",
+        "products": 177,
+        "offers": 207,
+        "fill": 5.08
+      },
+      {
+        "value": "600",
+        "products": 138,
+        "offers": 198,
+        "fill": 3.96
+      },
+      {
+        "value": "1000",
+        "products": 102,
+        "offers": 162,
+        "fill": 2.93
+      }
+    ]
+  },
+  {
+    "id": "9112423 06",
+    "name": "Длина",
+    "unit": "мм",
+    "priority": 3,
+    "unique": false,
+    "values": [
+      {
+        "value": "3000",
+        "products": 2006,
+        "offers": 6153,
+        "fill": 57.58
+      },
+      {
+        "value": "1200",
+        "products": 269,
+        "offers": 329,
+        "fill": 7.72
+      },
+      {
+        "value": "2500",
+        "products": 170,
+        "offers": 249,
+        "fill": 4.88
+      },
+      {
+        "value": "4000",
+        "products": 106,
+        "offers": 189,
+        "fill": 3.04
+      },
+      {
+        "value": "1500",
+        "products": 147,
+        "offers": 151,
+        "fill": 4.22
+      }
+    ]
+  },
+  {
+    "id": "9112423 01",
+    "name": "Рифление",
+    "unit": "",
+    "priority": 4,
+    "unique": false,
+    "values": [
+      {
+        "value": "квинтет",
+        "products": 2019,
+        "offers": 6255,
+        "fill": 57.95
+      },
+      {
+        "value": "даймонд",
+        "products": 188,
+        "offers": 206,
+        "fill": 5.4
+      },
+      {
+        "value": "апельсиновая корка",
+        "products": 95,
+        "offers": 115,
+        "fill": 2.73
+      },
+      {
+        "value": "дуэт",
+        "products": 40,
+        "offers": 40,
+        "fill": 1.15
+      },
+      {
+        "value": "зерно",
+        "products": 20,
+        "offers": 20,
+        "fill": 0.57
+      }
+    ]
+  },
+  {
+    "id": "9112423 07",
+    "name": "Марка материала",
+    "unit": "",
+    "priority": 5,
+    "unique": false,
+    "values": [
+      {
+        "value": "АМг2Н2Р",
+        "products": 472,
+        "offers": 3463,
+        "fill": 13.55
+      },
+      {
+        "value": "АМг2НР",
+        "products": 980,
+        "offers": 1316,
+        "fill": 28.13
+      },
+      {
+        "value": "АМг2Н2",
+        "products": 279,
+        "offers": 862,
+        "fill": 8.01
+      },
+      {
+        "value": "ВД1АМ",
+        "products": 180,
+        "offers": 340,
+        "fill": 5.17
+      },
+      {
+        "value": "5052-Н114",
+        "products": 53,
+        "offers": 278,
+        "fill": 1.52
+      }
+    ]
+  },
+  {
+    "id": "00004202",
+    "name": "Ед.изм.",
+    "unit": "",
+    "priority": 8,
+    "unique": false,
+    "values": [
+      {
+        "value": "т",
+        "products": 775,
+        "offers": 1696,
+        "fill": 22.24
+      },
+      {
+        "value": "кг",
+        "products": 771,
+        "offers": 1692,
+        "fill": 22.13
+      },
+      {
+        "value": "м2",
+        "products": 771,
+        "offers": 1692,
+        "fill": 22.13
+      },
+      {
+        "value": "шт",
+        "products": 643,
+        "offers": 1545,
+        "fill": 18.46
+      },
+      {
+        "value": "пог.м",
+        "products": 524,
+        "offers": 1398,
+        "fill": 15.04
+      }
+    ]
+  },
+  {
+    "id": "9112423 04",
+    "name": "ГОСТ",
+    "unit": "",
+    "priority": 9,
+    "unique": false,
+    "values": [
+      {
+        "value": "ГОСТ 21631-76",
+        "products": 245,
+        "offers": 366,
+        "fill": 7.03
+      },
+      {
+        "value": "ТУ 1-804-432-2006",
+        "products": 236,
+        "offers": 326,
+        "fill": 6.77
+      },
+      {
+        "value": "ТУ 1-3-228-2016",
+        "products": 35,
+        "offers": 40,
+        "fill": 1.0
+      },
+      {
+        "value": "ТУ 1-2-559-2001",
+        "products": 25,
+        "offers": 25,
+        "fill": 0.72
+      },
+      {
+        "value": "EN 573-3",
+        "products": 15,
+        "offers": 15,
+        "fill": 0.43
+      }
+    ]
+  }
+]

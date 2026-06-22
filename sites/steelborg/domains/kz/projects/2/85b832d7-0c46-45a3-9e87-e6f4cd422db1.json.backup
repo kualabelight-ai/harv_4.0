@@ -1,0 +1,31 @@
+{
+  "project_id": "85b832d7-0c46-45a3-9e87-e6f4cd422db1",
+  "project_name": "квадрат нержавеющий",
+  "category": "квадрат нержавеющий",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "квадрат нержавеющий"
+    },
+    "phase2": {},
+    "phase3": {},
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "квадрат нержавеющий",
+    "project_name": "квадрат нержавеющий",
+    "created_at": "2026-06-19T16:42:12.491625",
+    "updated_at": "2026-06-19T16:42:12.491625",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz"
+  },
+  "created_at": "2026-06-19T16:42:12.491625",
+  "updated_at": "2026-06-19T16:43:16.500514",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

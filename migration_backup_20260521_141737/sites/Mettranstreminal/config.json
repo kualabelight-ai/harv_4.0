@@ -1,0 +1,18 @@
+{
+  "site_name": "Mettranstreminal",
+  "display_name": "МТТ",
+  "description": "Сайт Mettranstreminal",
+  "created_at": "2026-05-20T15:03:53.308174",
+  "modules": [
+    "texts",
+    "faq",
+    "reviews"
+  ],
+  "default_module": "texts",
+  "ai_config": {
+    "default_provider": "deepseek",
+    "default_model": "deepseek-chat",
+    "temperature": 0.7,
+    "max_tokens": 2000
+  }
+}

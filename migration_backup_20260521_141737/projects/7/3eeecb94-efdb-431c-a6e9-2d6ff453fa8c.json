@@ -1,0 +1,260 @@
+{
+  "project_id": "3eeecb94-efdb-431c-a6e9-2d6ff453fa8c",
+  "project_name": "Мой первый проект",
+  "category": "Мой первый проект",
+  "current_phase": 3,
+  "app_data": {
+    "phase1": {
+      "category": "Вентиль бронзовый",
+      "characteristics": [
+        {
+          "char_id": "00001885",
+          "char_name": "Диаметр",
+          "original_name": "Диаметр",
+          "unit": "мм",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "50",
+              "items_count": 26,
+              "offers_sum": 86,
+              "percent": 18.30985915492958
+            },
+            {
+              "value": "20",
+              "items_count": 21,
+              "offers_sum": 78,
+              "percent": 14.788732394366196
+            },
+            {
+              "value": "32",
+              "items_count": 22,
+              "offers_sum": 77,
+              "percent": 15.492957746478872
+            },
+            {
+              "value": "25",
+              "items_count": 21,
+              "offers_sum": 74,
+              "percent": 14.788732394366196
+            },
+            {
+              "value": "40",
+              "items_count": 19,
+              "offers_sum": 74,
+              "percent": 13.380281690140844
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "00001886",
+          "char_name": "Маркировка",
+          "original_name": "Маркировка",
+          "unit": "",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "15б3р",
+              "items_count": 54,
+              "offers_sum": 208,
+              "percent": 38.028169014084504
+            },
+            {
+              "value": "15б1п",
+              "items_count": 35,
+              "offers_sum": 169,
+              "percent": 24.647887323943664
+            },
+            {
+              "value": "15б50р3м",
+              "items_count": 8,
+              "offers_sum": 9,
+              "percent": 5.633802816901409
+            },
+            {
+              "value": "15б12бк",
+              "items_count": 5,
+              "offers_sum": 5,
+              "percent": 3.5211267605633805
+            },
+            {
+              "value": "15б1бк",
+              "items_count": 3,
+              "offers_sum": 5,
+              "percent": 2.112676056338028
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "00004112",
+          "char_name": "Вид",
+          "original_name": "Вид",
+          "unit": "",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "запорный",
+              "items_count": 110,
+              "offers_sum": 401,
+              "percent": 77.46478873239437
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "00004113",
+          "char_name": "Давление",
+          "original_name": "Давление",
+          "unit": "",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "Ру16",
+              "items_count": 32,
+              "offers_sum": 115,
+              "percent": 22.535211267605636
+            },
+            {
+              "value": "Ру10",
+              "items_count": 28,
+              "offers_sum": 73,
+              "percent": 19.718309859154928
+            },
+            {
+              "value": "Ру25",
+              "items_count": 11,
+              "offers_sum": 12,
+              "percent": 7.746478873239436
+            },
+            {
+              "value": "Ру 10",
+              "items_count": 6,
+              "offers_sum": 6,
+              "percent": 4.225352112676056
+            },
+            {
+              "value": "Ру 16",
+              "items_count": 6,
+              "offers_sum": 6,
+              "percent": 4.225352112676056
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "00004117",
+          "char_name": "Способ присоединения",
+          "original_name": "Способ присоединения",
+          "unit": "",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "муфтовый",
+              "items_count": 52,
+              "offers_sum": 123,
+              "percent": 36.61971830985916
+            },
+            {
+              "value": "резьбовой",
+              "items_count": 12,
+              "offers_sum": 12,
+              "percent": 8.450704225352112
+            },
+            {
+              "value": "фланцевый",
+              "items_count": 6,
+              "offers_sum": 7,
+              "percent": 4.225352112676056
+            },
+            {
+              "value": "муфта-цапка",
+              "items_count": 4,
+              "offers_sum": 4,
+              "percent": 2.8169014084507045
+            },
+            {
+              "value": "под приварку",
+              "items_count": 1,
+              "offers_sum": 1,
+              "percent": 0.7042253521126761
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "9109727 01",
+          "char_name": "Материал",
+          "original_name": "Материал",
+          "unit": "",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "бронзовый",
+              "items_count": 142,
+              "offers_sum": 480,
+              "percent": 100.0
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "9109727 02",
+          "char_name": "Назначение",
+          "original_name": "Назначение",
+          "unit": "",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "пожарный",
+              "items_count": 9,
+              "offers_sum": 47,
+              "percent": 6.338028169014084
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "9109727 03",
+          "char_name": "Тип герметизации",
+          "original_name": "Тип герметизации",
+          "unit": "",
+          "is_unique": false,
+          "values": [],
+          "is_duplicate": false
+        }
+      ],
+      "metadata": {
+        "source_file": "Вентиль бронзовый.json",
+        "original_category": "Вентиль бронзовый",
+        "total_items": 142,
+        "selected_characteristics_count": 8,
+        "export_timestamp": "2026-04-21T16:12:19.908985"
+      }
+    },
+    "phase2": {
+      "category": "Вентиль бронзовый",
+      "markers": [
+        "вентиль бронзовый"
+      ],
+      "source_category": "Вентиль бронзовый",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "blocks_count": 11,
+      "characteristic_blocks": 4,
+      "other_blocks": 7
+    },
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "category": "Мой первый проект",
+    "project_name": "Мой первый проект",
+    "queue_tasks": {},
+    "created_at": "2026-04-21T16:12:05.587389",
+    "updated_at": "2026-04-21T16:12:05.587389"
+  },
+  "created_at": "2026-04-21T16:12:05.587389",
+  "updated_at": "2026-04-21T18:44:37.258759"
+}

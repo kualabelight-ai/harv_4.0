@@ -1,0 +1,18 @@
+{
+  "initialized": false,
+  "texts": [],
+  "original_texts": [],
+  "processed_texts": [],
+  "edited_texts": [],
+  "replacements": [],
+  "unigrams": {},
+  "bigrams": {},
+  "trigrams": {},
+  "ngrams": {},
+  "prepositional": {},
+  "analysis_completed": false,
+  "replacements_applied": false,
+  "texts_metadata": [],
+  "min_count": 3,
+  "last_loaded_project": "dacd98cc-d636-4a7a-8afa-c02c524de44f"
+}

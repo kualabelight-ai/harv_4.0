@@ -1,0 +1,17 @@
+{
+  "variable_formats": {
+    "property": "{prop ",
+    "system": "{system ",
+    "fragment": "{fragment "
+  },
+  "auto_correction": {
+    "enabled": true,
+    "add_brackets": true,
+    "smart_insert": true
+  },
+  "processing": {
+    "remove_units": true,
+    "check_special_chars": true,
+    "validate_regular_blocks": true
+  }
+}

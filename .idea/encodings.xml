@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/ai_config.py" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/ai_integration.py" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/ai_module.py" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/auth.py" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/config/ai_config.json" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/main_app.py" charset="UTF-8" />
+  </component>
+</project>

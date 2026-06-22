@@ -1,0 +1,96 @@
+{
+  "город": {
+    "variants": [
+      {
+        "value": "{system городе}",
+        "context": "в [город]"
+      },
+      {
+        "value": "{system по_городу}",
+        "context": "по [город]"
+      }
+    ],
+    "description": "Название города"
+  },
+  "название товара": {
+    "variants": [
+      {
+        "value": "{system название_товара}",
+        "context": ""
+      }
+    ],
+    "description": "Название товара"
+  },
+  "цена": {
+    "variants": [
+      {
+        "value": "{system цена_товара}, руб.",
+        "context": ""
+      }
+    ],
+    "description": "Цена товара"
+  },
+  "единица измерения": {
+    "variants": [
+      {
+        "value": "{system количество}",
+        "context": ""
+      }
+    ],
+    "description": "Единица измерения"
+  },
+  "телефон": {
+    "variants": [
+      {
+        "value": "8 495 969-51-08",
+        "context": ""
+      }
+    ],
+    "description": "Телефон компании"
+  },
+  "email": {
+    "variants": [
+      {
+        "value": "msk@steelborg.ru",
+        "context": ""
+      }
+    ],
+    "description": "Email компании"
+  },
+  "компания": {
+    "variants": [
+      {
+        "value": "Steelborg",
+        "context": ""
+      }
+    ],
+    "description": "Название компании"
+  },
+  "категория РП": {
+    "variants": [
+      {
+        "value": "{system название_категории_РП}",
+        "context": ""
+      }
+    ],
+    "description": "Категория в родительном падеже"
+  },
+  "категория ВП": {
+    "variants": [
+      {
+        "value": "{system название_категории_ВП}",
+        "context": ""
+      }
+    ],
+    "description": "Категория в винительном падеже"
+  },
+  "категория ИП": {
+    "variants": [
+      {
+        "value": "{system название_категории}",
+        "context": ""
+      }
+    ],
+    "description": "Категория в именительном падеже"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "9112423 03": {
+    "mode": "Top N",
+    "count": 1,
+    "sort": "offers",
+    "unique": false
+  },
+  "9112423 02": {
+    "mode": "Top N",
+    "count": 1,
+    "sort": "offers",
+    "unique": false
+  },
+  "00000945": {
+    "mode": "Top N",
+    "count": 5,
+    "sort": "offers",
+    "unique": false
+  },
+  "00000946": {
+    "mode": "Top N",
+    "count": 5,
+    "sort": "offers",
+    "unique": false
+  },
+  "9112423 05": {
+    "mode": "Top N",
+    "count": 5,
+    "sort": "offers",
+    "unique": false
+  },
+  "9112423 06": {
+    "mode": "Top N",
+    "count": 5,
+    "sort": "offers",
+    "unique": false
+  },
+  "9112423 01": {
+    "mode": "Top N",
+    "count": 5,
+    "sort": "offers",
+    "unique": false
+  },
+  "9112423 07": {
+    "mode": "Top N",
+    "count": 5,
+    "sort": "offers",
+    "unique": false
+  },
+  "00004202": {
+    "mode": "Top N",
+    "count": 5,
+    "sort": "offers",
+    "unique": false
+  },
+  "9112423 04": {
+    "mode": "Top N",
+    "count": 5,
+    "sort": "offers",
+    "unique": false
+  }
+}

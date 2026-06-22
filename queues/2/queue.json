@@ -1,0 +1,183 @@
+{
+  "user_id": 2,
+  "updated_at": "2026-06-18T14:55:27.048909",
+  "projects": [
+    {
+      "project_id": "558c97b7-2ad5-499f-919c-92c55897ab2a",
+      "user_id": 2,
+      "project_name": "хуй",
+      "category": "Известковый раствор",
+      "status": "completed",
+      "current_phase": 7,
+      "message": "✅ Проект завершен",
+      "progress": 100,
+      "site_name": "steelborg",
+      "domain_name": "kz",
+      "phase4_prompts": [
+        {
+          "block_id": "default",
+          "block_name": "Основной блок",
+          "block_type": "characteristic",
+          "characteristic_name": "Марка материала",
+          "characteristic_value": {
+            "value": "М-4",
+            "count": 1,
+            "offers": 2
+          },
+          "prompt": "Создай описание для Основной блок с характеристикой Марка материала: {'value': 'М-4', 'count': 1, 'offers': 2}. Текст должен быть информативным и профессиональным.",
+          "variables": [
+            "characteristic_name",
+            "characteristic_value"
+          ],
+          "prompt_id": "default_Марка_материала_{'value':_'М-4',_'count':_"
+        },
+        {
+          "block_id": "default",
+          "block_name": "Основной блок",
+          "block_type": "characteristic",
+          "characteristic_name": "Марка материала",
+          "characteristic_value": {
+            "value": "М-10",
+            "count": 1,
+            "offers": 1
+          },
+          "prompt": "Создай описание для Основной блок с характеристикой Марка материала: {'value': 'М-10', 'count': 1, 'offers': 1}. Текст должен быть информативным и профессиональным.",
+          "variables": [
+            "characteristic_name",
+            "characteristic_value"
+          ],
+          "prompt_id": "default_Марка_материала_{'value':_'М-10',_'count':"
+        },
+        {
+          "block_id": "default",
+          "block_name": "Основной блок",
+          "block_type": "characteristic",
+          "characteristic_name": "Марка материала",
+          "characteristic_value": {
+            "value": "М-100",
+            "count": 1,
+            "offers": 1
+          },
+          "prompt": "Создай описание для Основной блок с характеристикой Марка материала: {'value': 'М-100', 'count': 1, 'offers': 1}. Текст должен быть информативным и профессиональным.",
+          "variables": [
+            "characteristic_name",
+            "characteristic_value"
+          ],
+          "prompt_id": "default_Марка_материала_{'value':_'М-100',_'count'"
+        },
+        {
+          "block_id": "default",
+          "block_name": "Основной блок",
+          "block_type": "characteristic",
+          "characteristic_name": "Марка материала",
+          "characteristic_value": {
+            "value": "М-150",
+            "count": 1,
+            "offers": 1
+          },
+          "prompt": "Создай описание для Основной блок с характеристикой Марка материала: {'value': 'М-150', 'count': 1, 'offers': 1}. Текст должен быть информативным и профессиональным.",
+          "variables": [
+            "characteristic_name",
+            "characteristic_value"
+          ],
+          "prompt_id": "default_Марка_материала_{'value':_'М-150',_'count'"
+        },
+        {
+          "block_id": "default",
+          "block_name": "Основной блок",
+          "block_type": "characteristic",
+          "characteristic_name": "Марка материала",
+          "characteristic_value": {
+            "value": "М-200",
+            "count": 1,
+            "offers": 1
+          },
+          "prompt": "Создай описание для Основной блок с характеристикой Марка материала: {'value': 'М-200', 'count': 1, 'offers': 1}. Текст должен быть информативным и профессиональным.",
+          "variables": [
+            "characteristic_name",
+            "characteristic_value"
+          ],
+          "prompt_id": "default_Марка_материала_{'value':_'М-200',_'count'"
+        }
+      ],
+      "phase5_results": {
+        "default_Марка_материала_{'value':_'М-4',_'count':_": {
+          "prompt_id": "default_Марка_материала_{'value':_'М-4',_'count':_",
+          "prompt": "Создай описание для Основной блок с характеристикой Марка материала: {'value': 'М-4', 'count': 1, 'offers': 2}. Текст должен быть информативным и профессиональным.",
+          "ai_response": "Текст для Основной блок с характеристикой Марка материала: {'value': 'М-4', 'count': 1, 'offers': 2}. Это сгенерированный текст для SEO-оптимизации.",
+          "edited_text": "Текст для Основной блок с характеристикой Марка материала: {'value': 'М-4', 'count': 1, 'offers': 2}. Это сгенерированный текст для SEO-оптимизации.",
+          "status": "success",
+          "selected": true,
+          "characteristic_name": "Марка материала",
+          "characteristic_value": {
+            "value": "М-4",
+            "count": 1,
+            "offers": 2
+          },
+          "block_name": "Основной блок"
+        },
+        "default_Марка_материала_{'value':_'М-10',_'count':": {
+          "prompt_id": "default_Марка_материала_{'value':_'М-10',_'count':",
+          "prompt": "Создай описание для Основной блок с характеристикой Марка материала: {'value': 'М-10', 'count': 1, 'offers': 1}. Текст должен быть информативным и профессиональным.",
+          "ai_response": "Текст для Основной блок с характеристикой Марка материала: {'value': 'М-10', 'count': 1, 'offers': 1}. Это сгенерированный текст для SEO-оптимизации.",
+          "edited_text": "Текст для Основной блок с характеристикой Марка материала: {'value': 'М-10', 'count': 1, 'offers': 1}. Это сгенерированный текст для SEO-оптимизации.",
+          "status": "success",
+          "selected": true,
+          "characteristic_name": "Марка материала",
+          "characteristic_value": {
+            "value": "М-10",
+            "count": 1,
+            "offers": 1
+          },
+          "block_name": "Основной блок"
+        },
+        "default_Марка_материала_{'value':_'М-100',_'count'": {
+          "prompt_id": "default_Марка_материала_{'value':_'М-100',_'count'",
+          "prompt": "Создай описание для Основной блок с характеристикой Марка материала: {'value': 'М-100', 'count': 1, 'offers': 1}. Текст должен быть информативным и профессиональным.",
+          "ai_response": "Текст для Основной блок с характеристикой Марка материала: {'value': 'М-100', 'count': 1, 'offers': 1}. Это сгенерированный текст для SEO-оптимизации.",
+          "edited_text": "Текст для Основной блок с характеристикой Марка материала: {'value': 'М-100', 'count': 1, 'offers': 1}. Это сгенерированный текст для SEO-оптимизации.",
+          "status": "success",
+          "selected": true,
+          "characteristic_name": "Марка материала",
+          "characteristic_value": {
+            "value": "М-100",
+            "count": 1,
+            "offers": 1
+          },
+          "block_name": "Основной блок"
+        },
+        "default_Марка_материала_{'value':_'М-150',_'count'": {
+          "prompt_id": "default_Марка_материала_{'value':_'М-150',_'count'",
+          "prompt": "Создай описание для Основной блок с характеристикой Марка материала: {'value': 'М-150', 'count': 1, 'offers': 1}. Текст должен быть информативным и профессиональным.",
+          "ai_response": "Текст для Основной блок с характеристикой Марка материала: {'value': 'М-150', 'count': 1, 'offers': 1}. Это сгенерированный текст для SEO-оптимизации.",
+          "edited_text": "Текст для Основной блок с характеристикой Марка материала: {'value': 'М-150', 'count': 1, 'offers': 1}. Это сгенерированный текст для SEO-оптимизации.",
+          "status": "success",
+          "selected": true,
+          "characteristic_name": "Марка материала",
+          "characteristic_value": {
+            "value": "М-150",
+            "count": 1,
+            "offers": 1
+          },
+          "block_name": "Основной блок"
+        },
+        "default_Марка_материала_{'value':_'М-200',_'count'": {
+          "prompt_id": "default_Марка_материала_{'value':_'М-200',_'count'",
+          "prompt": "Создай описание для Основной блок с характеристикой Марка материала: {'value': 'М-200', 'count': 1, 'offers': 1}. Текст должен быть информативным и профессиональным.",
+          "ai_response": "Текст для Основной блок с характеристикой Марка материала: {'value': 'М-200', 'count': 1, 'offers': 1}. Это сгенерированный текст для SEO-оптимизации.",
+          "edited_text": "Текст для Основной блок с характеристикой Марка материала: {'value': 'М-200', 'count': 1, 'offers': 1}. Это сгенерированный текст для SEO-оптимизации.",
+          "status": "success",
+          "selected": true,
+          "characteristic_name": "Марка материала",
+          "characteristic_value": {
+            "value": "М-200",
+            "count": 1,
+            "offers": 1
+          },
+          "block_name": "Основной блок"
+        }
+      },
+      "phase5_completed": true
+    }
+  ]
+}

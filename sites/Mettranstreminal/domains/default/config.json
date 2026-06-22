@@ -1,0 +1,31 @@
+{
+  "domain_name": "default",
+  "display_name": "СНГ (дефолтный)",
+  "description": "Дефолтный домен для СНГ",
+  "created_at": "2026-05-20T15:03:53.308174",
+  "based_on": null,
+  "phases": {
+    "phase1": {
+      "data_file": "phase1_data.json"
+    },
+    "phase2": {
+      "data_file": "phase2_data.json"
+    },
+    "phase3": {
+      "blocks_file": "phase3_blocks.json",
+      "custom_blocks_allowed": true
+    },
+    "phase4": {
+      "prompts_file": "phase4_prompts.json"
+    },
+    "phase5": {
+      "texts_file": "phase5_texts.json"
+    },
+    "phase6": {
+      "synonyms_file": "phase6_synonyms.json"
+    },
+    "phase7": {
+      "final_file": "phase7_final.json"
+    }
+  }
+}
