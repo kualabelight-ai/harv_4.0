@@ -1,0 +1,190 @@
+{
+  "project_id": "8013e320-6877-4bf2-8783-78a00b74c432",
+  "project_name": "лист холоднокатаный",
+  "category": "Лист холоднокатаный",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Лист холоднокатаный",
+      "project_name": "лист холоднокатаный",
+      "characteristics": [
+        {
+          "char_id": "00000283",
+          "char_name": "Толщина",
+          "original_name": "Толщина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "1.5",
+              "count": 1118,
+              "offers": 5766
+            },
+            {
+              "value": "2",
+              "count": 986,
+              "offers": 5056
+            },
+            {
+              "value": "1",
+              "count": 997,
+              "offers": 5032
+            },
+            {
+              "value": "1.2",
+              "count": 987,
+              "offers": 4623
+            },
+            {
+              "value": "0.8",
+              "count": 644,
+              "offers": 3214
+            }
+          ]
+        },
+        {
+          "char_id": "00000284",
+          "char_name": "Раскрой",
+          "original_name": "Раскрой",
+          "is_unique": false,
+          "unit": "м",
+          "values": [
+            {
+              "value": "1.25х2.5",
+              "count": 3110,
+              "offers": 29215
+            },
+            {
+              "value": "1х2",
+              "count": 1297,
+              "offers": 3149
+            },
+            {
+              "value": "1.25хрулон",
+              "count": 958,
+              "offers": 2749
+            },
+            {
+              "value": "1.25х2.2",
+              "count": 222,
+              "offers": 862
+            },
+            {
+              "value": "1.25хL",
+              "count": 269,
+              "offers": 707
+            }
+          ]
+        },
+        {
+          "char_id": "00000285",
+          "char_name": "Марка материала",
+          "original_name": "Марка материала",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "08пс",
+              "count": 2661,
+              "offers": 18885
+            },
+            {
+              "value": "08сп",
+              "count": 955,
+              "offers": 4528
+            },
+            {
+              "value": "08кп",
+              "count": 764,
+              "offers": 3161
+            },
+            {
+              "value": "08",
+              "count": 305,
+              "offers": 2527
+            },
+            {
+              "value": "08пс6",
+              "count": 442,
+              "offers": 1535
+            }
+          ]
+        },
+        {
+          "char_id": "9113558 04",
+          "char_name": "ГОСТ",
+          "original_name": "ГОСТ",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "ГОСТ 16523-97",
+              "count": 2655,
+              "offers": 11839
+            },
+            {
+              "value": "ГОСТ 16523-89",
+              "count": 1893,
+              "offers": 9680
+            },
+            {
+              "value": "ГОСТ 19904-90",
+              "count": 2164,
+              "offers": 6261
+            },
+            {
+              "value": "ГОСТ 9045-93",
+              "count": 370,
+              "offers": 601
+            },
+            {
+              "value": "ТУ 14-105-767-2006",
+              "count": 108,
+              "offers": 558
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Лист холоднокатаный.json",
+        "original_category": "Лист холоднокатаный",
+        "total_items": 10879,
+        "selected_characteristics_count": 4,
+        "export_timestamp": "2026-06-22T14:16:59.403720"
+      }
+    },
+    "phase2": {
+      "category": "Лист холоднокатаный",
+      "original_category": "Лист холоднокатаный",
+      "markers": [
+        "лист холоднокатаный",
+        "лист х к",
+        "прокат листовой холоднокатаный",
+        "лист стальной холоднокатаный",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Лист холоднокатаный",
+      "custom_category_mode": false
+    },
+    "phase3": {},
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Лист холоднокатаный",
+    "project_name": "лист холоднокатаный",
+    "created_at": "2026-06-22T14:16:03.730501",
+    "updated_at": "2026-06-22T14:18:21.734581",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz"
+  },
+  "created_at": "2026-06-22T14:16:03.730501",
+  "updated_at": "2026-06-22T14:18:47.181203",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 12
+}

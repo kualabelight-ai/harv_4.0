@@ -1600,6 +1600,8 @@ def render_queue_panel():
 def render_manual_mode_with_domain():
     """Ручной режим с поддержкой доменов"""
     from domain_manager import DomainManager, render_domain_selector
+    from pathlib import Path
+    import json
 
     render_auth_buttons()
 
@@ -1607,6 +1609,28 @@ def render_manual_mode_with_domain():
         st.session_state.domain_manager = DomainManager()
 
     dm = st.session_state.domain_manager
+
+    # ========== ПРИНУДИТЕЛЬНО ЗАГРУЖАЕМ ДОМЕН ИЗ ФАЙЛА ==========
+    user_id = st.session_state.get('user_id')
+    if user_id:
+        settings_file = Path(f"sites/users/{user_id}/settings.json")
+        if settings_file.exists():
+            try:
+                with open(settings_file, 'r', encoding='utf-8') as f:
+                    settings = json.load(f)
+                    saved_domain = settings.get('selected_domain', 'default')
+                    saved_site = settings.get('selected_site', 'steelborg')
+
+                    if st.session_state.get('current_domain') != saved_domain:
+                        st.session_state.current_domain = saved_domain
+                        st.session_state.selected_domain = saved_domain
+                        st.session_state.current_site = saved_site
+                        st.session_state.selected_site = saved_site
+                        dm.set_current_domain(saved_domain)
+                        print(f"✅ Домен загружен из файла: {saved_site}/{saved_domain}")
+            except Exception as e:
+                print(f"⚠️ Ошибка загрузки домена: {e}")
+
     current_domain = dm.get_current_domain()
     domain_display = dm.get_domain_display_name(current_domain)
 
@@ -1663,22 +1687,59 @@ def render_manual_mode_with_domain():
 # main_app.py - ЗАМЕНИТЬ НАЧАЛО ФУНКЦИИ render_manual_mode_with_domain_context
 
 def render_manual_mode_with_domain_context(dm: DomainManager, context=None):
-    """Ручной режим с поддержом доменов - С ФИКСАЦИЕЙ ДОМЕНА"""
-    from domain_utils import ensure_domain_consistency
+    """Ручной режим с поддержкой доменов - С ФИКСАЦИЕЙ ДОМЕНА ИЗ ФАЙЛА ПОЛЬЗОВАТЕЛЯ"""
     from phase_navigation import render_phase_navigation, render_phase_content
+    from pathlib import Path
 
     app_state = AppState()
 
-    # ✅ СИНХРОНИЗИРУЕМ ДОМЕН
-    ensure_domain_consistency(st.session_state.get('current_project_id'))
+    # ========== 1. ПРИНУДИТЕЛЬНО ЗАГРУЖАЕМ ДОМЕН ИЗ ФАЙЛА ПОЛЬЗОВАТЕЛЯ ==========
+    user_id = st.session_state.get('user_id')
+    if user_id:
+        # Загружаем настройки пользователя
+        settings_file = Path(f"sites/users/{user_id}/settings.json")
+        saved_domain = 'default'
+        saved_site = 'steelborg'
 
-    # Проверка проекта
+        if settings_file.exists():
+            try:
+                import json
+                with open(settings_file, 'r', encoding='utf-8') as f:
+                    settings = json.load(f)
+                    saved_domain = settings.get('selected_domain', 'default')
+                    saved_site = settings.get('selected_site', 'steelborg')
+                    print(f"📂 Загружен домен из файла: {saved_site}/{saved_domain}")
+            except Exception as e:
+                print(f"⚠️ Ошибка чтения settings.json: {e}")
+
+        # Принудительно устанавливаем домен из файла
+        if st.session_state.get('current_domain') != saved_domain or st.session_state.get('current_site') != saved_site:
+            print(f"🔄 Синхронизация: {st.session_state.get('current_site')}/{st.session_state.get('current_domain')} -> {saved_site}/{saved_domain}")
+
+            # Обновляем session_state
+            st.session_state.current_site = saved_site
+            st.session_state.current_domain = saved_domain
+            st.session_state.selected_site = saved_site
+            st.session_state.selected_domain = saved_domain
+            st.session_state[f'domain_system_{saved_site}'] = saved_domain
+
+            # Обновляем DomainManager
+            if dm.site_name != saved_site:
+                from domain_manager import DomainManager
+                st.session_state.domain_manager = DomainManager(saved_site)
+                dm = st.session_state.domain_manager
+            dm.set_current_domain(saved_domain)
+
+            # Показываем сообщение пользователю
+            st.info(f"🔄 Переключено на домен: **{dm.get_domain_display_name(saved_domain)}**")
+
+    # ========== 2. ПРОВЕРКА ПРОЕКТА ==========
     if not st.session_state.get('current_project_id'):
         st.session_state.show_project_selector = True
         render_project_selector()
         return
 
-    # ✅ ПРОВЕРЯЕМ, ЧТО ПРОЕКТ СУЩЕСТВУЕТ В ТЕКУЩЕМ ДОМЕНЕ
+    # ========== 3. ПРОВЕРЯЕМ, ЧТО ПРОЕКТ СУЩЕСТВУЕТ В ТЕКУЩЕМ ДОМЕНЕ ==========
     user_id = st.session_state.get('user_id')
     project_id = st.session_state.get('current_project_id')
     current_site = st.session_state.get('current_site', 'steelborg')
@@ -1687,29 +1748,14 @@ def render_manual_mode_with_domain_context(dm: DomainManager, context=None):
     project_file = Path(f"sites/{current_site}/domains/{current_domain}/projects/{user_id}/{project_id}.json")
 
     if not project_file.exists():
-        st.error(f"❌ Проект {project_id} не найден в домене {current_domain}")
+        st.error(f"❌ Проект не найден в домене {current_domain}")
         st.session_state.current_project_id = None
         st.session_state.show_project_selector = True
         st.rerun()
         return
 
-    # ... остальной код функции ...
-
-
+    # ========== 4. ОСТАЛЬНОЙ КОД БЕЗ ИЗМЕНЕНИЙ ==========
     # Проверка проекта
-    if not st.session_state.get('current_project_id'):
-        st.session_state.show_project_selector = True
-        render_project_selector()
-        return
-
-    # ✅ УЛУЧШЕННАЯ ЛОГИКА СМЕНЫ ДОМЕНА - НЕ СБРАСЫВАЕМ ДАННЫЕ!
-    domain_key = f"{dm.site_name}_{dm.get_current_domain()}"
-    if st.session_state.get('domain_data_loaded') != domain_key:
-        # ✅ ТОЛЬКО ЗАГРУЖАЕМ ДАННЫЕ ДОМЕНА, НЕ ОЧИЩАЕМ ВСЁ!
-        _load_domain_data_safe(dm, domain_key, app_state)
-        return
-
-    # Если нет активного проекта - показываем выбор
     if st.session_state.get('show_project_selector', False):
         render_project_selector()
         return

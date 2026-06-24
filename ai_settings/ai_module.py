@@ -763,7 +763,15 @@ class AIInstructionManager:
                  site_name: str = None, domain_name: str = None,
                  context=None):
         self.context = context
-        """AI инструкции хранятся в папке ПРОЕКТА"""
+        self.project_id = project_id
+        self.user_id = user_id
+        self.site_name = site_name
+        self.domain_name = domain_name
+
+        # ✅ ВАЖНО: ИНИЦИАЛИЗИРУЕМ АТРИБУТ СРАЗУ
+        self.instructions = {}
+        self.storage_dir = None
+        self.storage_file = None
 
         # ✅ ДОБАВИТЬ СИНХРОНИЗАЦИЮ ДОМЕНА ИЗ ФАЙЛА
         try:
@@ -795,75 +803,69 @@ class AIInstructionManager:
         if (site_name is None or domain_name is None) and context is not None:
             site_name = context.site_name
             domain_name = context.domain_name
+            project_id = context.project_id
+            user_id = context.user_id
 
-            # ... остальной код без изменений ...
+        # Если нет в контексте - пробуем из session_state
+        if site_name is None or domain_name is None:
+            try:
+                import streamlit as st
+                if 'domain_manager' in st.session_state:
+                    dm = st.session_state.domain_manager
+                    site_name = site_name or dm.site_name
+                    domain_name = domain_name or dm.get_current_domain()
+            except:
+                pass
 
-            # Если нет в контексте - пробуем из session_state
-            if site_name is None or domain_name is None:
-                try:
-                    import streamlit as st
+        # Если нет project_id - пробуем взять из session_state
+        if project_id is None:
+            try:
+                import streamlit as st
+                if 'current_project_id' in st.session_state:
+                    project_id = st.session_state.current_project_id
+            except:
+                pass
+
+        if user_id is None:
+            try:
+                import streamlit as st
+                if 'user_id' in st.session_state:
+                    user_id = st.session_state.user_id
+            except:
+                pass
+
+        # ✅ УБЕДИТЕСЬ, ЧТО storage_dir СОЗДАЁТСЯ ВСЕГДА
+        if project_id and user_id and site_name and domain_name:
+            self.storage_dir = Path(
+                f"sites/{site_name}/domains/{domain_name}/projects/{user_id}/{project_id}/ai_instructions")
+        else:
+            # Fallback для случая, когда не хватает данных
+            self.storage_dir = Path("temp/ai_instructions")
+            print(f"⚠️ AIInstructionManager: нет параметров, использую {self.storage_dir}")
+
+            # Пытаемся восстановить из session_state
+            try:
+                import streamlit as st
+                if 'current_project_id' in st.session_state and 'user_id' in st.session_state:
+                    project_id = st.session_state.current_project_id
+                    user_id = st.session_state.user_id
                     if 'domain_manager' in st.session_state:
                         dm = st.session_state.domain_manager
-                        site_name = site_name or dm.site_name
-                        domain_name = domain_name or dm.get_current_domain()
-                except:
-                    pass
+                        site_name = dm.site_name
+                        domain_name = dm.get_current_domain()
+                        if project_id and user_id and site_name and domain_name:
+                            self.storage_dir = Path(
+                                f"sites/{site_name}/domains/{domain_name}/projects/{user_id}/{project_id}/ai_instructions")
+                            print(f"🔄 Восстановлен путь: {self.storage_dir}")
+            except:
+                pass
 
-            # Если нет project_id - пробуем взять из session_state
-            # Получаем project_id и user_id из контекста (приоритет)
-            if project_id is None and context is not None:
-                project_id = context.project_id
+        self.storage_dir.mkdir(parents=True, exist_ok=True)
+        self.storage_file = self.storage_dir / "instructions.json"
 
-            if user_id is None and context is not None:
-                user_id = context.user_id
-
-            # Если нет в контексте - пробуем из session_state
-            if project_id is None:
-                try:
-                    import streamlit as st
-                    if 'current_project_id' in st.session_state:
-                        project_id = st.session_state.current_project_id
-                except:
-                    pass
-
-            if user_id is None:
-                try:
-                    import streamlit as st
-                    if 'user_id' in st.session_state:
-                        user_id = st.session_state.user_id
-                except:
-                    pass
-
-                    # ✅ УБЕДИТЕСЬ, ЧТО storage_dir СОЗДАЁТСЯ ВСЕГДА
-                    if project_id and user_id and site_name and domain_name:
-                        self.storage_dir = Path(
-                            f"sites/{site_name}/domains/{domain_name}/projects/{user_id}/{project_id}/ai_instructions")
-                    else:
-                        # Fallback для случая, когда не хватает данных
-                        self.storage_dir = Path("temp/ai_instructions")
-                        print(f"⚠️ AIInstructionManager: нет параметров, использую {self.storage_dir}")
-
-                        # Пытаемся восстановить из session_state
-                        try:
-                            import streamlit as st
-                            if 'current_project_id' in st.session_state and 'user_id' in st.session_state:
-                                project_id = st.session_state.current_project_id
-                                user_id = st.session_state.user_id
-                                if 'domain_manager' in st.session_state:
-                                    dm = st.session_state.domain_manager
-                                    site_name = dm.site_name
-                                    domain_name = dm.get_current_domain()
-                                    if project_id and user_id and site_name and domain_name:
-                                        self.storage_dir = Path(
-                                            f"sites/{site_name}/domains/{domain_name}/projects/{user_id}/{project_id}/ai_instructions")
-                                        print(f"🔄 Восстановлен путь: {self.storage_dir}")
-                        except:
-                            pass
-
-                    self.storage_dir.mkdir(parents=True, exist_ok=True)
-                    self.storage_file = self.storage_dir / "instructions.json"
-                    self.instructions = self.load_instructions()
-                    print(f"✅ AIInstructionManager загружен: {len(self.instructions)} блоков")
+        # ✅ ЗАГРУЖАЕМ ИНСТРУКЦИИ (ЭТО СОЗДАЕТ self.instructions)
+        self.instructions = self.load_instructions()
+        print(f"✅ AIInstructionManager загружен: {len(self.instructions)} блоков")
     def switch_project(self, project_id: str, user_id: int, site_name: str = None, domain_name: str = None):
         # Если нет site_name/domain_name, пробуем из контекста
         if (site_name is None or domain_name is None) and self.context is not None:

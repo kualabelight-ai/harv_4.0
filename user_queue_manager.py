@@ -407,7 +407,15 @@ class UserQueueManager:
             print("\n" + "-"*60)
             print("🔍 ПРОВЕРКА ФАЗЫ 3")
             print("-"*60)
+            from pathlib import Path
+            blocks_dir = Path(f"sites/{site_name}/domains/{domain_name}/blocks")
 
+            if not blocks_dir.exists() or len(list(blocks_dir.iterdir())) == 0:
+                print(f"❌ НЕТ БЛОКОВ В ДОМЕНЕ {domain_name}!")
+                task.status = ProjectStatus.FAILED
+                task.error = f"Нет блоков в домене {domain_name}. Сначала создайте блоки вручную."
+                self._save_queue()
+                return
             phase3_data = ctx.get_phase_data(3)
             has_blocks = phase3_data and phase3_data.get('blocks') and len(phase3_data.get('blocks', {})) > 0
             print(f"   phase3_data: {bool(phase3_data)}")

@@ -200,7 +200,22 @@ class Phase5DataManager:
     def __init__(self):
         self._ensure_session_state()
         self._load_from_current_project()
+            # После force_load_phase5_from_file()
+        if 'phase5' in st.session_state:
+            # Обновляем статистику без data_manager
+            results = st.session_state.phase5.get('results', {})
+            total = len(st.session_state.phase5_prompts) if 'phase5_prompts' in st.session_state else 0
+            success = sum(1 for r in results.values() if r.get('status') == 'success')
+            error = sum(1 for r in results.values() if r.get('status') == 'error')
 
+            st.session_state.phase5['statistics'] = {
+                'total': total,
+                'success': success,
+                'error': error,
+                'completed': success + error,
+                'pending': total - success - error,
+                'selected': st.session_state.phase5.get('statistics', {}).get('selected', total)
+            }
     def _log_prompts_stats(self, context=""):
         """Логирует статистику по промптам"""
         prompts = st.session_state.phase5_prompts if 'phase5_prompts' in st.session_state else []
@@ -354,7 +369,7 @@ class Phase5DataManager:
             print(f"⚠️ Нет данных phase5 в проекте")
 
     def load_prompts_from_phase4(self, context=None):
-        """Загрузка промптов из фазы 4 - ПОЛНАЯ ПЕРЕЗАГРУЗКА С ОЧИСТКОЙ"""
+        """Загружает ГОТОВЫЕ промпты из фазы 4"""
         import json
         from pathlib import Path
 
@@ -362,111 +377,42 @@ class Phase5DataManager:
         print("🔍 load_prompts_from_phase4 STARTED")
         print("=" * 80)
 
-        # ===== 1. ОЧИЩАЕМ ВСЁ =====
-        print("   ШАГ 1: ОЧИСТКА ВСЕХ ДАННЫХ")
-
-        # session_state
-        for key in list(st.session_state.keys()):
-            if key.startswith('phase5') or key == 'temp_selections':
-                del st.session_state[key]
-                print(f"      🗑️ Удален session_state.{key}")
-
-        # app_data
-        if 'app_data' in st.session_state:
-            for key in ['phase5', 'phase5_results', 'phase5_completed', 'phase5_settings']:
-                if key in st.session_state.app_data:
-                    del st.session_state.app_data[key]
-                    print(f"      🗑️ Удален app_data.{key}")
-
-        # ===== 2. ПРЯМО ЧИСТИМ ФАЙЛ =====
-        print("   ШАГ 2: ОЧИСТКА ФАЙЛА")
-        project_file = self._get_project_file(context)
-
-        if project_file and project_file.exists():
-            try:
-                with open(project_file, 'r', encoding='utf-8') as f:
-                    file_data = json.load(f)
-
-                # Удаляем ВСЕ ключи phase5
-                if 'app_data' in file_data:
-                    for key in ['phase5', 'phase5_results', 'phase5_completed', 'phase5_settings']:
-                        if key in file_data['app_data']:
-                            del file_data['app_data'][key]
-                            print(f"      🗑️ Удален из файла: app_data.{key}")
-
-                if 'phase5_results' in file_data:
-                    del file_data['phase5_results']
-                    print(f"      🗑️ Удален из файла: phase5_results")
-
-                if 'phase5_completed' in file_data:
-                    del file_data['phase5_completed']
-                    print(f"      🗑️ Удален из файла: phase5_completed")
-
-                file_data['updated_at'] = datetime.now().isoformat()
-
-                with open(project_file, 'w', encoding='utf-8') as f:
-                    json.dump(file_data, f, ensure_ascii=False, indent=2)
-
-                print(f"      ✅ Файл очищен: {project_file}")
-            except Exception as e:
-                print(f"      ❌ Ошибка очистки файла: {e}")
-
-        # ===== 3. СОЗДАЕМ НОВУЮ СТРУКТУРУ =====
-        print("   ШАГ 3: СОЗДАНИЕ НОВОЙ СТРУКТУРЫ")
-        st.session_state.phase5 = {
-            'generation_status': 'idle',
-            'selected_prompt_ids': [],
-            'results': {},
-            'statistics': {
-                'total': 0, 'selected': 0, 'completed': 0, 'success': 0, 'error': 0, 'pending': 0
-            },
-            'generation_settings': {
-                'provider': 'agentplatform',
-                'temperature': 0.7,
-                'max_tokens': 2000,
-                'retry_count': 3,
-                'delay_between_requests': 2.0
-            },
-            'generation_queue': [],
-            'current_index': 0,
-            'generation_running': False,
-            'initialized': True,
-            'phase_completed': False
-        }
-        st.session_state.phase5_prompts = []
-        st.session_state.temp_selections = {}
-        print("      ✅ Новая структура создана")
-
-        # ===== 4. ЗАГРУЖАЕМ ПРОМПТЫ =====
-        print("   ШАГ 4: ЗАГРУЗКА ПРОМПТОВ ИЗ ФАЗЫ 4")
+        # ===== 1. ЗАГРУЖАЕМ ГОТОВЫЕ ПРОМПТЫ ИЗ ФАЙЛА =====
         app_data = self._load_from_project_file(context)
         phase4_data = app_data.get('phase4', {})
-        prompts = []
 
-        if isinstance(phase4_data, dict):
-            if 'prompts' in phase4_data and phase4_data['prompts']:
-                prompts = phase4_data['prompts']
-                print(f"      ✅ Загружено {len(prompts)} промптов из phase4.prompts")
+        # ✅ БЕРЕМ ГОТОВЫЕ ПРОМПТЫ
+        prompts = phase4_data.get('prompts', [])
 
         if not prompts:
-            print("      ❌ ПРОМПТЫ НЕ НАЙДЕНЫ!")
+            print("   ❌ Нет готовых промптов в phase4.prompts")
             return []
 
-        # ===== 5. СОЗДАЕМ ЗАПИСИ =====
-        print("   ШАГ 5: СОЗДАНИЕ ЗАПИСЕЙ")
+        print(f"   ✅ Загружено {len(prompts)} готовых промптов из phase4.prompts")
+
+        # ===== 2. СОХРАНЯЕМ ИХ В SESSION_STATE =====
+        st.session_state.phase5_prompts = prompts
+
+        # ===== 3. СОЗДАЕМ ЗАПИСИ ДЛЯ ВСЕХ ПРОМПТОВ =====
         new_results = {}
         for i, prompt in enumerate(prompts):
-            if 'characteristic_id' in prompt:
-                prompt_id = f"char_{prompt['characteristic_id']}_{prompt.get('value', '')}_{prompt.get('prompt_num', i)}"
-            elif 'block_id' in prompt:
-                prompt_id = f"block_{prompt['block_id']}_{prompt.get('prompt_num', i)}"
-            else:
-                prompt_id = f"prompt_{i}"
+            # ✅ БЕРЕМ ГОТОВЫЙ phase5_id ИЗ ПРОМПТА
+            prompt_id = prompt.get('phase5_id')
 
-            prompt['phase5_id'] = prompt_id
+            # Если нет phase5_id - создаем
+            if not prompt_id:
+                if 'characteristic_id' in prompt:
+                    prompt_id = f"char_{prompt['characteristic_id']}_{prompt.get('value', '')}_{prompt.get('prompt_num', i)}"
+                elif 'block_id' in prompt:
+                    prompt_id = f"block_{prompt['block_id']}_{prompt.get('prompt_num', i)}"
+                else:
+                    prompt_id = f"prompt_{i}"
+                prompt['phase5_id'] = prompt_id
+
+            # ✅ ИСПОЛЬЗУЕМ ГОТОВЫЙ ПРОМПТ
             new_results[prompt_id] = {
                 'prompt_id': prompt_id,
-                'prompt': prompt.get('prompt', ''),
+                'prompt': prompt.get('prompt', ''),  # ← БЕРЕМ ГОТОВЫЙ ТЕКСТ!
                 'ai_response': '',
                 'status': 'pending',
                 'model': '',
@@ -483,19 +429,12 @@ class Phase5DataManager:
             }
 
         st.session_state.phase5['results'] = new_results
-        st.session_state.phase5_prompts = prompts.copy()
-        print(f"      ✅ Создано {len(new_results)} записей")
 
-        # ===== 6. ВЫБИРАЕМ ВСЕ =====
-        print("   ШАГ 6: ВЫБОР ВСЕХ ПРОМПТОВ")
-        all_ids = [p.get('phase5_id') for p in prompts if p.get('phase5_id')]
-        st.session_state.phase5['selected_prompt_ids'] = all_ids.copy()
-        for pid in all_ids:
-            st.session_state.temp_selections[pid] = True
-        print(f"      ✅ Выбрано {len(all_ids)} промптов")
+        # ===== 4. ВЫБИРАЕМ ВСЕ ПРОМПТЫ =====
+        all_ids = list(new_results.keys())
+        st.session_state.phase5['selected_prompt_ids'] = all_ids
 
-        # ===== 7. СТАТИСТИКА =====
-        print("   ШАГ 7: ОБНОВЛЕНИЕ СТАТИСТИКИ")
+        # ===== 5. СТАТИСТИКА =====
         st.session_state.phase5['statistics'] = {
             'total': len(prompts),
             'selected': len(all_ids),
@@ -504,54 +443,15 @@ class Phase5DataManager:
             'error': 0,
             'pending': len(prompts)
         }
-        print(f"      ✅ Статистика: total={len(prompts)}, pending={len(prompts)}")
 
-        # ===== 8. СОХРАНЯЕМ В ФАЙЛ =====
-        print("   ШАГ 8: СОХРАНЕНИЕ В ФАЙЛ")
-
-        # Читаем файл заново
-        file_data = {}
-        if project_file and project_file.exists():
-            with open(project_file, 'r', encoding='utf-8') as f:
-                file_data = json.load(f)
-
-        if 'app_data' not in file_data:
-            file_data['app_data'] = {}
-
-        # ✅ ЗАПИСЫВАЕМ НОВЫЕ ДАННЫЕ
-        file_data['app_data']['phase5'] = {
-            'results': new_results,
-            'statistics': st.session_state.phase5['statistics'],
-            'generation_settings': st.session_state.phase5['generation_settings'],
-            'prompts': prompts,
-            'selected_prompt_ids': all_ids,
-            'generation_status': 'idle',
-            'generation_running': False,
-            'generation_queue': [],
-            'current_index': 0,
-            'phase_completed': False,
-            'prompts_count': len(prompts)
-        }
-        file_data['app_data']['phase5_completed'] = False
-        file_data['updated_at'] = datetime.now().isoformat()
-
-        # ✅ УДАЛЯЕМ СТАРЫЕ КЛЮЧИ ЕЩЕ РАЗ
-        for key in ['phase5_results', 'phase5_completed']:
-            if key in file_data['app_data']:
-                del file_data['app_data'][key]
-        if 'phase5_results' in file_data:
-            del file_data['phase5_results']
-
-        with open(project_file, 'w', encoding='utf-8') as f:
-            json.dump(file_data, f, ensure_ascii=False, indent=2)
-
-        print(f"      ✅ Файл сохранен: {project_file}")
-        print(f"      ✅ Сохранено {len(new_results)} результатов")
-
-        print("\n" + "=" * 80)
-        print(f"✅ load_prompts_from_phase4 COMPLETED: {len(prompts)} промптов")
+        print(f"\n✅ Загружено {len(prompts)} готовых промптов")
+        print(f"   Создано {len(new_results)} записей")
         print("=" * 80 + "\n")
-
+        # В load_prompts_from_phase4
+        print(f"\n📊 ПРОВЕРКА:")
+        print(f"   phase4.prompts: {len(phase4_data.get('prompts', []))} промптов")
+        print(f"   Первый промпт: {phase4_data['prompts'][0].get('characteristic_name')} = {phase4_data['prompts'][0].get('value')}")
+        print(f"   Всего создано результатов: {len(new_results)}")
         return prompts
 
     def save_to_app_data(self, app_state=None):
@@ -2062,13 +1962,11 @@ def force_load_phase5_from_file(context=None):
         phase5_data = app_data.get('phase5', {})
         results = phase5_data.get('results', {})
 
-        # ✅ СОХРАНЯЕМ ПРОМПТЫ ИЗ ФАЙЛА (из phase4)
+        # ✅ ЗАГРУЖАЕМ ПРОМПТЫ ИЗ PHASE4
         phase4_data = app_data.get('phase4', {})
         prompts_from_phase4 = phase4_data.get('prompts', [])
 
-        # Если есть промпты в phase4, загружаем их
-        if prompts_from_phase4 and (not st.session_state.phase5_prompts or len(st.session_state.phase5_prompts) != len(
-                prompts_from_phase4)):
+        if prompts_from_phase4 and (not st.session_state.phase5_prompts or len(st.session_state.phase5_prompts) != len(prompts_from_phase4)):
             loaded_prompts = []
             for i, prompt in enumerate(prompts_from_phase4):
                 if 'characteristic_id' in prompt:
@@ -2089,8 +1987,7 @@ def force_load_phase5_from_file(context=None):
         if 'phase5' not in st.session_state:
             st.session_state.phase5 = {}
 
-        # ✅ КРИТИЧЕСКИ ВАЖНО: НЕ ПЕРЕЗАПИСЫВАТЬ СУЩЕСТВУЮЩИЕ РЕЗУЛЬТАТЫ!
-        # Обновляем только те, которых нет
+        # ✅ НЕ ПЕРЕЗАПИСЫВАЕМ СУЩЕСТВУЮЩИЕ РЕЗУЛЬТАТЫ
         existing_results = st.session_state.phase5.get('results', {})
 
         # Добавляем результаты из файла
@@ -2130,7 +2027,7 @@ def force_load_phase5_from_file(context=None):
             if missing_count > 0:
                 print(f"   ✅ СОЗДАНО {missing_count} НЕДОСТАЮЩИХ РЕЗУЛЬТАТОВ")
 
-        # ✅ ОБНОВЛЯЕМ СТАТИСТИКУ С ПРАВИЛЬНЫМ total
+        # ✅ ОБНОВЛЯЕМ СТАТИСТИКУ - ИСПРАВЛЕНО: НЕ ИСПОЛЬЗУЕМ data_manager
         total_prompts = len(st.session_state.phase5_prompts) if 'phase5_prompts' in st.session_state else 0
         current_results = st.session_state.phase5['results']
 
@@ -2145,15 +2042,10 @@ def force_load_phase5_from_file(context=None):
             'error': error,
             'completed': completed,
             'pending': pending,
-            'selected': st.session_state.phase5.get('statistics', {}).get('selected', 0)
+            'selected': st.session_state.phase5.get('statistics', {}).get('selected', total_prompts)  # ← ИСПРАВЛЕНО
         }
 
-        # Если есть статус завершения
-        if phase5_data.get('phase_completed', False):
-            st.session_state.phase5['generation_status'] = 'completed'
-            st.session_state.phase5_completed = True
-
-        # ✅ В КОНЦЕ - ВЫБИРАЕМ ВСЕ ПРОМПТЫ
+        # ✅ ВЫБИРАЕМ ВСЕ ПРОМПТЫ
         prompts = st.session_state.phase5_prompts if 'phase5_prompts' in st.session_state else []
         if prompts:
             all_ids = [p.get('phase5_id') for p in prompts if p.get('phase5_id')]
@@ -2164,13 +2056,19 @@ def force_load_phase5_from_file(context=None):
                     st.session_state.temp_selections = {}
                 for pid in all_ids:
                     st.session_state.temp_selections[pid] = True
-                data_manager._update_statistics()
                 print(f"✅ ВЫБРАНЫ ВСЕ ПРОМПТЫ (force_load): {len(all_ids)}")
+
+        # Если есть статус завершения
+        if phase5_data.get('phase_completed', False):
+            st.session_state.phase5['generation_status'] = 'completed'
+            st.session_state.phase5_completed = True
 
         return True
 
     except Exception as e:
         print(f"❌ Ошибка загрузки phase5: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 def auto_generate_all_texts(app_state=None, context=None):
     """
@@ -2218,40 +2116,27 @@ def auto_generate_all_texts(app_state=None, context=None):
 
     # ========== 2. ЗАГРУЖАЕМ ПРОМПТЫ ИЗ ФАЙЛА ==========
     prompts = []
-    try:
-        print(f"\n{'='*60}")
-        print(f"🔍 PHASE5: ЗАГРУЗКА ПРОМПТОВ")
-        print(f"   project_file: {project_file}")
-        print(f"   file exists: {project_file.exists()}")
 
-        with open(project_file, 'r', encoding='utf-8') as f:
-            file_data = json.load(f)
-            app_data = file_data.get('app_data', {})
+    # ✅ ПРЯМО БЕРЕМ ИЗ phase4.prompts
+    with open(project_file, 'r', encoding='utf-8') as f:
+        file_data = json.load(f)
+        app_data = file_data.get('app_data', {})
+        phase4 = app_data.get('phase4', {})
+        prompts = phase4.get('prompts', [])
 
-            print(f"   app_data keys: {list(app_data.keys())}")
-            print(f"   phase4 keys: {list(app_data.get('phase4', {}).keys())}")
+        if prompts:
+            print(f"   ✅ Загружено {len(prompts)} готовых промптов из phase4.prompts")
 
-            phase4 = app_data.get('phase4', {})
-            if phase4.get('prompts'):
-                prompts = phase4['prompts']
-                print(f"   ✅ Загружено из phase4.prompts: {len(prompts)}")
-            elif app_data.get('phase4_generated_prompts'):
-                prompts = app_data['phase4_generated_prompts']
-                print(f"   ✅ Загружено из phase4_generated_prompts: {len(prompts)}")
-            else:
-                print(f"   ⚠️ Нет промптов в файле!")
+    # ❌ НЕ ПЫТАЙТЕСЬ ПЕРЕСЧИТЫВАТЬ ИХ КОЛИЧЕСТВО!
+    # Просто используйте то, что есть
+
+    if not prompts:
+        return {'success': False, 'message': '❌ Нет готовых промптов в phase4.prompts', 'count': 0, 'errors': 0}
 
         print(f"📝 Итого загружено {len(prompts)} промптов")
         print(f"{'='*60}\n")
 
-    except Exception as e:
-        print(f"❌ Ошибка загрузки: {e}")
-        import traceback
-        traceback.print_exc()
-        return {'success': False, 'message': f'Ошибка: {e}', 'count': 0, 'errors': 0}
 
-    if not prompts:
-        return {'success': False, 'message': '❌ Нет промптов', 'count': 0, 'errors': 0}
 
     # ========== 3. ЗАГРУЖАЕМ СУЩЕСТВУЮЩИЕ РЕЗУЛЬТАТЫ ==========
     existing_results = {}

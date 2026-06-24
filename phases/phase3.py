@@ -642,38 +642,26 @@ class DynamicVariableProcessor:
 
 # --- Классы для работы с данными ---
 class BlockManager:
-
     def __init__(self, domain_name: str = None, site_name: str = None):
+        print(f"🛠 BlockManager.__init__ вызван с domain_name={domain_name}, site_name={site_name}")
+
+        # Приоритет: переданные параметры > session_state
         if domain_name is None:
             domain_name = st.session_state.get('current_domain', 'default')
         if site_name is None:
             site_name = st.session_state.get('current_site', 'steelborg')
 
-        # ========== СНАЧАЛА СИНХРОНИЗАЦИЯ ==========
-        try:
-            if 'domain_manager' in st.session_state:
-                dm = st.session_state.domain_manager
-                user_id = st.session_state.get('user_id')
-                if user_id:
-                    settings = dm.load_user_settings(user_id)
-                    file_domain = settings.get('selected_domain', 'default')
-                    file_site = settings.get('selected_site', 'steelborg')
-
-                    if file_domain != domain_name or file_site != site_name:
-                        print(
-                            f"⚠️ BlockManager: домен из файла ({file_domain}) отличается от переданного ({domain_name})")
-                        domain_name = file_domain
-                        site_name = file_site
-                        st.session_state.current_domain = domain_name
-                        st.session_state.current_site = site_name
-        except Exception as e:
-            print(f"⚠️ Ошибка синхронизации: {e}")
-
-        # ========== ПОТОМ СОЗДАЁМ ПАПКУ ==========
         self.blocks_dir = Path(f"sites/{site_name}/domains/{domain_name}/blocks")
+        print(f"   → blocks_dir = {self.blocks_dir}")
+
         self.blocks_dir.mkdir(parents=True, exist_ok=True)
         self.blocks = {}
         self.load_blocks()
+
+        print(f"📁 BlockManager инициализирован: domain={domain_name}, блоков={len(self.blocks)}")
+
+        print(f"📁 BlockManager: сайт={site_name}, домен={domain_name}, путь={self.blocks_dir}")
+        print(f"   Загружено блоков: {len(self.blocks)}")
 
         print(f"📁 BlockManager: сайт={site_name}, домен={domain_name}, путь={self.blocks_dir}")
 
@@ -782,50 +770,46 @@ class BlockManager:
             return True
         return False
 
+    # === ЗАМЕНИТЬ полностью функцию create_new_block ===
     def create_new_block(self, base_block_id=None):
-        """Создает новый блок в папке ДОМЕНА"""
+        """Создает новый блок — ТОЛЬКО по явному запросу"""
+        print(f"🔧 create_new_block вызван | base_block_id={base_block_id} | существующих блоков: {len(self.blocks)}")
+
         if base_block_id and base_block_id in self.blocks:
-            # Копируем существующий блок
+            print(f"   → Копируем существующий блок {base_block_id}")
             base_block = self.blocks[base_block_id]
             new_block_id = f"{base_block_id}_copy_{int(time.time())}"
 
             new_block = base_block.copy()
             new_block["block_id"] = new_block_id
-            new_block["name"] = f"{base_block['name']} (копия)"
+            new_block["name"] = f"{base_block.get('name', 'Блок')} (копия)"
 
-            # Копируем переменные
-            variables_data = base_block.get("variables_data", {})
-
+            variables_data = base_block.get("variables_data", {}).copy()
             return new_block_id, new_block, variables_data
-        else:
-            # Создаем пустой блок
-            new_block_id = f"new_block_{int(time.time())}"
-            new_block = {
-                "block_id": new_block_id,
-                "name": "Новый блок",
-                "description": "Новый шаблон промпта",
-                "template": "Твой шаблон здесь...\n{переменная1}\n{переменная2}",
-                "variables": ["переменная1", "переменная2"],
-                "settings": {},
-                "block_type": "other"
-            }
 
-            variables_data = {
-                "переменная1": {
-                    "name": "переменная1",
-                    "description": "Описание переменной 1",
-                    "values": ["Значение 1", "Значение 2"],
-                    "type": "static"
-                },
-                "переменная2": {
-                    "name": "переменная2",
-                    "description": "Описание переменной 2",
-                    "values": ["Значение А", "Значение Б"],
-                    "type": "static"
-                }
-            }
+        # Пустой минимальный блок
+        print(f"   → Создаём ПУСТОЙ новый блок")
+        new_block_id = f"block_{int(time.time())}"
+        new_block = {
+            "block_id": new_block_id,
+            "name": "Новый блок",
+            "description": "Новый шаблон промпта",
+            "template": "Вставьте шаблон здесь...\n{переменная1}",
+            "variables": ["переменная1"],
+            "settings": {},
+            "block_type": "other"
+        }
 
-            return new_block_id, new_block, variables_data
+        variables_data = {
+            "переменная1": {
+                "name": "переменная1",
+                "description": "Описание",
+                "values": ["Значение 1"],
+                "type": "static"
+            }
+        }
+
+        return new_block_id, new_block, variables_data
 
     def get_block(self, block_id):
         """Получает блок по ID"""
@@ -1249,17 +1233,26 @@ def run_mass_generation_auto(app_state=None, context=None):
         st.session_state.domain_manager = DomainManager()
     dm = st.session_state.domain_manager
 
+    # 🔥 КРИТИЧНО: явно передаём domain_name из контекста/параметров
+    effective_domain = domain_name or dm.get_current_domain() or st.session_state.get('current_domain', 'default')
+    effective_site = site_name or dm.site_name or st.session_state.get('current_site', 'steelborg')
+
+    print(f"🔄 run_mass_generation_auto: используем domain='{effective_domain}', site='{effective_site}'")
+
     from phases.phase3 import BlockManager
     block_manager = BlockManager(
-        domain_name=domain_name or dm.get_current_domain(),
-        site_name=site_name or dm.site_name
+        domain_name=effective_domain,   # ← Явная передача!
+        site_name=effective_site
     )
-    blocks = block_manager.get_all_blocks()
-    print(f"📦 Блоков из ДОМЕНА: {len(blocks)}")
 
-    if not blocks:
-        print("❌ Нет блоков в домене")
-        return {"success": False, "message": "Нет созданных блоков. Сначала настройте фазу 3.", "count": 0}
+    blocks = block_manager.get_all_blocks()
+    print(f"📦 Блоков из ДОМЕНА (в автогенерации): {len(blocks)} | domain={effective_domain}")
+
+    if len(blocks) == 0:
+        print(f"❌ Нет блоков в домене '{effective_domain}'!")
+        return {"success": False, "message": f"Нет созданных блоков в домене {effective_domain}.", "count": 0}
+
+    print(f"   ID блоков: {list(blocks.keys())}")
 
     # ========== СОБИРАЕМ AI ПЕРЕМЕННЫЕ ==========
     ai_vars = []
@@ -1448,7 +1441,6 @@ def main(app_state=None, settings_mode=False, context=None):
 
         print(f"✅ Phase3 загружен домен из файла: {saved_domain}, сайт: {saved_site}")
     else:
-        # Если user_id нет, пробуем взять из session_state
         saved_domain = st.session_state.get('current_domain', 'default')
         saved_site = st.session_state.get('current_site', 'steelborg')
         print(f"⚠️ Phase3: user_id не найден, использую домен по умолчанию: {saved_domain}")
@@ -1469,18 +1461,68 @@ def main(app_state=None, settings_mode=False, context=None):
         st.session_state.ai_mgr_domain_key = domain_key
         print(f"🔄 AIInstructionManager обновлён для домена {current_domain}")
 
-    # ✅ ВСЕГДА ПЕРЕСОЗДАЁМ BlockManager для текущего домена
-    st.session_state.block_manager = BlockManager(
-        domain_name=current_domain,
-        site_name=current_site
-    )
+    # ✅ СОЗДАЕМ BlockManager ТОЛЬКО ОДИН РАЗ
+    # ✅ СОЗДАЕМ BlockManager
+    # ✅ СОЗДАЕМ BlockManager
+    if ('block_manager' not in st.session_state or
+            st.session_state.get('_bm_domain_key') != f"{current_site}_{current_domain}"):
 
-    # Принудительно загружаем блоки из файлов домена
-    st.session_state.block_manager.load_blocks()
+        st.session_state.block_manager = BlockManager(
+            domain_name=current_domain,
+            site_name=current_site
+        )
+        st.session_state._bm_domain_key = f"{current_site}_{current_domain}"
+        print(f"📦 Создан новый BlockManager для домена '{current_domain}'")
+    else:
+        st.session_state.block_manager.load_blocks()
+        print(f"📦 Перезагружены блоки для домена '{current_domain}'")
+
+    # ====================== ОТЛАДКА ======================
+    current_blocks = st.session_state.block_manager.get_all_blocks()
+    print(f"📊 ЗАГРУЖЕНО БЛОКОВ ИЗ ДОМЕНА: {len(current_blocks)}")
+    if current_blocks:
+        print(f"   Блоки: {list(current_blocks.keys())}")
+    else:
+        print(f"   ⚠️ Блоков в домене НЕТ")
+    # ====================================================
+
+    # === ЗАЩИТА ОТ АВТОМАТИЧЕСКОГО СОЗДАНИЯ ДЕФОЛТНЫХ БЛОКОВ ===
+    is_auto_mode = context is not None and hasattr(context, 'project_id')
+
+    # Проверка наличия блоков
+    blocks_count = len(st.session_state.block_manager.get_all_blocks())
+
+    if blocks_count == 0:
+        if is_auto_mode:
+            # АВТОГЕНЕРАЦИЯ - НЕ СОЗДАЕМ!
+            st.error("""
+            ## ❌ В домене нет блоков!
+            
+            Для автогенерации необходимо:
+            1. Запустить проект в ручном режиме
+            2. Создать блоки в фазе 3
+            3. Сохранить настройки
+            4. Затем использовать автогенерацию
+            """)
+            return {'success': False, 'blocks_count': 0, 'message': 'Нет блоков в домене'}
+        else:
+            # РУЧНОЙ РЕЖИМ - показываем кнопку создания
+            st.warning("⚠️ Нет созданных блоков. Создайте первый блок ниже.")
+            if st.button("➕ Создать первый блок", use_container_width=True):
+                new_id, new_block, vars_data = st.session_state.block_manager.create_new_block()
+                st.session_state.block_manager.save_block(new_block, vars_data)
+                st.rerun()
+            return {'success': False, 'blocks_count': 0, 'message': 'Нет созданных блоков'}
+    # ========================================================
+
+    # ✅ УБИРАЕМ ВТОРОЙ ВЫЗОВ load_blocks() - он уже вызван в __init__
+    # st.session_state.block_manager.load_blocks()  # ← ЗАКОММЕНТИРОВАТЬ!
 
     # Проверяем, что блоки загрузились
     current_blocks = st.session_state.block_manager.get_all_blocks()
-    print(f"📦 Загружено блоков из домена '{current_domain}': {len(current_blocks)}")
+    print(f"📦 ИТОГО загружено блоков из домена '{current_domain}': {len(current_blocks)}")
+
+    # ... остальной код main() без изменений ...
 
     # Инициализация остальных менеджеров
     if 'variable_manager' not in st.session_state:
@@ -1568,10 +1610,13 @@ def main(app_state=None, settings_mode=False, context=None):
         return {'success': False, 'blocks_count': 0, 'message': 'Нет данных из фазы 1'}
 
     # Проверка наличия блоков
+    # Проверка наличия блоков
     if len(current_blocks) == 0:
-        st.warning("⚠️ Нет созданных блоков. Нажмите кнопку ниже для создания первого блока.")
+        st.warning("⚠️ Нет созданных блоков. Создайте первый блок ниже.")
         if st.button("➕ Создать первый блок", use_container_width=True):
-            st.session_state.block_manager.create_new_block()
+            print("🛠 Пользователь нажал 'Создать первый блок'")
+            new_id, new_block, vars_data = st.session_state.block_manager.create_new_block()
+            st.session_state.block_manager.save_block(new_block, vars_data)
             st.rerun()
         return {'success': False, 'blocks_count': 0, 'message': 'Нет созданных блоков'}
 
@@ -2333,23 +2378,21 @@ def show_blocks_management(app_state=None):
     if not blocks:
         st.info("Блоки не найдены. Создайте первый блок.")
 
-    # Создание нового блока
+        # ========== СОЗДАНИЕ НОВОГО БЛОКА ==========
+        # ========== СОЗДАНИЕ НОВОГО БЛОКА ==========
     st.markdown("### ➕ Создать новый блок")
 
-    col_create1, col_create2, col_create3, col_create4 = st.columns([2, 2, 1, 1])
+    col_create1, col_create2, col_create3, col_create4 = st.columns([2.2, 2, 1.2, 1])
 
     with col_create1:
-        if blocks:
-            base_block_options = ["(пустой блок)"] + list(blocks.keys())
-            base_block = st.selectbox(
-                "На основе блока:",
-                base_block_options,
-                format_func=lambda
-                    x: "(пустой блок)" if x == "(пустой блок)" else f"{blocks[x].get('name', x)} ({blocks[x].get('block_type', 'other')})",
-                key="new_block_base"
-            )
-        else:
-            base_block = "(пустой блок)"
+        base_block_options = ["(пустой блок)"] + list(blocks.keys())
+        base_block = st.selectbox(
+            "На основе блока:",
+            base_block_options,
+            format_func=lambda x: "(пустой блок)" if x == "(пустой блок)"
+            else f"{blocks[x].get('name', x)} ({blocks[x].get('block_type', 'other')})",
+            key="new_block_base"
+        )
 
     with col_create2:
         block_type = st.selectbox(
@@ -2360,150 +2403,34 @@ def show_blocks_management(app_state=None):
         )
 
     with col_create3:
-        # Для characteristic блоков выбираем подтип
+        characteristic_type = None
         if block_type == "characteristic":
             characteristic_type = st.selectbox(
                 "Тип характеристики:",
                 ["regular", "unique"],
-                format_func=lambda x: "Regular (обычная)" if x == "regular" else "Unique (уникальная)",
                 key="new_char_type"
             )
-        else:
-            characteristic_type = None
 
     with col_create4:
-        create_disabled = block_type == "characteristic" and characteristic_type is None
-        if st.button(
-                "Создать",
-                key="create_new_block_button",   # ← ФИКС: статический ключ!
-                use_container_width=True,
-                disabled=create_disabled,
-                type="primary"
-        ):
+        if st.button("✅ Создать", key="create_new_block_button", use_container_width=True, type="primary"):
+            print(f"🚀 Кнопка 'Создать' нажата! base_block={base_block}, type={block_type}")
+
             base_block_id = None if base_block == "(пустой блок)" else base_block
 
             new_block_id, new_block, variables_data = st.session_state.block_manager.create_new_block(base_block_id)
 
-            # Устанавливаем тип блока
             new_block["block_type"] = block_type
 
-            # Для characteristic блоков добавляем информацию о типе
-            if block_type == "characteristic":
-                if base_block == "(пустой блок)":
-                    if characteristic_type == "regular":
-                        new_block.update({
-                            "name": "Шаблон для Regular характеристики",
-                            "description": "Шаблон для regular характеристик",
-                            "template": """Ты должен генерировать текст, полностью исключая определительные конструкции с тире и союзом 'что'.
-    {стиль_текста}.
-    Объем: {объем_характеристики}. 
-    {скобки_характеристика}
-    {контекст_категория}.
-    Тут крайне внимательно: {инструкция_характеристика} {название_характеристики} так, чтобы значение {значение_форматированное} было логично вставлено в текст, {подводка_характеристика}
-    Обязательно используй "{характеристика_маркер}" один раз в тексте.  
-    Структура предложения: {структура_характеристики}.
-    {ограничение_повторы}.
-    {требование_тошноты}.
-    {стоп}.""",
-                            "variables": [
-                                "стиль_текста", "объем_характеристики", "структура_характеристики",
-                                "подводка_характеристика", "инструкция_характеристика",
-                                "ограничение_повторы", "требование_тошноты", "скобки_характеристика"
-                            ],
-                            "settings": {
-                                "маркер_позиция": "начало",
-                                "формат_значения_regular": "[[значение]]",
-                                "формат_значения_unique": "\"[значение]\"",
-                                "добавлять_скобки_переменную": True,
-                                "characteristic_type": "regular"
-                            }
-                        })
-                        variables_data = {
-                            "стиль_текста": {"name": "стиль_текста", "description": "Стиль текста", "type": "static", "values": ["Деловой стиль", "Маркетинговый стиль"]},
-                            "объем_характеристики": {"name": "объем_характеристики", "description": "Объем", "type": "static", "values": ["2-3 предложения", "3-4 предложения"]},
-                            "структура_характеристики": {"name": "структура_характеристики", "description": "Структура", "type": "static", "values": ["Простое предложение", "Сложносочиненное"]},
-                            "подводка_характеристика": {"name": "подводка_характеристика", "description": "Подводка", "type": "static", "values": ["что делает идеальным", "что обеспечивает качество"]},
-                            "инструкция_характеристика": {"name": "инструкция_характеристика", "description": "Инструкция", "type": "static", "values": ["напиши о", "опиши"]},
-                            "ограничение_повторы": {"name": "ограничение_повторы", "description": "Ограничения", "type": "static", "values": ["Избегай повторений"]},
-                            "требование_тошноты": {"name": "требование_тошноты", "description": "Тошнота", "type": "static", "values": ["Низкая тошнота"]},
-                            "скобки_характеристика": {"name": "скобки_характеристика", "description": "Скобки", "type": "static", "values": ["Значение в [[ ]]"]}
-                        }
-                    else:  # unique
-                        new_block.update({
-                            "name": "Шаблон для Unique характеристики",
-                            "description": "Шаблон для unique характеристик",
-                            "template": """Ты должен генерировать текст, полностью исключая определительные конструкции с тире и союзом 'что'.
-    {стиль_текста}.
-    Объем: {объем_характеристики}. 
-    {контекст_категория}.
-    Тут крайне внимательно: {инструкция_характеристика} {название_характеристики} так, чтобы значение {значение_форматированное} было логично вставлено в текст, {подводка_характеристика}
-    Обязательно используй "{характеристика_маркер}" один раз в тексте.  
-    Структура предложения: {структура_характеристики}.
-    {ограничение_повторы}.
-    {требование_тошноты}.
-    {стоп}.""",
-                            "variables": [
-                                "стиль_текста", "объем_характеристики", "структура_характеристики",
-                                "подводка_характеристика", "инструкция_характеристика",
-                                "ограничение_повторы", "требование_тошноты"
-                            ],
-                            "settings": {
-                                "маркер_позиция": "начало",
-                                "формат_значения_regular": "[[значение]]",
-                                "формат_значения_unique": "\"[значение]\"",
-                                "добавлять_скобки_переменную": False,
-                                "characteristic_type": "unique"
-                            }
-                        })
-                        variables_data = {
-                            "стиль_текста": {"name": "стиль_текста", "description": "Стиль текста", "type": "static", "values": ["Деловой стиль", "Маркетинговый стиль"]},
-                            "объем_характеристики": {"name": "объем_характеристики", "description": "Объем", "type": "static", "values": ["2-3 предложения", "3-4 предложения"]},
-                            "структура_характеристики": {"name": "структура_характеристики", "description": "Структура", "type": "static", "values": ["Простое предложение", "Сложносочиненное"]},
-                            "подводка_характеристика": {"name": "подводка_характеристика", "description": "Подводка", "type": "static", "values": ["что делает идеальным", "что обеспечивает качество"]},
-                            "инструкция_характеристика": {"name": "инструкция_характеристика", "description": "Инструкция", "type": "static", "values": ["напиши о", "опиши"]},
-                            "ограничение_повторы": {"name": "ограничение_повторы", "description": "Ограничения", "type": "static", "values": ["Избегай повторений"]},
-                            "требование_тошноты": {"name": "требование_тошноты", "description": "Тошнота", "type": "static", "values": ["Низкая тошнота"]}
-                        }
-                else:
-                    if "settings" not in new_block:
-                        new_block["settings"] = {}
-                    new_block["settings"]["characteristic_type"] = characteristic_type
+            # Только устанавливаем тип — БЕЗ гигантских дефолтных шаблонов!
+            if block_type == "characteristic" and characteristic_type:
+                if "settings" not in new_block:
+                    new_block["settings"] = {}
+                new_block["settings"]["characteristic_type"] = characteristic_type
+                print(f"   → characteristic_type установлен: {characteristic_type}")
 
-            # Сохраняем блок
             if st.session_state.block_manager.save_block(new_block, variables_data):
-                st.success(f"✅ Создан новый блок: {new_block['name']} ({block_type})")
-
-                # === КРИТИЧЕСКИ ВАЖНО: ПРИНУДИТЕЛЬНО СОХРАНЯЕМ В ДОМЕН ===
-                st.session_state.block_manager.load_blocks()
+                st.success(f"✅ Создан новый блок: **{new_block['name']}**")
                 force_save_phase3_blocks(app_state)
-                # Сохраняем в DomainManager
-                if 'domain_manager' in st.session_state:
-                    dm = st.session_state.domain_manager
-                    all_blocks = st.session_state.block_manager.get_all_blocks()
-                    blocks_data = {}
-                    for bid, b in all_blocks.items():
-                        blocks_data[bid] = {
-                            'name': b.get('name', ''),
-                            'block_type': b.get('block_type', 'other'),
-                            'description': b.get('description', ''),
-                            'template': b.get('template', ''),
-                            'variables': b.get('variables', []),
-                            'settings': b.get('settings', {}),
-                            'variables_data': b.get('variables_data', {})
-                        }
-                    dm.save_phase_data(3, {
-                        'blocks': blocks_data,
-                        'blocks_count': len(all_blocks),
-                        'characteristic_blocks': len([b for b in all_blocks.values() if b.get('block_type') == 'characteristic']),
-                        'other_blocks': len([b for b in all_blocks.values() if b.get('block_type') == 'other']),
-                        'settings_saved': True,
-                        'saved_at': datetime.now().isoformat()
-                    })
-
-                # Сохраняем в app_state если есть
-                if app_state:
-                    app_state.save_project()
-
                 st.session_state.current_edit_block = new_block_id
                 st.session_state.switch_to_edit_tab = True
                 st.rerun()
@@ -4250,7 +4177,9 @@ def load_blocks(self):
     self.blocks = {}
 
     # Проверяем, есть ли папки блоков
+    print(f"🔍 BlockManager.load_blocks() — сканируем папку: {self.blocks_dir}")
     block_dirs = [d for d in self.blocks_dir.iterdir() if d.is_dir()]
+    print(f"   Найдено папок блоков: {len(block_dirs)}")
 
     # Загружаем все блоки
     for block_dir in block_dirs:

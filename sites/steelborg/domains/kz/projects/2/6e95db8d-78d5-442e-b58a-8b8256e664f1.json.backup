@@ -1,0 +1,69 @@
+{
+  "project_id": "6e95db8d-78d5-442e-b58a-8b8256e664f1",
+  "project_name": "ффф",
+  "category": "Задвижка латунная",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Задвижка латунная",
+      "project_name": "ффф",
+      "characteristics": [
+        {
+          "char_id": "9112112 01",
+          "char_name": "Диаметр",
+          "original_name": "Диаметр",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "25",
+              "count": 24,
+              "offers": 37
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Задвижка латунная.json",
+        "original_category": "Задвижка латунная",
+        "total_items": 172,
+        "selected_characteristics_count": 1,
+        "export_timestamp": "2026-06-22T12:49:22.459165"
+      }
+    },
+    "phase2": {
+      "category": "Известковый раствор",
+      "original_category": "Задвижка латунная",
+      "markers": [
+        "раствор извести",
+        "известняковый раствор"
+      ],
+      "source_category": "Задвижка латунная",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-22T12:49:50.419235"
+    },
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Задвижка латунная",
+    "project_name": "ффф",
+    "created_at": "2026-06-22T12:48:03.223039",
+    "updated_at": "2026-06-22T12:49:50.419235",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz"
+  },
+  "created_at": "2026-06-22T12:48:03.223039",
+  "updated_at": "2026-06-22T12:49:50.558561",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

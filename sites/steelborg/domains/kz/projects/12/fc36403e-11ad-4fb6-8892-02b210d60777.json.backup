@@ -1,0 +1,397 @@
+{
+  "project_id": "fc36403e-11ad-4fb6-8892-02b210d60777",
+  "project_name": "просечно-вытяжной лист",
+  "category": "лист просечно-вытяжной ПВЛ",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "лист просечно-вытяжной ПВЛ",
+      "project_name": "просечно-вытяжной лист",
+      "characteristics": [
+        {
+          "char_id": "00000431",
+          "char_name": "Толщина",
+          "original_name": "Толщина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "5",
+              "count": 2293,
+              "offers": 6101
+            },
+            {
+              "value": "4",
+              "count": 2103,
+              "offers": 5304
+            },
+            {
+              "value": "6",
+              "count": 369,
+              "offers": 922
+            },
+            {
+              "value": "3",
+              "count": 363,
+              "offers": 765
+            },
+            {
+              "value": "2",
+              "count": 86,
+              "offers": 114
+            }
+          ]
+        },
+        {
+          "char_id": "00000432",
+          "char_name": "Раскрой",
+          "original_name": "Раскрой",
+          "is_unique": false,
+          "unit": "м",
+          "values": [
+            {
+              "value": "1х2",
+              "count": 413,
+              "offers": 1144
+            },
+            {
+              "value": "1х3",
+              "count": 207,
+              "offers": 680
+            },
+            {
+              "value": "1х2.5",
+              "count": 261,
+              "offers": 606
+            },
+            {
+              "value": "1.2х2.5",
+              "count": 120,
+              "offers": 472
+            },
+            {
+              "value": "1.2х2-3.5",
+              "count": 16,
+              "offers": 324
+            }
+          ]
+        },
+        {
+          "char_id": "00000434",
+          "char_name": "Марка ПВЛ",
+          "original_name": "Марка ПВЛ",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "ПВЛ 406",
+              "count": 1244,
+              "offers": 3290
+            },
+            {
+              "value": "ПВЛ 506",
+              "count": 1120,
+              "offers": 2832
+            },
+            {
+              "value": "ПВЛ 408",
+              "count": 676,
+              "offers": 1706
+            },
+            {
+              "value": "ПВЛ 508",
+              "count": 698,
+              "offers": 1691
+            },
+            {
+              "value": "ПВЛ 510",
+              "count": 501,
+              "offers": 1569
+            }
+          ]
+        },
+        {
+          "char_id": "00000433",
+          "char_name": "Марка материала",
+          "original_name": "Марка материала",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "Ст3сп5",
+              "count": 295,
+              "offers": 1399
+            },
+            {
+              "value": "Ст3сп",
+              "count": 834,
+              "offers": 1380
+            },
+            {
+              "value": "Ст3пс5",
+              "count": 216,
+              "offers": 1311
+            },
+            {
+              "value": "Ст3",
+              "count": 785,
+              "offers": 1170
+            },
+            {
+              "value": "Ст3пс",
+              "count": 431,
+              "offers": 492
+            }
+          ]
+        },
+        {
+          "char_id": "00005865",
+          "char_name": "Материал",
+          "original_name": "Материал",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "черная сталь",
+              "count": 3281,
+              "offers": 8866
+            },
+            {
+              "value": "стальной",
+              "count": 46,
+              "offers": 46
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "лист просечно-вытяжной ПВЛ.json",
+        "original_category": "лист просечно-вытяжной ПВЛ",
+        "total_items": 5569,
+        "selected_characteristics_count": 5,
+        "export_timestamp": "2026-06-22T15:28:40.243673"
+      }
+    },
+    "phase2": {
+      "category": "Просечно-вытяжной лист",
+      "original_category": "лист просечно-вытяжной ПВЛ",
+      "markers": [
+        "лист пвл",
+        "листы пвл",
+        "лист стальной просечно-вытяжной",
+        "лист металлический просечно-вытяжной",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "лист просечно-вытяжной ПВЛ",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-22T15:29:00.329027"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00000431": {
+            "prompts_per_value": 3,
+            "char_name": "Толщина"
+          },
+          "00000432": {
+            "prompts_per_value": 3,
+            "char_name": "Раскрой"
+          },
+          "00000434": {
+            "prompts_per_value": 3,
+            "char_name": "Марка ПВЛ"
+          },
+          "00000433": {
+            "prompts_per_value": 3,
+            "char_name": "Марка материала"
+          },
+          "00005865": {
+            "prompts_per_value": 5,
+            "char_name": "Материал"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "лист просечно-вытяжной ПВЛ",
+    "project_name": "просечно-вытяжной лист",
+    "created_at": "2026-06-22T15:27:51.036022",
+    "updated_at": "2026-06-22T15:29:26.433602",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00000431": {
+          "prompts_per_value": 3,
+          "char_name": "Толщина"
+        },
+        "00000432": {
+          "prompts_per_value": 3,
+          "char_name": "Раскрой"
+        },
+        "00000434": {
+          "prompts_per_value": 3,
+          "char_name": "Марка ПВЛ"
+        },
+        "00000433": {
+          "prompts_per_value": 3,
+          "char_name": "Марка материала"
+        },
+        "00005865": {
+          "prompts_per_value": 5,
+          "char_name": "Материал"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-06-22T15:27:51.036022",
+  "updated_at": "2026-06-22T15:45:05.559111",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 12
+}

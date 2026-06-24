@@ -1416,6 +1416,24 @@ def show_generation_mode(phase1_data, category, markers, settings_mode=False, ap
     st.subheader("2. Выбор шаблона для генерации")
 
     if not characteristic_blocks:
+        # ✅ ПРОВЕРЯЕМ - ЭТО АВТОМАТИЧЕСКИЙ РЕЖИМ ИЛИ РУЧНОЙ?
+        is_auto_mode = context is not None and hasattr(context, 'project_id')
+
+        if is_auto_mode:
+            # В АВТОМАТИЧЕСКОМ РЕЖИМЕ - НЕ СОЗДАЕМ БЛОКИ!
+            st.error("""
+            ## ❌ НЕТ БЛОКОВ В ДОМЕНЕ!
+            
+            Для автогенерации необходимы блоки в домене.
+            
+            **Решение:**
+            1. Перейдите в ручной режим (Фаза 3)
+            2. Создайте блоки вручную
+            3. Вернитесь к автогенерации
+            """)
+            return
+
+        # РУЧНОЙ РЕЖИМ - показываем кнопку создания
         st.error("## ❌ Нет доступных блоков для характеристик")
         col1, col2, col3 = st.columns(3)
         with col1:
@@ -1426,6 +1444,7 @@ def show_generation_mode(phase1_data, category, markers, settings_mode=False, ap
             if st.button("📝 Перейти к редактированию", use_container_width=True):
                 st.page_link("phase3.py", label="Открыть фазу 3")
         with col3:
+            # ✅ ЭТА КНОПКА ТОЛЬКО ДЛЯ РУЧНОГО РЕЖИМА
             if st.button("🚀 Создать шаблоны характеристик", type="primary", use_container_width=True):
                 create_default_templates()
                 st.rerun()
@@ -2074,13 +2093,13 @@ def auto_generate_all_prompts(app_state=None, context=None):
         )
         st.session_state.variable_manager = VariableManager(st.session_state.block_manager)
         st.session_state.dynamic_var_manager = DynamicVariableManager()
-    # Загружаем блоки в менеджер
-    for block_id, block_info in blocks_data.items():
-        existing = st.session_state.block_manager.get_block(block_id)
-        if not existing:
-            st.session_state.block_manager.save_block(block_info, block_info.get('variables_data', {}))
+
 
     st.session_state.block_manager.load_blocks()
+
+    # ========== 8. ПОДГОТОВКА ДАННЫХ ==========
+    characteristics = phase1_data.get('characteristics', [])
+    category = phase1_data.get('category', '')
 
     # ========== 8. ПОДГОТОВКА ДАННЫХ ==========
     characteristics = phase1_data.get('characteristics', [])
@@ -2101,10 +2120,23 @@ def auto_generate_all_prompts(app_state=None, context=None):
         phase2_data = app_state.get_phase_data(2)
         if phase2_data:
             markers = phase2_data.get('markers', [])
+            if markers:
+                print(f"✅ Маркеры из APP_STATE: {len(markers)}")
 
-    # ИЗ SESSION_STATE
+    # ИЗ SESSION_STATE (с проверкой)
     if not markers:
-        markers = st.session_state.app_data.get('phase2', {}).get('markers', [])
+        # ✅ ИСПРАВЛЕНИЕ: проверяем существование app_data
+        if 'app_data' in st.session_state:
+            markers = st.session_state.app_data.get('phase2', {}).get('markers', [])
+            if markers:
+                print(f"✅ Маркеры из SESSION_STATE: {len(markers)}")
+        else:
+            # Инициализируем app_data если его нет
+            st.session_state.app_data = {}
+            print("⚠️ app_data не существовал, инициализирован")
+
+    if not markers:
+        print("⚠️ Маркеры не найдены ни в одном источнике")
 
     # ... (продолжение генерации - то же самое) ...
 

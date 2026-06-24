@@ -1,0 +1,402 @@
+{
+  "project_id": "9b66dab9-2ed4-496c-b524-0076e234badd",
+  "project_name": "лист горячекатаный",
+  "category": "Лист горячекатаный",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Лист горячекатаный",
+      "project_name": "лист горячекатаный",
+      "characteristics": [
+        {
+          "char_id": "00000289",
+          "char_name": "Толщина",
+          "original_name": "Толщина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "10",
+              "count": 2884,
+              "offers": 15788
+            },
+            {
+              "value": "8",
+              "count": 2668,
+              "offers": 15503
+            },
+            {
+              "value": "12",
+              "count": 2929,
+              "offers": 14940
+            },
+            {
+              "value": "3",
+              "count": 1663,
+              "offers": 14758
+            },
+            {
+              "value": "4",
+              "count": 2140,
+              "offers": 13793
+            }
+          ]
+        },
+        {
+          "char_id": "9123672 01",
+          "char_name": "Ширина",
+          "original_name": "Ширина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "1500",
+              "count": 16248,
+              "offers": 143061
+            },
+            {
+              "value": "2000",
+              "count": 7361,
+              "offers": 33257
+            },
+            {
+              "value": "1250",
+              "count": 3443,
+              "offers": 21032
+            },
+            {
+              "value": "1000",
+              "count": 3277,
+              "offers": 7870
+            },
+            {
+              "value": "1600",
+              "count": 994,
+              "offers": 1228
+            }
+          ]
+        },
+        {
+          "char_id": "00000291",
+          "char_name": "Марка материала",
+          "original_name": "Марка материала",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "09Г2С",
+              "count": 6359,
+              "offers": 35278
+            },
+            {
+              "value": "Ст3",
+              "count": 4812,
+              "offers": 35048
+            },
+            {
+              "value": "Ст3сп5",
+              "count": 2973,
+              "offers": 27531
+            },
+            {
+              "value": "Ст3сп",
+              "count": 2803,
+              "offers": 17395
+            },
+            {
+              "value": "09Г2С-15",
+              "count": 1190,
+              "offers": 17348
+            }
+          ]
+        },
+        {
+          "char_id": "9123672 03",
+          "char_name": "Назначение",
+          "original_name": "Назначение",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "судостроительный",
+              "count": 584,
+              "offers": 757
+            },
+            {
+              "value": "котельный",
+              "count": 385,
+              "offers": 641
+            },
+            {
+              "value": "мостостроительный",
+              "count": 20,
+              "offers": 140
+            }
+          ]
+        },
+        {
+          "char_id": "9123672 02",
+          "char_name": "Длина",
+          "original_name": "Длина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "6000",
+              "count": 13301,
+              "offers": 139861
+            },
+            {
+              "value": "2500",
+              "count": 3344,
+              "offers": 20173
+            },
+            {
+              "value": "3000",
+              "count": 1962,
+              "offers": 15846
+            },
+            {
+              "value": "2000",
+              "count": 2755,
+              "offers": 6520
+            },
+            {
+              "value": "1500",
+              "count": 2808,
+              "offers": 3677
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Лист горячекатаный.json",
+        "original_category": "Лист горячекатаный",
+        "total_items": 59342,
+        "selected_characteristics_count": 5,
+        "export_timestamp": "2026-06-22T15:06:51.988038"
+      }
+    },
+    "phase2": {
+      "category": "Лист горячекатаный",
+      "original_category": "Лист горячекатаный",
+      "markers": [
+        "горячекатаный листовой прокат",
+        "лист г к",
+        "горячекатаный стальной лист",
+        "сталь горячекатаная листовая",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Лист горячекатаный",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-22T15:07:10.853433"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00000289": {
+            "prompts_per_value": 7,
+            "char_name": "Толщина"
+          },
+          "9123672 01": {
+            "prompts_per_value": 7,
+            "char_name": "Ширина"
+          },
+          "00000291": {
+            "prompts_per_value": 7,
+            "char_name": "Марка материала"
+          },
+          "9123672 03": {
+            "prompts_per_value": 7,
+            "char_name": "Назначение"
+          },
+          "9123672 02": {
+            "prompts_per_value": 7,
+            "char_name": "Длина"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 7,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Лист горячекатаный",
+    "project_name": "лист горячекатаный",
+    "created_at": "2026-06-22T15:06:23.837360",
+    "updated_at": "2026-06-22T15:07:39.051962",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00000289": {
+          "prompts_per_value": 7,
+          "char_name": "Толщина"
+        },
+        "9123672 01": {
+          "prompts_per_value": 7,
+          "char_name": "Ширина"
+        },
+        "00000291": {
+          "prompts_per_value": 7,
+          "char_name": "Марка материала"
+        },
+        "9123672 03": {
+          "prompts_per_value": 7,
+          "char_name": "Назначение"
+        },
+        "9123672 02": {
+          "prompts_per_value": 7,
+          "char_name": "Длина"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 7,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-06-22T15:06:23.837360",
+  "updated_at": "2026-06-22T15:07:39.379305",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

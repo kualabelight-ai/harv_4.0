@@ -2,7 +2,7 @@
   "project_id": "5f1e12fe-176c-4e61-ba7e-6417053ff2bb",
   "project_name": "u",
   "category": "Алюминиевый лист рифленый",
-  "current_phase": 5,
+  "current_phase": 1,
   "app_data": {
     "phase1": {
       "category": "Алюминиевый лист рифленый",
@@ -877,7 +877,24 @@
           "type": "other"
         }
       },
-      "phase_completed": true
+      "statistics": {
+        "total": 20,
+        "success": 20,
+        "error": 0,
+        "completed": 20,
+        "pending": 0,
+        "selected": 20
+      },
+      "generation_settings": {
+        "provider": "agentplatform",
+        "temperature": 0.7,
+        "max_tokens": 2000,
+        "retry_count": 3,
+        "delay_between_requests": 2.0
+      },
+      "phase_completed": true,
+      "completed_at": "2026-06-22T12:52:48.019266",
+      "prompts_count": 20
     },
     "phase6": {},
     "phase7": {
@@ -1713,7 +1730,7 @@
     }
   },
   "created_at": "2026-06-20T16:11:52.893313",
-  "updated_at": "2026-06-20T16:21:58.898422",
+  "updated_at": "2026-06-22T12:56:56.508165",
   "site_name": "steelborg",
   "domain_name": "default",
   "user_id": 2

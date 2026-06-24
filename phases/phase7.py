@@ -759,6 +759,266 @@ class EnhancedTextProcessor:
     # --------------------------------------------------------------
     #  ГЕНЕРАЦИЯ HTML
     # --------------------------------------------------------------
+    def _is_valid_list_line(self, line: str) -> bool:
+        """
+        Проверяет, является ли строка валидным списком.
+        Требует минимум 2 элемента для списка.
+        """
+        marker_count = 0
+
+        # Проверяем маркеры UL (*, -, +)
+        ul_markers = ['* ', '- ', '+ ']
+        for marker in ul_markers:
+            marker_count += line.count(marker)
+
+        # Проверяем маркеры OL (1., 2., 3. и т.д.)
+        ol_pattern = r'\b\d+\.\s+'
+        ol_matches = re.findall(ol_pattern, line)
+        marker_count += len(ol_matches)
+
+        # ТОЛЬКО ЕСЛИ 2+ МАРКЕРА - ЭТО СПИСОК
+        return marker_count >= 2
+
+    def _extract_list_items(self, line: str) -> Tuple[List[str], Optional[str]]:
+        """
+        Извлекает элементы списка из строки.
+        Возвращает: (список_элементов, вводный_текст)
+        """
+        items = []
+        intro_text = None
+
+        # Проверяем OL (1., 2., 3.)
+        ol_pattern = r'\d+\.\s+'
+        parts = re.split(ol_pattern, line)
+        if len(parts) > 1:
+            first_part = parts[0].strip()
+            if first_part:
+                if self._is_intro_text(first_part, len(parts) - 1):
+                    intro_text = first_part
+                    parts = parts[1:]
+                else:
+                    if first_part:
+                        items.append(first_part)
+                    parts = parts[1:]
+
+            for part in parts:
+                if part.strip():
+                    items.append(part.strip())
+            if items:
+                # ✅ ДОБАВЛЯЕМ: разделяем последний элемент
+                items, extra_text = self._split_last_list_item(items)
+                if extra_text:
+                    # Если есть extra_text, добавляем его как отдельный элемент
+                    # который потом станет отдельным абзацем
+                    pass
+                return items, intro_text
+
+        # Проверяем UL маркеры
+        ul_markers = ['* ', '- ', '+ ']
+        for marker in ul_markers:
+            if marker in line:
+                parts = line.split(marker)
+                if len(parts) > 1:
+                    first_part = parts[0].strip()
+
+                    if first_part and self._is_intro_text(first_part, len(parts) - 1):
+                        intro_text = first_part
+                        parts = parts[1:]
+                    else:
+                        if first_part:
+                            items.append(first_part)
+                        parts = parts[1:]
+
+                    for part in parts:
+                        if part.strip():
+                            items.append(part.strip())
+                    if items:
+                        # ✅ ДОБАВЛЯЕМ: разделяем последний элемент
+                        items, extra_text = self._split_last_list_item(items)
+                        if extra_text:
+                            # Если есть extra_text, добавляем его как отдельный элемент
+                            # который потом станет отдельным абзацем
+                            pass
+                        return items, intro_text
+
+        return items, intro_text
+
+    def _is_intro_text(self, text: str, items_count: int) -> bool:
+        """
+        Определяет, является ли текст вводным для списка.
+        items_count - количество элементов в списке
+        """
+        if not text:
+            return False
+
+        text_lower = text.lower().strip()
+
+        # 1. Если текст заканчивается на : - это точно вводный
+        if text_lower.endswith(':'):
+            return True
+
+        # 2. Содержит ключевые слова-индикаторы
+        intro_indicators = [
+            'следующий', 'ниже', 'это', 'включает', 'состоит',
+            'представлен', 'доступен', 'характеристики', 'преимущества',
+            'особенности', 'параметры', 'свойства', 'виды', 'типы',
+            'список', 'перечень', 'такой', 'как', 'например'
+        ]
+        for indicator in intro_indicators:
+            if indicator in text_lower:
+                return True
+
+        # 3. Если текст длинный (более 50 символов) и есть 3+ элементов списка
+        if len(text) > 50 and items_count >= 3:
+            return True
+
+        # 4. Если текст содержит несколько предложений (есть . или ! или ?)
+        if len(text) > 30 and ('. ' in text or '! ' in text or '? ' in text):
+            return True
+
+        # 5. Если текст явно описывает что будет дальше
+        desc_phrases = [
+            'представляет собой', 'является', 'используется', 'применяется',
+            'включает в себя', 'состоит из', 'имеет следующие'
+        ]
+        for phrase in desc_phrases:
+            if phrase in text_lower:
+                return True
+
+        return False
+
+    def _detect_list_type(self, line: str) -> str:
+        """
+        Определяет тип списка: 'ul' или 'ol'
+        """
+        ol_pattern = r'\b\d+\.\s+'
+        if re.search(ol_pattern, line):
+            matches = re.findall(ol_pattern, line)
+            if len(matches) >= 2:
+                return 'ol'
+        return 'ul'
+
+    def _split_last_list_item(self, items: List[str]) -> Tuple[List[str], Optional[str]]:
+        """
+        Разделяет последний элемент списка по второй заглавной букве.
+        Если есть заглавная буква НЕ в начале - это отдельный абзац!
+        """
+        if not items:
+            return items, None
+
+        last_item = items[-1]
+
+        # Ищем ВСЕ заглавные буквы (кроме первой)
+        for i in range(1, len(last_item)):
+            char = last_item[i]
+
+            # Если это заглавная буква
+            if char.isupper() and char.isalpha():
+                # Проверяем, что перед ней пробел или разделитель
+                if last_item[i-1] in [' ', '.', '!', '?']:
+                    first_part = last_item[:i].strip()
+                    second_part = last_item[i:].strip()
+
+                    # Проверяем, что вторая часть не слишком короткая
+                    if len(second_part) > 5:
+                        items[-1] = first_part
+                        return items, second_part
+
+        return items, None
+    def _fix_h2_in_paragraph(self, html: str) -> str:
+        """
+        Исправляет ситуацию, когда <h2> находится внутри <p>
+            """
+        pattern = r'<p[^>]*>(.*?)<h2>(.*?)</h2>(.*?)</p>'
+
+        def replacer(match):
+            before = match.group(1).strip()
+            h2_content = match.group(2).strip()
+            after = match.group(3).strip()
+
+            result = []
+            result.append(f'<h2>{h2_content}</h2>')
+            if before or after:
+                combined = ' '.join([before, after]).strip()
+                if combined:
+                    result.append(f'<p>{combined}</p>')
+
+            return '\n'.join(result)
+
+        return re.sub(pattern, replacer, html, flags=re.DOTALL | re.IGNORECASE)
+    def _extract_inline_list(self, text: str) -> Tuple[str, Optional[str], List[str]]:
+        """
+        Ищет в тексте inline-список (например: "1. текст 2. текст 3. текст")
+        Возвращает: (текст_до_списка, тип_списка, элементы_списка)
+        """
+        ol_pattern = r'\b(\d+)\.\s+'
+        matches = list(re.finditer(ol_pattern, text))
+
+        if len(matches) >= 2:  # Минимум 2 элемента
+            first_pos = matches[0].start()
+            before = text[:first_pos].strip()
+
+            items = []
+            for i, match in enumerate(matches):
+                # Начало элемента - позиция маркера
+                start = match.start()
+                # Конец элемента - перед следующим маркером или конец текста
+                if i + 1 < len(matches):
+                    end = matches[i + 1].start()
+                else:
+                    end = len(text)
+
+                # Извлекаем текст элемента (включая маркер)
+                full_text = text[start:end].strip()
+
+                # Убираем маркер (1., 2., 3.) из начала
+                # Ищем точку с пробелом после цифры
+                marker_match = re.match(r'\d+\.\s+', full_text)
+                if marker_match:
+                    item_text = full_text[marker_match.end():].strip()
+                else:
+                    item_text = full_text
+
+                if item_text:
+                    items.append(item_text)
+
+            if items:
+                return before, 'ol', items
+
+        # Проверяем UL список (*, -, +)
+        ul_markers = ['* ', '- ', '+ ']
+        for marker in ul_markers:
+            positions = []
+            start = 0
+            while True:
+                pos = text.find(marker, start)
+                if pos == -1:
+                    break
+                # Проверяем, что это не часть слова
+                if pos == 0 or text[pos-1] in [' ', '\n', '\t']:
+                    positions.append(pos)
+                start = pos + len(marker)
+
+            if len(positions) >= 2:
+                first_pos = positions[0]
+                before = text[:first_pos].strip()
+
+                items = []
+                for i, pos in enumerate(positions):
+                    item_start = pos + len(marker)
+                    if i + 1 < len(positions):
+                        item_end = positions[i + 1]
+                    else:
+                        item_end = len(text)
+
+                    item_text = text[item_start:item_end].strip()
+                    if item_text:
+                        items.append(item_text)
+
+                if items:
+                    return before, 'ul', items
+
+        return text, None, []
     def convert_to_html(self, text: str, block_id: str = None) -> Tuple[str, List[Dict]]:
         """
         Конвертирует текст в HTML.
@@ -771,12 +1031,11 @@ class EnhancedTextProcessor:
         lines = text.split('\n')
         html_lines = []
         in_list = False
-        list_type = None  # 'ul' или 'ol'
+        list_type = None
 
         for line_num, line in enumerate(lines):
             line = line.rstrip()
 
-            # Пропускаем пустые строки
             if not line:
                 if in_list:
                     html_lines.append(f'</{list_type}>')
@@ -784,7 +1043,7 @@ class EnhancedTextProcessor:
                     list_type = None
                 continue
 
-            # Проверка на запрещённое форматирование (** и * не для списков)
+            # Проверка на запрещённое форматирование
             if re.search(r'(?<!^)\*\*', line) or re.search(r'(?<!^)\*[^*]', line):
                 if not re.match(r'^\s*\*\s+', line):
                     errors.append({
@@ -794,50 +1053,36 @@ class EnhancedTextProcessor:
                         'text': line[:50] + '...' if len(line) > 50 else line
                     })
 
-            # --- ИСПРАВЛЕНО: обработка h2 с последующим текстом ---
+            # --- ОБРАБОТКА h2 с последующим текстом ---
             h2_match = re.match(r'^(<h2>.*?</h2>)(.*)$', line, re.IGNORECASE | re.DOTALL)
             if h2_match:
-                # Закрываем предыдущий список если был
                 if in_list:
                     html_lines.append(f'</{list_type}>')
                     in_list = False
                     list_type = None
 
-                # Добавляем h2 как есть
                 h2_part = h2_match.group(1).strip()
                 html_lines.append(h2_part)
 
-                # Обрабатываем остаток строки после h2
                 rest_part = h2_match.group(2).strip()
                 if rest_part:
-                    # Проверяем наличие маркеров списка (* или -)
-                    if '* ' in rest_part or '- ' in rest_part:
-                        # Определяем, какой маркер используется
-                        if '* ' in rest_part:
-                            marker = '* '
-                        else:
-                            marker = '- '
+                    before, list_type_found, items = self._extract_inline_list(rest_part)
+                    if items and len(items) >= 2:
+                        # ✅ ДОБАВЛЯЕМ ЭТУ СТРОКУ:
+                        items, extra_text = self._split_last_list_item(items)
 
-                        # Разбиваем по маркеру
-                        parts = rest_part.split(marker)
-                        first_part = parts[0].strip()
-                        list_items = [p.strip() for p in parts[1:] if p.strip()]
-
-                        # Убираем возможные точки в конце элементов
-                        list_items = [item.rstrip('.') for item in list_items]
-
-                        if first_part:
-                            html_lines.append(f'<p>{first_part}</p>')
-
-                        if list_items:
-                            html_lines.append('<ul>')
-                            for item in list_items:
-                                html_lines.append(f'<li>{item}</li>')
-                            html_lines.append('</ul>')
+                        if before:
+                            html_lines.append(f'<p>{before}</p>')
+                        html_lines.append(f'<{list_type_found}>')
+                        for item in items:
+                            html_lines.append(f'<li>{item}</li>')
+                        html_lines.append(f'</{list_type_found}>')
+                        # ✅ ДОБАВЛЯЕМ ЭТУ СТРОКУ:
+                        if extra_text:
+                            html_lines.append(f'<p>{extra_text}</p>')
                     else:
-                        # Просто текст
                         html_lines.append(f'<p>{rest_part}</p>')
-                continue
+                    continue
 
             # Если строка уже содержит HTML-тег - пропускаем
             if re.match(r'^\s*<[a-z][a-z0-9]*[^>]*>.*</[a-z][a-z0-9]*>\s*$', line, re.IGNORECASE):
@@ -845,62 +1090,67 @@ class EnhancedTextProcessor:
                     html_lines.append(line)
                 continue
 
-            # --- ИСПРАВЛЕНО: обработка inline-списка с маркерами * или - ---
-            # Ищем маркеры в строке (* или - с пробелом)
-            markers = []
-            if '* ' in line:
-                markers.append('* ')
-            if '- ' in line:
-                markers.append('- ')
-
-            if markers and (line.count('* ') + line.count('- ')) >= 2:  # минимум 2 маркера = 3+ элемента
-                # Используем первый найденный маркер
-                marker = markers[0]
-                parts = line.split(marker)
+            # --- ПРОВЕРЯЕМ НА INLINE-СПИСОК ---
+            before, list_type_found, items = self._extract_inline_list(line)
+            if items and len(items) >= 2:
+                # ✅ ДОБАВЛЯЕМ: разделяем последний элемент
+                items, extra_text = self._split_last_list_item(items)
 
                 if in_list:
-                    # Добавляем все части как элементы списка
-                    for part in parts:
-                        if part.strip():
-                            # Убираем точку в конце если есть
-                            clean_part = part.strip().rstrip('.')
-                            html_lines.append(f'<li>{clean_part}</li>')
-                else:
-                    # Создаём новый список
-                    if len(parts) >= 2:
-                        first_part = parts[0].strip()
-                        rest_parts = [p.strip().rstrip('.') for p in parts[1:] if p.strip()]
+                    html_lines.append(f'</{list_type}>')
+                    in_list = False
+                    list_type = None
 
-                        # Проверяем, является ли первый элемент вводным текстом
-                        intro_indicators = [
-                            'такой', 'следующий', 'ниже', ':', 'это', 'включает',
-                            'предлагаем', 'обеспечивает', 'предоставляет', 'включает',
-                            'состоит', 'имеет', 'представлен', 'доступен'
-                        ]
+                if before:
+                    html_lines.append(f'<p>{before}</p>')
 
-                        # Если первый элемент заканчивается на : или содержит ключевые слова
-                        is_intro = (first_part.endswith(':') or
-                                    any(ind in first_part.lower() for ind in intro_indicators))
+                html_lines.append(f'<{list_type_found}>')
+                for item in items:
+                    html_lines.append(f'<li>{item}</li>')
+                html_lines.append(f'</{list_type_found}>')
 
-                        if is_intro and len(first_part) < 150:  # вводный текст
-                            html_lines.append(f'<p>{first_part}</p>')
-                            if rest_parts:
-                                html_lines.append('<ul>')
-                                for part in rest_parts:
-                                    if part:
-                                        html_lines.append(f'<li>{part}</li>')
-                                html_lines.append('</ul>')
-                        else:
-                            # Все части - элементы списка (включая первую)
-                            all_items = [first_part] + rest_parts if first_part else rest_parts
-                            all_items = [item for item in all_items if item]
-
-                            if all_items:
-                                html_lines.append('<ul>')
-                                for item in all_items:
-                                    html_lines.append(f'<li>{item}</li>')
-                                html_lines.append('</ul>')
+                # ✅ ДОБАВЛЯЕМ: если есть extra_text - добавляем как отдельный абзац
+                if extra_text:
+                    html_lines.append(f'<p>{extra_text}</p>')
                 continue
+
+            # --- ОБЫЧНЫЕ СПИСКИ (с маркерами в начале строки) ---
+            if self._is_valid_list_line(line):
+                items, intro_text = self._extract_list_items(line)
+
+                if len(items) >= 2:
+                    if intro_text:
+                        if in_list:
+                            html_lines.append(f'</{list_type}>')
+                            in_list = False
+                            list_type = None
+                        html_lines.append(f'<p>{intro_text}</p>')
+
+                    items, extra_text = self._split_last_list_item(items)
+                    lt = self._detect_list_type(line)
+
+                    if in_list:
+                        for item in items:
+                            if item.strip():
+                                clean_item = item.strip().rstrip('.')
+                                html_lines.append(f'<li>{clean_item}</li>')
+                        html_lines.append(f'</{lt}>')
+                        in_list = False
+                        list_type = None
+                        if extra_text:
+                            html_lines.append(f'<p>{extra_text}</p>')
+                    else:
+                        html_lines.append(f'<{lt}>')
+                        for item in items:
+                            if item.strip():
+                                clean_item = item.strip().rstrip('.')
+                                html_lines.append(f'<li>{clean_item}</li>')
+                        html_lines.append(f'</{lt}>')
+                        in_list = True
+                        if extra_text:
+                            html_lines.append(f'<p>{extra_text}</p>')
+                        list_type = lt
+                    continue
 
             # Обычный текст
             else:
@@ -911,10 +1161,11 @@ class EnhancedTextProcessor:
 
                 html_lines.append(f'<p>{line}</p>')
 
-        # Закрываем список, если остался открытым
         if in_list:
             html_lines.append(f'</{list_type}>')
-        html_lines.append('<br>')
+
+        if html_lines:
+            html_lines.append('<br>')
 
         return '\n'.join(html_lines), errors
 
@@ -1709,7 +1960,6 @@ class Phase7Interface:
         else:
             block.status = 'processed'
     def _sync_session_state_to_blocks(self):
-        """Синхронизация session_state ↔ blocks (в обе стороны)"""
         fm = st.session_state.get('fragment_manager')
         if not fm:
             return False
@@ -1719,23 +1969,20 @@ class Phase7Interface:
             text_key = f"edit_text_{block.id}"
             html_key = f"edit_html_{block.id}"
 
-            # Из session_state в block
+            # ✅ ТОЛЬКО из session_state в block
             if text_key in st.session_state:
                 new_text = st.session_state[text_key]
                 if new_text != block.processed_text:
                     block.processed_text = new_text
                     changed = True
 
-            if html_key in st.session_state and block.html_text != st.session_state[html_key]:
-                block.html_text = st.session_state[html_key]
-                changed = True
-
-            # Из block в session_state (чтобы всегда было актуально)
-            if text_key not in st.session_state or st.session_state[text_key] != block.processed_text:
-                st.session_state[text_key] = block.processed_text
-
-            if html_key not in st.session_state or st.session_state[html_key] != block.html_text:
-                st.session_state[html_key] = block.html_text
+            # ⚠️ ВАЖНО: НЕ затираем HTML из session_state, если там нет HTML!
+            if html_key in st.session_state and st.session_state[html_key]:
+                new_html = st.session_state[html_key]
+                if new_html != block.html_text:
+                    block.html_text = new_html
+                    changed = True
+            # Если в session_state нет HTML - НЕ затираем блок!
 
         return changed
     def _init_session_state(self):
@@ -2310,7 +2557,7 @@ class Phase7Interface:
                     delta="Обновлено" if results.get('total_errors', 0) > 0 else None)
 
         if results.get('details'):
-            with st.expander("📋 Детали по блокам", expanded=True):
+            with st.expander("📋 Детали по блокам", expanded=False):
                 df = pd.DataFrame(results['details'])
                 st.dataframe(df, use_container_width=True, hide_index=True)
     def _migrate_fragments(self):
@@ -2491,11 +2738,98 @@ class Phase7Interface:
         except Exception as e:
             st.error(f"Ошибка загрузки: {str(e)}")
             return {}
-    # ------------------------------------------------------------------
+    def _add_debug_button(self):
+        """Добавляет кнопку отладки"""
+        with st.sidebar:
+            st.divider()
+            if st.button("🔍 Показать состояние блоков", use_container_width=True):
+                self._debug_blocks_state()
+                st.info("✅ Состояние выведено в консоль")
+
+                # ✅ Показываем в UI
+                fm = st.session_state.fragment_manager
+                if fm:
+                    st.write("📊 Статистика в UI:")
+                    for block in fm.fragments:
+                        st.write(f"  {block.fragment_name}: html={len(block.html_text)} симв, generated={block.html_generated}")
+    def _debug_blocks_state(self):
+        """Отладка состояния блоков"""
+        fm = st.session_state.get('fragment_manager')
+        if not fm:
+            return
+
+        print("\n" + "="*60)
+        print("🔍 СОСТОЯНИЕ БЛОКОВ:")
+        print("="*60)
+
+        for block in fm.fragments:
+            text_key = f"edit_text_{block.id}"
+            html_key = f"edit_html_{block.id}"
+
+            print(f"\n📦 Блок: {block.fragment_name} (id: {block.id[:8]})")
+            print(f"   processed_text в блоке: {len(block.processed_text)} символов")
+            print(f"   processed_text в session_state: {len(st.session_state.get(text_key, ''))} символов")
+            print(f"   html_text в блоке: {len(block.html_text)} символов")
+            print(f"   html_text в session_state: {len(st.session_state.get(html_key, ''))} символов")
+            print(f"   html_generated: {block.html_generated}")
+            print(f"   status: {block.status}")
+
+        print("="*60)
+    def _clear_old_session_keys(self, current_block_ids: List[str] = None):
+        """Очищает старые ключи session_state, которые не принадлежат текущим блокам"""
+        if current_block_ids is None:
+            fm = st.session_state.get('fragment_manager')
+            if fm:
+                current_block_ids = [block.id for block in fm.fragments]
+            else:
+                current_block_ids = []
+
+        # Создаём множество текущих ID
+        current_ids = set(current_block_ids)
+
+        # Находим все ключи, которые начинаются с edit_text_ или edit_html_
+        keys_to_delete = []
+        for key in st.session_state.keys():
+            if key.startswith('edit_text_') or key.startswith('edit_html_'):
+                # Извлекаем ID из ключа
+                parts = key.split('_')
+                if len(parts) >= 3:
+                    block_id = parts[2]  # edit_text_{id} или edit_html_{id}
+                    if block_id not in current_ids:
+                        keys_to_delete.append(key)
+
+        # Удаляем старые ключи
+        for key in keys_to_delete:
+            del st.session_state[key]
+            log(f"   🗑️ Удалён старый ключ: {key}", "DEBUG")
+
+        return len(keys_to_delete)
+        # ------------------------------------------------------------------
     #                     ЗАГРУЗКА ДАННЫХ (БЕЗ ОБРАБОТКИ)
     # ------------------------------------------------------------------
+
+    def _debug_session_keys(self):
+        """Отладка - показывает все ключи session_state"""
+        print("\n" + "="*60)
+        print("🔍 КЛЮЧИ В SESSION_STATE:")
+        print("="*60)
+
+        text_keys = [k for k in st.session_state.keys() if k.startswith('edit_text_')]
+        html_keys = [k for k in st.session_state.keys() if k.startswith('edit_html_')]
+
+        print(f"📝 edit_text_* ключей: {len(text_keys)}")
+        for key in sorted(text_keys)[:10]:
+            value = st.session_state.get(key, '')
+            print(f"   {key}: {len(value)} символов -> {value[:50]}...")
+
+        print(f"\n🌐 edit_html_* ключей: {len(html_keys)}")
+        for key in sorted(html_keys)[:10]:
+            value = st.session_state.get(key, '')
+            print(f"   {key}: {len(value)} символов")
+
+        print("="*60)
     def _load_data(self) -> bool:
-        """Загружает данные из фазы 6 ТОЛЬКО из файла"""
+        """Загружает данные с приоритетом: phase7 > phase6 > phase5"""
         log("=" * 60, "INFO")
         log("🔍 _load_data() CALLED", "INFO")
 
@@ -2514,13 +2848,43 @@ class Phase7Interface:
             domain = st.session_state.get('current_domain', 'default')
 
         log(f"   current_project_id: {current_project_id}", "INFO")
-        log(f"   user_id: {user_id}", "INFO")
-        log(f"   site: {site}", "INFO")
-        log(f"   domain: {domain}", "INFO")
+
+        # ✅ Если проект изменился - ПОЛНОСТЬЮ ОЧИЩАЕМ ВСЁ
+        last_loaded = st.session_state.get('phase7_last_loaded_project')
+        if last_loaded != current_project_id:
+            log(f"🔄 Смена проекта: {last_loaded} -> {current_project_id}", "INFO")
+
+            # 1. Очищаем fragment_manager
+            fm = st.session_state.get('fragment_manager')
+            if fm:
+                fm.fragments = []
+                fm.fragment_names = set()
+                fm.fragment_properties = defaultdict(list)
+                fm.templates = {}
+
+            # 2. ✅ ОЧИЩАЕМ ВСЕ ДИНАМИЧЕСКИЕ КЛЮЧИ (включая старые ID!)
+            keys_to_clear = [key for key in list(st.session_state.keys())
+                             if key.startswith('edit_text_') or
+                             key.startswith('edit_html_') or
+                             key.startswith('inline_editor_text_') or
+                             key.startswith('editor_text_')]
+            for key in keys_to_clear:
+                if key in st.session_state:
+                    del st.session_state[key]
+                    log(f"   Удалён ключ: {key}", "DEBUG")
+
+            # 3. Сбрасываем флаги
+            st.session_state.phase7_initialized = False
+            st.session_state.variables_replaced = False
+            if 'postprocessing_results' in st.session_state:
+                del st.session_state.postprocessing_results
+
+            # 4. ✅ ОЧИЩАЕМ phase7_projects_data
+            if 'phase7_projects_data' in st.session_state.app_data:
+                st.session_state.app_data['phase7_projects_data'] = {}
 
         project_file = Path(f"sites/{site}/domains/{domain}/projects/{user_id}/{current_project_id}.json")
         log(f"   project_file: {project_file}", "INFO")
-        log(f"   project_file.exists(): {project_file.exists()}", "INFO")
 
         if not project_file.exists():
             log(f"❌ Файл проекта НЕ СУЩЕСТВУЕТ: {project_file}", "ERROR")
@@ -2530,43 +2894,66 @@ class Phase7Interface:
             with open(project_file, 'r', encoding='utf-8') as f:
                 file_data = json.load(f)
 
-            log(f"   ✅ Файл загружен, keys: {list(file_data.keys())}", "INFO")
-            log(f"   app_data keys: {list(file_data.get('app_data', {}).keys())}", "INFO")
+            fm = st.session_state.fragment_manager
 
-            # Проверяем phase6
+            # ✅ ПРОВЕРЯЕМ СНАЧАЛА PHASE7 (ТАМ ЕСТЬ HTML!)
+            phase7_data = file_data.get('app_data', {}).get('phase7', {})
+
+            if phase7_data and phase7_data.get('blocks'):
+                log(f"✅ Загрузка из phase7: {len(phase7_data['blocks'])} блоков с HTML", "INFO")
+
+                # Очищаем перед загрузкой
+                fm.fragments = []
+                fm.fragment_names = set()
+                fm.fragment_properties = defaultdict(list)
+                fm.templates = {}
+
+                # ✅ Загружаем блоки с HTML
+                for block_data in phase7_data['blocks']:
+                    block = fm.add_block(block_data)
+
+                    # ✅ ВОССТАНАВЛИВАЕМ HTML В SESSION_STATE
+                    if block_data.get('html_text'):
+                        html_key = f"edit_html_{block.id}"
+                        st.session_state[html_key] = block_data['html_text']
+                        log(f"   Восстановлен HTML для {block.fragment_name} ({len(block_data['html_text'])} символов)", "INFO")
+
+                    if block_data.get('processed_text'):
+                        text_key = f"edit_text_{block.id}"
+                        st.session_state[text_key] = block_data['processed_text']
+
+                fm.category_code = phase7_data.get('category_code', fm.category_code)
+                fm.category = fm.category_code
+
+                # Пересчитываем ошибки
+                for block in fm.fragments:
+                    self._recalculate_block_errors(block)
+
+                # Создаём шаблоны
+                self._create_default_templates()
+
+                st.session_state.phase7_last_loaded_project = current_project_id
+                st.session_state.phase7_initialized = True
+
+                log(f"✅ Загружено {len(fm.fragments)} блоков из phase7", "INFO")
+                log("=" * 60, "INFO")
+                return True
+
+            # Если нет phase7 - пробуем phase6
             phase6_data = file_data.get('app_data', {}).get('phase6', {})
-            log(f"   phase6_data type: {type(phase6_data)}", "INFO")
 
-            if phase6_data:
-                log(f"   phase6_data keys: {list(phase6_data.keys())}", "INFO")
-                log(f"   phase6_data has 'results': {'results' in phase6_data}", "INFO")
-                log(f"   phase6_data has 'processed_texts': {'processed_texts' in phase6_data}", "INFO")
-
-                if 'results' in phase6_data:
-                    log(f"   results count: {len(phase6_data['results'])}", "INFO")
-                if 'processed_texts' in phase6_data:
-                    log(f"   processed_texts count: {len(phase6_data['processed_texts'])}", "INFO")
-
-            # ===== ЕСЛИ В PHASE6 НЕТ processed_texts, ИСПОЛЬЗУЕМ PHASE5 =====
+            # Если нет phase6 - пробуем phase5
             if not phase6_data.get('processed_texts') and not phase6_data.get('results'):
-                log(f"⚠️ В phase6 нет processed_texts и results, используем phase5", "WARNING")
-
-                # Пробуем взять из phase5
                 phase5_data = file_data.get('app_data', {}).get('phase5', {})
                 results = phase5_data.get('results', {})
-
                 if results:
-                    log(f"✅ Найдены phase5 results: {len(results)}", "INFO")
-
-                    # Конвертируем phase5 в формат phase6
+                    log(f"⚠️ Загрузка из phase5 (нет phase6)", "WARNING")
                     phase6_data = {
                         'results': results,
                         'processed_texts': [],
                         'original_texts': [],
                         'statistics': phase5_data.get('statistics', {})
                     }
-
-                    # Извлекаем тексты из результатов
                     for prompt_id, result in results.items():
                         if isinstance(result, dict):
                             text = result.get('edited_text') or result.get('ai_response', '')
@@ -2574,26 +2961,11 @@ class Phase7Interface:
                                 phase6_data['processed_texts'].append(text)
                                 phase6_data['original_texts'].append(text)
 
-                    log(f"✅ Извлечено {len(phase6_data['processed_texts'])} текстов из phase5", "INFO")
-                else:
-                    log(f"❌ Нет данных ни в phase6, ни в phase5", "ERROR")
-                    return False
-
-            # Проверяем phase5
-            phase5_data = file_data.get('app_data', {}).get('phase5', {})
-            log(f"   phase5_data keys: {list(phase5_data.keys())}", "INFO")
-            if phase5_data and 'results' in phase5_data:
-                log(f"   phase5 results count: {len(phase5_data['results'])}", "INFO")
-
-            # Проверяем phase5_results в корне
-            phase5_results_root = file_data.get('phase5_results', {})
-            log(f"   phase5_results_root count: {len(phase5_results_root)}", "INFO")
-
         except Exception as e:
             log(f"❌ Ошибка чтения файла: {e}", "ERROR")
             return False
 
-        # Извлекаем результаты
+        # Извлекаем результаты из phase6
         results_dict = {}
 
         if 'results' in phase6_data:
@@ -2628,16 +3000,17 @@ class Phase7Interface:
             log(f"❌ Нет результатов в phase6_data", "ERROR")
             return False
 
-        log(f"✅ Загружено {len(results_dict)} результатов")
+        log(f"✅ Загружено {len(results_dict)} результатов из phase6", "INFO")
 
         fm = st.session_state.fragment_manager
 
-        # Очищаем старые блоки
+        # Очищаем перед загрузкой
         fm.fragments = []
         fm.fragment_names = set()
         fm.fragment_properties = defaultdict(list)
+        fm.templates = {}
 
-        # Создаём блоки из файла
+        # Создаём блоки из phase6
         for prompt_id, result in results_dict.items():
             if isinstance(result, str):
                 try:
@@ -2648,21 +3021,17 @@ class Phase7Interface:
             if not isinstance(result, dict) or result.get('status') == 'error':
                 continue
 
-            # Извлекаем текст с приоритетом
             text = (result.get('edited_text') or
                     result.get('ai_response') or
                     result.get('processed_text') or
                     result.get('text', ''))
 
-            # Если текст - это результат из phase5
             if not text and 'ai_response' in result:
                 text = result['ai_response']
 
-            # Если результат - строка, используем её
             if not text and isinstance(result, str):
                 text = result
 
-            # Если ничего не нашли - пропускаем
             if not text:
                 log(f"⚠️ Нет текста для prompt_id: {prompt_id}", "WARNING")
                 continue
@@ -2694,8 +3063,13 @@ class Phase7Interface:
                 'is_synonymized': result.get('is_synonymized', False)
             }
 
-            fm.add_block(block_data)
+            block = fm.add_block(block_data)
 
+            # ✅ Сохраняем в session_state (НОВЫЕ КЛЮЧИ!)
+            text_key = f"edit_text_{block.id}"
+            st.session_state[text_key] = normalized_text
+        current_ids = [block.id for block in fm.fragments]
+        self._clear_old_session_keys(current_ids)
         # Пересчитываем ошибки
         for block in fm.fragments:
             self._recalculate_block_errors(block)
@@ -2703,10 +3077,14 @@ class Phase7Interface:
         # Создаём шаблоны
         self._create_default_templates()
 
-        # Сохраняем
+        # ✅ Сохраняем ID текущего проекта
+        st.session_state.phase7_last_loaded_project = current_project_id
+        st.session_state.phase7_initialized = True
+
+        # ✅ СОХРАНЯЕМ В PHASE7
         self.save_data_to_app_state()
 
-        log(f"✅ _load_data() завершена, загружено {len(fm.fragments)} блоков", "INFO")
+        log(f"✅ _load_data() завершена, загружено {len(fm.fragments)} блоков из phase6", "INFO")
         log("=" * 60, "INFO")
         return True
     def _load_from_phase5(self) -> bool:
@@ -2788,12 +3166,17 @@ class Phase7Interface:
 
         return text
     def _apply_postprocessing(self, block_id: str = None):
-        """Применяет постобработку с учётом правил из конфига домена"""
-        self._sync_session_state_to_blocks()
-
-        rules = self._get_postprocessing_rules()
+        """Постобработка с СОХРАНЕНИЕМ HTML"""
+        # ✅ СНАЧАЛА синхронизируем ИЗ blocks В session_state
+        self._force_sync_from_blocks_to_session()
 
         fm = st.session_state.fragment_manager
+
+        if not fm.fragments:
+            st.warning("⚠️ Нет данных для постобработки")
+            return
+
+        rules = self._get_postprocessing_rules()
         registry = st.session_state.transformation_registry
 
         if block_id:
@@ -2811,21 +3194,23 @@ class Phase7Interface:
         details = []
 
         for block in blocks:
+            # ✅ БЕРЁМ ТЕКСТ ИЗ БЛОКА (НЕ ИЗ SESSION_STATE!)
             old_text = block.processed_text
             new_text = old_text
+
+            if not new_text or new_text.strip() == "":
+                continue
+
+            # Применяем правила постобработки
             if rules.get("punctuation_fix", True):
                 new_text = self.text_processor.fix_punctuation(new_text)
 
             if rules.get("city_variable_fix", True):
                 new_text, _ = self.text_processor.process_city_variable(new_text)
 
-            # Кастомные замены из конфига
             custom_replacements = rules.get("custom_replacements", [])
             for repl in custom_replacements:
                 new_text = new_text.replace(repl["from"], repl["to"])
-            # === Постобработка ===
-            new_text = self.text_processor.fix_punctuation(new_text)
-            new_text, city_errors = self.text_processor.process_city_variable(new_text)
 
             units = st.session_state.ui_state.get('selected_units_global', [])
             if units:
@@ -2842,17 +3227,22 @@ class Phase7Interface:
                     total_symbols_removed += len(removed_sym)
                 block.special_symbols = new_specials
 
-            # Обновляем текст
+            # ✅ ОБНОВЛЯЕМ ТОЛЬКО ТЕКСТ, HTML НЕ ТРОГАЕМ!
             block.processed_text = new_text
             block.last_modified = datetime.now()
             block.manually_fixed = True
 
-            # Критично: обновляем session_state
+            # ✅ ОБНОВЛЯЕМ session_state для текста
             text_key = f"edit_text_{block.id}"
-            if text_key in st.session_state:
-                st.session_state[text_key] = new_text
+            st.session_state[text_key] = new_text
 
-            # Пересчёт ошибок ПОСЛЕ всех изменений
+            # ✅ HTML ОСТАЁТСЯ НЕИЗМЕННЫМ!
+            # Проверяем, что HTML не потерялся
+            if block.html_text:
+                html_key = f"edit_html_{block.id}"
+                st.session_state[html_key] = block.html_text
+
+            # Пересчёт ошибок
             self._recalculate_block_errors(block)
 
             # Регистрация трансформации
@@ -2874,23 +3264,24 @@ class Phase7Interface:
                 'Статус': block.status
             })
 
-        # === СОХРАНЯЕМ РЕЗУЛЬТАТЫ С АКТУАЛЬНЫМИ ОШИБКАМИ ===
         st.session_state.postprocessing_results = {
             'total_processed': processed_count,
             'total_units_removed': total_units_removed,
             'total_symbols_removed': total_symbols_removed,
-            'total_errors': sum(len(b.errors) for b in blocks),   # ← теперь актуально
+            'total_errors': sum(len(b.errors) for b in blocks),
             'details': details,
             'timestamp': datetime.now().isoformat()
         }
 
+        # ✅ СОХРАНЯЕМ В ФАЙЛ
         self.save_data_to_app_state()
 
         st.success(f"✅ Постобработка выполнена для {processed_count} блоков")
         if st.session_state.postprocessing_results['total_errors'] > 0:
-            st.warning(f"⚠️ Найдено {st.session_state.postprocessing_results['total_errors']} ошибок после обработки")
+            st.warning(f"⚠️ Найдено {st.session_state.postprocessing_results['total_errors']} ошибок")
 
         st.rerun()
+
 
     def _generate_fragment_name(self, result: Dict) -> str:
         bt = result.get('type', '')
@@ -3321,28 +3712,54 @@ class Phase7Interface:
         st.rerun()
 
     def _apply_generate_html(self, block_id: str = None):
-        self._sync_session_state_to_blocks()  # <-- ДОБАВИТЬ ЭТУ СТРОКУ
+        """Генерация HTML с сохранением"""
+        self._force_sync_from_blocks_to_session()
+
         fm = st.session_state.fragment_manager
+
+        if not fm.fragments:
+            st.warning("⚠️ Нет данных для генерации HTML")
+            return
+
         registry = st.session_state.transformation_registry
-        blocks = [next((b for b in fm.fragments if b.id == block_id), None)] if block_id else fm.fragments
-        blocks = [b for b in blocks if b is not None]
+
+        if block_id:
+            blocks = [next((b for b in fm.fragments if b.id == block_id), None)]
+            blocks = [b for b in blocks if b is not None]
+        else:
+            blocks = fm.fragments.copy()
+
+        if not blocks:
+            st.warning("Нет блоков для генерации HTML")
+            return
 
         generated = 0
         total_errors = 0
 
         for block in blocks:
+            if not block.processed_text or block.processed_text.strip() == "":
+                continue
+
+            # ✅ Генерируем HTML
             html, errors = self.text_processor.convert_to_html(block.processed_text, block.id)
+
+            # ✅ ИСПРАВЛЯЕМ h2 внутри p
+            html = self.text_processor._fix_h2_in_paragraph(html)
 
             html_errors = self.text_processor.validate_html_structure(html, block.fragment_name)
             errors.extend(html_errors)
 
+            # ✅ СОХРАНЯЕМ В БЛОК
             block.html_text = html
             block.last_modified = datetime.now()
             block.html_generated = True
 
-            # ДОБАВИТЬ: синхронизируем с session_state
+            # ✅ СОХРАНЯЕМ В SESSION_STATE
             html_key = f"edit_html_{block.id}"
             st.session_state[html_key] = html
+
+            text_key = f"edit_text_{block.id}"
+            st.session_state[text_key] = block.processed_text
 
             for err in errors:
                 if not any(e.get('type') == err['type'] and e.get('message') == err['message']
@@ -3364,13 +3781,10 @@ class Phase7Interface:
             registry.add(trans)
             generated += 1
 
-        # ... остальной код
-
         if total_errors:
-            st.error(f"❌ Найдено {total_errors} ошибок форматирования или структуры HTML")
+            st.error(f"❌ Найдено {total_errors} ошибок")
         st.success(f"🌐 HTML сгенерирован для {generated} блоков")
-        if generated == 1 and block_id:
-            st.markdown(blocks[0].html_text, unsafe_allow_html=True)
+
         self.save_data_to_app_state()
         st.rerun()
 
@@ -3401,100 +3815,119 @@ class Phase7Interface:
     #                     СБРОС СОСТОЯНИЯ
     # ------------------------------------------------------------------
     def _reset_state(self):
-        """Полный и надёжный сброс фазы 7 (очищает всё и загружает заново из фазы 6)"""
+        """Полный сброс - удаляем phase7 из файла и загружаем из фазы 6"""
 
-        # ===== ДОБАВИТЬ ОЧИСТКУ ID ПРОЕКТА =====
-        st.session_state.phase7_last_loaded_project = None
-        # ===== КОНЕЦ ДОБАВЛЕНИЯ =====
+        print("🔄 СБРОС ФАЗЫ 7 - удаление phase7 из файла и загрузка из фазы 6")
 
-        # 1. Полностью очищаем fragment_manager
+        # 1. Получаем путь к файлу проекта
+        ctx_data = _get_context_data(self.context, st.session_state)
+
+        if ctx_data['has_context'] and self.context is not None:
+            current_project_id = self.context.project_id
+            user_id = self.context.user_id
+            site = self.context.site_name
+            domain = self.context.domain_name
+        else:
+            current_project_id = st.session_state.get('current_project_id', '')
+            user_id = st.session_state.get('user_id')
+            site = st.session_state.get('current_site', 'steelborg')
+            domain = st.session_state.get('current_domain', 'default')
+
+        if not current_project_id:
+            st.error("❌ Нет ID текущего проекта")
+            return
+
+        project_file = Path(f"sites/{site}/domains/{domain}/projects/{user_id}/{current_project_id}.json")
+
+        # 2. ✅ УДАЛЯЕМ phase7 ИЗ ФАЙЛА
+        if project_file.exists():
+            try:
+                with open(project_file, 'r', encoding='utf-8') as f:
+                    file_data = json.load(f)
+
+                # Удаляем phase7 из app_data
+                if 'app_data' in file_data and 'phase7' in file_data['app_data']:
+                    del file_data['app_data']['phase7']
+                    print("   ✅ phase7 удалён из файла")
+
+                # Сохраняем файл без phase7
+                with open(project_file, 'w', encoding='utf-8') as f:
+                    json.dump(file_data, f, ensure_ascii=False, indent=2)
+                    print("   ✅ Файл сохранён без phase7")
+
+            except Exception as e:
+                print(f"   ❌ Ошибка при удалении phase7 из файла: {e}")
+
+        # 3. Очищаем fragment_manager
         if 'fragment_manager' in st.session_state:
             fm = st.session_state.fragment_manager
             fm.fragments = []
             fm.fragment_names = set()
             fm.fragment_properties = defaultdict(list)
             fm.templates = {}
+            print("   ✅ fragment_manager очищен")
 
+        # 4. Удаляем ВСЕ edit_text_* и edit_html_* ключи
+        keys_to_delete = []
+        for key in list(st.session_state.keys()):
+            if (key.startswith('edit_text_') or
+                    key.startswith('edit_html_') or
+                    key.startswith('inline_editor_text_') or
+                    key.startswith('editor_text_')):
+                keys_to_delete.append(key)
 
-        # 2. Очищаем все связанные session_state ключи
-        keys_to_clear = [
-            'fragment_manager',
-            'transformation_registry',
-            'postprocessing_results',
-            'variables_replaced',
+        for key in keys_to_delete:
+            del st.session_state[key]
+            print(f"   🗑️ Удалён ключ: {key}")
+
+        # 5. Сбрасываем ВСЕ флаги
+        flags_to_reset = [
             'phase7_initialized',
+            'variables_replaced',
+            'postprocessing_results',
+            '_force_ui_update',
+            '_templates_updated',
+            '_last_template_update',
+            '_template_debug',
             'found_units',
             'found_special_symbols',
-            'ui_state',
+            'phase7_last_loaded_project',
         ]
 
-        for key in keys_to_clear:
-            if key in st.session_state:
-                del st.session_state[key]
+        for flag in flags_to_reset:
+            if flag in st.session_state:
+                del st.session_state[flag]
+                print(f"   🗑️ Удалён флаг: {flag}")
 
-        # 3. Очищаем все динамические ключи (text_area, html и т.д.)
-        dynamic_keys = [key for key in st.session_state.keys()
-                        if key.startswith('edit_text_') or
-                        key.startswith('edit_html_') or
-                        key.startswith('inline_editor_text_') or
-                        key.startswith('selected_units_global_widget') or
-                        key.startswith('selected_symbols_global_widget')]
+        # 6. Очищаем phase7 в app_data (в session_state)
+        if 'app_data' in st.session_state:
+            if 'phase7' in st.session_state.app_data:
+                st.session_state.app_data['phase7'] = {}
+                print("   ✅ phase7 в session_state.app_data очищен")
 
-        for key in dynamic_keys:
-            if key in st.session_state:
-                del st.session_state[key]
+            if 'phase7_projects_data' in st.session_state.app_data:
+                if current_project_id in st.session_state.app_data['phase7_projects_data']:
+                    del st.session_state.app_data['phase7_projects_data'][current_project_id]
+                    print(f"   ✅ phase7_projects_data для {current_project_id} очищен")
 
-        # 4. Очищаем данные в app_data для текущего проекта
-        current_project_id = st.session_state.get('current_project_id', 'default')
-
-        if 'phase7_projects_data' in st.session_state.app_data:
-            if current_project_id in st.session_state.app_data['phase7_projects_data']:
-                del st.session_state.app_data['phase7_projects_data'][current_project_id]
-
-        if 'phase7' in st.session_state.app_data:
-            st.session_state.app_data['phase7'] = {}
-
-        # 5. Очищаем в DomainManager
-        if 'domain_manager' in st.session_state:
-            dm = st.session_state.domain_manager
-            dm.save_phase_data(7, {})
-
-        # 6. Создаём новый fragment_manager
+        # 7. Создаём новый fragment_manager
         st.session_state.fragment_manager = FragmentManager("Без_категории")
+        print("   ✅ Новый fragment_manager создан")
 
-        # 7. Заново инициализируем
+        # 8. Загружаем свежие данные из фазы 6
         self._init_session_state()
         self._init_ui_state()
 
-        # 8. Очищаем старые шаблоны
-        if 'fragment_manager' in st.session_state:
-            st.session_state.fragment_manager.templates.clear()
-
-        # 9. Загружаем свежие данные из фазы 6
+        # 9. ✅ ПРИНУДИТЕЛЬНО загружаем из фазы 6 (игнорируя phase7)
         success = self._load_data()
 
         if success:
             fm = st.session_state.fragment_manager
-            # Пересчитываем ошибки
-            for block in fm.fragments:
-                self._recalculate_block_errors(block)
-
-            # Создаём шаблоны
-            self._create_default_templates()
-
-            # Сканируем единицы и символы
-            st.session_state.found_units = self._scan_units_in_texts()
-            st.session_state.found_special_symbols = self._scan_special_symbols_in_texts()
-
-            # Устанавливаем флаг инициализации
-            st.session_state.phase7_initialized = True
-
-            st.success(f"✅ Фаза 7 полностью сброшена и загружена из фазы 6 ({len(fm.fragments)} блоков)")
+            st.success(f"✅ Данные загружены из фазы 6 ({len(fm.fragments)} блоков)")
         else:
             st.error("❌ Не удалось загрузить данные из фазы 6")
-            st.session_state.phase7_initialized = False
 
-        time.sleep(1)
+        time.sleep(0.5)
         st.rerun()
 
     def _add_reset_button(self):
@@ -3560,27 +3993,23 @@ class Phase7Interface:
             with col3:
                 if st.button("📊 Статистика", use_container_width=True):
                     fm = st.session_state.fragment_manager
-                    '''st.info(f"""
-                    📊 **Статистика:**
-                    - Блоков: {len(fm.fragments)}
-                    - Фрагментов: {len(fm.fragment_names)}
-                    - Шаблонов: {len(fm.templates)}
-                    - Ошибок: {sum(1 for b in fm.fragments if b.errors)}
-                    """)'''
+                    # статистика
 
         st.markdown("---")
-
-        # ... остальной код
 
         # === Проверка изменений в phase6 ===
         if st.session_state.get('phase6_changed', False):
             st.warning("Обнаружены изменения в фазе 6. Рекомендуется обновить данные.")
             if st.button("🔄 Обновить сейчас"):
                 self.refresh_from_phase6()
-                st.session_state.phase6_changed = False  # сброс флага
+                st.session_state.phase6_changed = False
 
-        # ==================== КРИТИЧЕСКИЙ ФИКС ====================
-        if not st.session_state.get('phase7_initialized', False):
+        # ✅ ИСПРАВЛЕНИЕ: НЕ перезагружаем данные, если они уже есть!
+        fm = st.session_state.fragment_manager
+
+        # Проверяем, есть ли данные в fm
+        if not fm or len(fm.fragments) == 0:
+            # ТОЛЬКО ЕСЛИ ДАННЫХ НЕТ - загружаем
             success = self._load_data()
             if success:
                 st.session_state.phase7_initialized = True
@@ -3589,8 +4018,7 @@ class Phase7Interface:
                 st.session_state.found_units = self._scan_units_in_texts()
                 st.session_state.found_special_symbols = self._scan_special_symbols_in_texts()
 
-                # ✅ ДОБАВЛЯЕМ: Пересчёт ошибок после загрузки
-                fm = st.session_state.fragment_manager
+                # Пересчёт ошибок
                 for block in fm.fragments:
                     self._recalculate_block_errors(block)
 
@@ -3598,28 +4026,42 @@ class Phase7Interface:
             else:
                 st.error("Не удалось загрузить данные для фазы 7")
                 return
+        else:
+            # ✅ ДАННЫЕ УЖЕ ЕСТЬ - просто синхронизируем
+            self._sync_session_state_to_blocks()
+            self._sync_html_to_session_state()
+
+            # Проверяем, не изменился ли проект
+            current_project_id = st.session_state.get('current_project_id')
+            last_loaded = st.session_state.get('phase7_last_loaded_project')
+            if current_project_id and last_loaded != current_project_id:
+                # Проект сменился - загружаем новые данные
+                self._load_data()
+            else:
+                # ✅ Просто синхронизируем HTML из session_state
+                for block in fm.fragments:
+                    html_key = f"edit_html_{block.id}"
+                    if html_key in st.session_state and st.session_state[html_key]:
+                        block.html_text = st.session_state[html_key]
+                    text_key = f"edit_text_{block.id}"
+                    if text_key in st.session_state and st.session_state[text_key]:
+                        block.processed_text = st.session_state[text_key]
+
         # =========================================================
 
-        fm = st.session_state.fragment_manager
         current_domain = self.dm.get_current_domain()
         last_domain = st.session_state.get('_last_domain', None)
 
         if current_domain != last_domain:
             self._on_domain_change()
             st.session_state._last_domain = current_domain
-        # Принудительная синхронизация ПЕРЕД отрисовкой
-        self._sync_session_state_to_blocks()
-        self._sync_html_to_session_state()
 
-        # ... остальной код без изменений
-        # Сканируем единицы и спецсимволы в текстах
+        # Сканируем единицы и спецсимволы
         st.session_state.found_units = self._scan_units_in_texts()
         st.session_state.found_special_symbols = self._scan_special_symbols_in_texts()
 
         self._display_top_panel()
-        # Кнопка сброса состояния
 
-        # Общие кнопки для массовых операций
         if 'variables_replaced' not in st.session_state:
             st.session_state.variables_replaced = False
 
@@ -3632,12 +4074,11 @@ class Phase7Interface:
                     self._auto_insert_regular_blocks()
 
             with col2:
-
-                if st.button("🔄 2. Заменить переменные во всех блоках",
-                             use_container_width=True):
+                if st.button("🔄 2. Заменить переменные во всех блоках", use_container_width=True):
                     st.warning("Выполняется замена переменных...")
-                    self._apply_variable_replacement()
                     st.session_state.variables_replaced = True
+                    self._apply_variable_replacement()
+
                     st.rerun()
 
         st.markdown("---")
@@ -3653,14 +4094,10 @@ class Phase7Interface:
                     if st.button("🌐 4. Сгенерировать HTML для всех блоков", use_container_width=True):
                         self._apply_generate_html()
 
-
-
-                # Здесь можно показывать результаты последней постобработки, если они есть
                 if 'postprocessing_results' in st.session_state:
                     self._display_postprocessing_results()
 
         st.markdown("---")
-
 
         self._sync_session_state_to_blocks()
         tab_options = ["🏷️ Фрагменты", "📋 История замен", "🧩 Шаблоны и HTML", "📤 Экспорт отчета"]
@@ -3677,11 +4114,22 @@ class Phase7Interface:
             key="main_tabs"
         )
 
+
+
         # ✅ ПРИ ПЕРЕКЛЮЧЕНИИ ВКЛАДКИ - СОХРАНЯЕМ ДАННЫЕ
         old_tab = st.session_state.ui_state.get('active_tab')
         if old_tab != active_tab:
-            self._sync_session_state_to_blocks()      # ← обязательно
-            self.save_data_to_app_state(st.session_state.get('app_state'))  # ← сохраняем
+            # ✅ ВАЖНО: синхронизируем ИЗ session_state В блоки
+            for block in fm.fragments:
+                text_key = f"edit_text_{block.id}"
+                html_key = f"edit_html_{block.id}"
+                if text_key in st.session_state:
+                    block.processed_text = st.session_state[text_key]
+                if html_key in st.session_state:
+                    block.html_text = st.session_state[html_key]
+
+            # ✅ СОХРАНЯЕМ В ФАЙЛ
+            self.save_data_to_app_state(st.session_state.get('app_state'))
 
         st.session_state.ui_state['active_tab'] = active_tab
 
@@ -3694,7 +4142,6 @@ class Phase7Interface:
             self._display_templates_interface()
         elif active_tab == tab_options[3]:
             self._display_export_interface()
-
     def _display_top_panel(self):
         with st.sidebar:
             st.header("⚙️ Настройки обработки")
@@ -3851,7 +4298,11 @@ class Phase7Interface:
     #                        ЭКСПОРТ
     # ------------------------------------------------------------------
     def _display_export_interface(self):
-        self._sync_session_state_to_blocks()
+        """Экспорт с принудительной синхронизацией"""
+        # ✅ СНАЧАЛА синхронизируем ИЗ блоков В session_state
+        self._force_sync_from_blocks_to_session()
+
+        # ✅ ПОТОМ сохраняем в файл
         self.save_data_to_app_state(st.session_state.get('app_state'))
 
         st.header("📤 Экспорт отчета")
@@ -3977,15 +4428,27 @@ class Phase7Interface:
     #                     ФРАГМЕНТЫ (СПИСОК И РЕДАКТОР)
     # ------------------------------------------------------------------
     def _display_fragments_interface(self):
-        self._sync_session_state_to_blocks()  # <-- ДОБАВИТЬ ЭТУ СТРОКУ
         st.header("🏷️ Фрагменты и блоки")
         fm = st.session_state.fragment_manager
 
-        # ДОБАВИТЬ ЭТУ КНОПКУ СИНХРОНИЗАЦИИ
+        # ✅ СНАЧАЛА восстанавливаем из session_state в блоки
+        for block in fm.fragments:
+            html_key = f"edit_html_{block.id}"
+            if html_key in st.session_state and st.session_state[html_key]:
+                block.html_text = st.session_state[html_key]
+            text_key = f"edit_text_{block.id}"
+            if text_key in st.session_state and st.session_state[text_key]:
+                block.processed_text = st.session_state[text_key]
+
+            # ✅ Проверяем, что флаг html_generated соответствует наличию HTML
+            if block.html_text and not block.html_generated:
+                block.html_generated = True
+
+        # Кнопка синхронизации
         col_sync, col_empty = st.columns([1, 5])
         with col_sync:
             if st.button("🔄 Синхронизировать всё", key="force_sync_all", use_container_width=True):
-                self._sync_session_state_to_blocks()
+                self._force_sync_from_blocks_to_session()
                 st.success("✅ Все данные синхронизированы!")
                 time.sleep(0.5)
                 st.rerun()
@@ -3993,6 +4456,10 @@ class Phase7Interface:
         if not fm.fragments:
             st.info("Нет фрагментов для отображения")
             return
+
+            # ... остальной код
+
+            # ... остальной код без изменений
 
             # --- Фильтры (без изменений) ---
         col1, col2, col3, col4 = st.columns(4)
@@ -4093,7 +4560,25 @@ class Phase7Interface:
             html_key = f"edit_html_{block.id}"
             if block.html_text and (html_key not in st.session_state or st.session_state[html_key] != block.html_text):
                 st.session_state[html_key] = block.html_text
+            # ✅ ДОБАВЛЯЕМ: синхронизируем и текст
+            text_key = f"edit_text_{block.id}"
+            if block.processed_text and (text_key not in st.session_state or st.session_state[text_key] != block.processed_text):
+                st.session_state[text_key] = block.processed_text
+    def _force_sync_from_blocks_to_session(self):
+        """Принудительная синхронизация ИЗ блоков В session_state"""
+        fm = st.session_state.get('fragment_manager')
+        if not fm:
+            return
 
+        for block in fm.fragments:
+            text_key = f"edit_text_{block.id}"
+            html_key = f"edit_html_{block.id}"
+
+            # ✅ Сохраняем из блока в session_state
+            if block.processed_text:
+                st.session_state[text_key] = block.processed_text
+            if block.html_text:
+                st.session_state[html_key] = block.html_text
     def _on_text_change(self, block_id: str):
         """Callback при изменении текста"""
         fm = st.session_state.get('fragment_manager')
@@ -4834,24 +5319,49 @@ class Phase7Interface:
 def main(app_state=None, settings_mode=False, context=None):
     """
     Фаза 7: Подготовка к загрузке на сайт
-    Получает данные из фазы 6 (синонимизатор) или напрямую из фазы 5
     """
     load_css()
 
-    # ===== ДОБАВИТЬ ПРОВЕРКУ СМЕНЫ ПРОЕКТА =====
+    # ===== ПРОВЕРКА СМЕНЫ ПРОЕКТА =====
     current_project_id = st.session_state.get('current_project_id')
     last_loaded = st.session_state.get('phase7_last_loaded_project')
 
-    # Если проект изменился - сбрасываем данные
+    # Если проект изменился - ПОЛНОСТЬЮ ОЧИЩАЕМ
     if current_project_id and last_loaded != current_project_id:
+        print(f"🔄 Смена проекта в main: {last_loaded} -> {current_project_id}")
+
+        # ✅ Очищаем fragment_manager
         if 'fragment_manager' in st.session_state:
             fm = st.session_state.fragment_manager
             fm.fragments = []
             fm.fragment_names = set()
             fm.fragment_properties = defaultdict(list)
             fm.templates = {}
-        st.session_state.phase7_last_loaded_project = current_project_id
+
+        # ✅ Очищаем ВСЕ динамические ключи
+        keys_to_clear = [key for key in list(st.session_state.keys())
+                         if key.startswith('edit_text_') or
+                         key.startswith('edit_html_') or
+                         key.startswith('inline_editor_text_') or
+                         key.startswith('editor_text_')]
+        for key in keys_to_clear:
+            if key in st.session_state:
+                del st.session_state[key]
+                print(f"   Удалён ключ: {key}")
+
+        # Сбрасываем флаги
         st.session_state.phase7_initialized = False
+        st.session_state.variables_replaced = False
+        if 'postprocessing_results' in st.session_state:
+            del st.session_state.postprocessing_results
+
+        # ✅ Очищаем phase7_projects_data
+        if 'phase7_projects_data' in st.session_state.app_data:
+            st.session_state.app_data['phase7_projects_data'] = {}
+
+        st.session_state.phase7_last_loaded_project = current_project_id
+
+    # ... остальной код
     # ===== КОНЕЦ ПРОВЕРКИ =====
 
     if 'domain_manager' not in st.session_state:
