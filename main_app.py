@@ -1661,8 +1661,7 @@ def render_manual_mode_with_domain():
         context.load()
 
     app_state = AppState()
-    if render_module_specific_buttons(app_state):
-        return
+
 
     if st.session_state.get('selected_module') == 'texts':
         render_manual_mode_with_domain_context(dm, context=context)
@@ -1768,7 +1767,7 @@ def render_manual_mode_with_domain_context(dm: DomainManager, context=None):
             return
 
     # Хедер
-    render_manual_header(app_state)
+
 
     # Навигация и содержимое
     render_phase_navigation(app_state, context)
@@ -1832,7 +1831,7 @@ def render_manual_mode():
             return
 
     # Верхняя панель
-    render_manual_header(app_state)
+
 
     # Навигация и содержимое фаз
     render_phase_navigation(app_state)
@@ -2742,8 +2741,7 @@ def render_auto_mode():
     # st.session_state.current_domain = current_domain
 
     # Кнопки модуля
-    if render_module_specific_buttons(app_state):
-        return
+
 
     # Загрузка проекта если выбран
     if st.session_state.get('current_project_id'):
@@ -3944,7 +3942,9 @@ def main():
     st.set_page_config(page_title="Data Harvester Pro", layout="wide", initial_sidebar_state="expanded")
     init_session_state_keys()
     # ✅ Восстанавливаем сохранённый домен при запуске
+    app_state = AppState()
 
+    render_manual_header(app_state)
 
     # === ИНИЦИАЛИЗАЦИЯ СТРУКТУРЫ САЙТОВ И ДОМЕНОВ ===
     if 'sites_initialized' not in st.session_state:

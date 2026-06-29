@@ -1428,7 +1428,37 @@ class EnhancedTextProcessor:
                     'message': f'Найдено стоп-слово: "{word}"'
                 })
         return errors
-
+    def apply_stop_phrase_replacements(self, text: str) -> str:
+        """
+        Заменяет нежелательные фразы на корректные согласно списку.
+        Выполняется последовательная замена (регистр учитывается).
+        """
+        replacements = [
+            # Строчные варианты
+            ("идеально для", "подходит для"),
+            ("идеальным выбором", "подходящим выбором"),
+            (" и долговечности", ""),
+            (" и долговечность", ""),
+            (" и долговечностью", ""),  # удаляем пробел + "и долговечности"
+            ("идеальна для", "подходит для"),
+            ("идеален для", "подходит для"),
+            ("бонусы и акции", "акции"),
+            ("преимущества и бонусы", "наши преимущества"),
+            ("идеально подходит", "подходит"),
+            ("идеальным для", "подходящим для"),
+            # С заглавной буквы
+            ("Идеально для", "Подходит для"),
+            ("Идеальным выбором", "Подходящим выбором"),
+            ("Идеальна для", "Подходит для"),
+            ("Идеален для", "Подходит для"),
+            ("Бонусы и акции", "Акции"),
+            ("Преимущества и бонусы", "Наши преимущества"),
+            ("Идеально подходит", "Подходит"),
+            ("Идеальным для", "Подходящим для"),
+        ]
+        for old, new in replacements:
+            text = text.replace(old, new)
+        return text
 
 class ExportManager:
 
@@ -3226,7 +3256,7 @@ class Phase7Interface:
                     block.symbols_removed = list(set(block.symbols_removed + removed_sym))
                     total_symbols_removed += len(removed_sym)
                 block.special_symbols = new_specials
-
+            new_text = self.text_processor.apply_stop_phrase_replacements(new_text)
             # ✅ ОБНОВЛЯЕМ ТОЛЬКО ТЕКСТ, HTML НЕ ТРОГАЕМ!
             block.processed_text = new_text
             block.last_modified = datetime.now()
