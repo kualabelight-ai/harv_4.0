@@ -1,0 +1,1069 @@
+{
+  "project_id": "735dac91-01cf-47a9-a8e9-c7d5448cf593",
+  "project_name": "лист с полимерным покрытием",
+  "category": "Лист с полимерным покрытием",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Лист с полимерным покрытием",
+      "project_name": "лист с полимерным покрытием",
+      "characteristics": [
+        {
+          "char_id": "00003530",
+          "char_name": "Толщина",
+          "original_name": "Толщина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "0.5",
+              "count": 1668,
+              "offers": 4926
+            },
+            {
+              "value": "0.45",
+              "count": 1804,
+              "offers": 4491
+            },
+            {
+              "value": "0.4",
+              "count": 1048,
+              "offers": 2695
+            },
+            {
+              "value": "0.35",
+              "count": 598,
+              "offers": 1112
+            },
+            {
+              "value": "0.7",
+              "count": 368,
+              "offers": 904
+            }
+          ]
+        },
+        {
+          "char_id": "00003531",
+          "char_name": "Раскрой",
+          "original_name": "Раскрой",
+          "is_unique": false,
+          "unit": "м",
+          "values": [
+            {
+              "value": "1.25хL",
+              "count": 3428,
+              "offers": 9540
+            },
+            {
+              "value": "1.25хрулон",
+              "count": 1280,
+              "offers": 4173
+            },
+            {
+              "value": "1.25х2",
+              "count": 537,
+              "offers": 763
+            },
+            {
+              "value": "1.25х2.5",
+              "count": 391,
+              "offers": 566
+            },
+            {
+              "value": "рулон",
+              "count": 467,
+              "offers": 546
+            }
+          ]
+        },
+        {
+          "char_id": "00003533",
+          "char_name": "RAL",
+          "original_name": "RAL",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "RAL8017",
+              "count": 603,
+              "offers": 1151
+            },
+            {
+              "value": "RAL9003",
+              "count": 400,
+              "offers": 989
+            },
+            {
+              "value": "RAL6005",
+              "count": 480,
+              "offers": 984
+            },
+            {
+              "value": "RAL3005",
+              "count": 466,
+              "offers": 931
+            },
+            {
+              "value": "RAL5005",
+              "count": 393,
+              "offers": 790
+            },
+            {
+              "value": "RAL7004",
+              "count": 294,
+              "offers": 768
+            },
+            {
+              "value": "RAL7024",
+              "count": 302,
+              "offers": 646
+            },
+            {
+              "value": "RAL1014",
+              "count": 304,
+              "offers": 460
+            },
+            {
+              "value": "RAL1015",
+              "count": 133,
+              "offers": 244
+            },
+            {
+              "value": "RAL5002",
+              "count": 160,
+              "offers": 195
+            },
+            {
+              "value": "RAL9002",
+              "count": 122,
+              "offers": 183
+            },
+            {
+              "value": "RAL9006",
+              "count": 104,
+              "offers": 172
+            },
+            {
+              "value": "RAL3003",
+              "count": 126,
+              "offers": 157
+            },
+            {
+              "value": "RAL6002",
+              "count": 103,
+              "offers": 148
+            },
+            {
+              "value": "RAL6029",
+              "count": 108,
+              "offers": 145
+            },
+            {
+              "value": "RAL5021",
+              "count": 108,
+              "offers": 144
+            },
+            {
+              "value": "RAL3011",
+              "count": 74,
+              "offers": 130
+            },
+            {
+              "value": "RAL8019",
+              "count": 63,
+              "offers": 106
+            },
+            {
+              "value": "RAL1018",
+              "count": 81,
+              "offers": 104
+            },
+            {
+              "value": "RAL7035",
+              "count": 90,
+              "offers": 95
+            },
+            {
+              "value": "RAL7047",
+              "count": 82,
+              "offers": 82
+            },
+            {
+              "value": "RAL9010",
+              "count": 65,
+              "offers": 79
+            },
+            {
+              "value": "RAL9005",
+              "count": 62,
+              "offers": 77
+            },
+            {
+              "value": "RAL5015",
+              "count": 77,
+              "offers": 77
+            },
+            {
+              "value": "RAL3020",
+              "count": 70,
+              "offers": 75
+            },
+            {
+              "value": "RAL7015",
+              "count": 65,
+              "offers": 65
+            },
+            {
+              "value": "RAL2004",
+              "count": 24,
+              "offers": 44
+            },
+            {
+              "value": "RAL8004",
+              "count": 18,
+              "offers": 29
+            },
+            {
+              "value": "RAL7043",
+              "count": 26,
+              "offers": 26
+            },
+            {
+              "value": "RAL7021",
+              "count": 25,
+              "offers": 25
+            },
+            {
+              "value": "RAL7005",
+              "count": 25,
+              "offers": 25
+            },
+            {
+              "value": "NL807",
+              "count": 23,
+              "offers": 23
+            },
+            {
+              "value": "SV17",
+              "count": 21,
+              "offers": 21
+            },
+            {
+              "value": "RAL3009",
+              "count": 20,
+              "offers": 20
+            },
+            {
+              "value": "RAL7016",
+              "count": 15,
+              "offers": 15
+            },
+            {
+              "value": "RAL5014",
+              "count": 11,
+              "offers": 11
+            },
+            {
+              "value": "NL805",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "RAL6011",
+              "count": 7,
+              "offers": 7
+            },
+            {
+              "value": "RAL7037",
+              "count": 7,
+              "offers": 7
+            },
+            {
+              "value": "RAL8029",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "RAL1036",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "RAL8022",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "RAL6018",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "RAL1033",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "RAL3016",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "OL008",
+              "count": 4,
+              "offers": 4
+            },
+            {
+              "value": "RAL5010",
+              "count": 3,
+              "offers": 3
+            },
+            {
+              "value": "RAL6026",
+              "count": 3,
+              "offers": 3
+            },
+            {
+              "value": "RAL6037",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "RAL5019",
+              "count": 1,
+              "offers": 1
+            }
+          ]
+        },
+        {
+          "char_id": "9117115 05",
+          "char_name": "Покрытие",
+          "original_name": "Покрытие",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "Полиэстер",
+              "count": 940,
+              "offers": 2898
+            },
+            {
+              "value": "Полиэстер двухсторонний",
+              "count": 216,
+              "offers": 435
+            },
+            {
+              "value": "Printech",
+              "count": 130,
+              "offers": 281
+            },
+            {
+              "value": "Zn 120",
+              "count": 258,
+              "offers": 258
+            },
+            {
+              "value": "Zn 100",
+              "count": 146,
+              "offers": 190
+            },
+            {
+              "value": "Ecosteel",
+              "count": 15,
+              "offers": 175
+            },
+            {
+              "value": "AGNETA",
+              "count": 15,
+              "offers": 170
+            },
+            {
+              "value": "двухсторонний",
+              "count": 159,
+              "offers": 167
+            },
+            {
+              "value": "CLOUDY",
+              "count": 20,
+              "offers": 165
+            },
+            {
+              "value": "PURETAN",
+              "count": 15,
+              "offers": 160
+            },
+            {
+              "value": "PURMAN",
+              "count": 25,
+              "offers": 155
+            },
+            {
+              "value": "Ecosteel matt",
+              "count": 10,
+              "offers": 155
+            },
+            {
+              "value": "Ecosteel Texture",
+              "count": 10,
+              "offers": 155
+            },
+            {
+              "value": "Texture",
+              "count": 121,
+              "offers": 153
+            },
+            {
+              "value": "VALORI",
+              "count": 25,
+              "offers": 145
+            },
+            {
+              "value": "Viking MP E",
+              "count": 10,
+              "offers": 145
+            },
+            {
+              "value": "Стальной бархат",
+              "count": 73,
+              "offers": 121
+            },
+            {
+              "value": "Norman MP",
+              "count": 10,
+              "offers": 120
+            },
+            {
+              "value": "Полиэстер односторонний",
+              "count": 77,
+              "offers": 107
+            },
+            {
+              "value": "Viking MP",
+              "count": 18,
+              "offers": 103
+            },
+            {
+              "value": "Ecosteel matt двусторонний",
+              "count": 15,
+              "offers": 95
+            },
+            {
+              "value": "Пластизол",
+              "count": 58,
+              "offers": 93
+            },
+            {
+              "value": "Zn 80-120",
+              "count": 90,
+              "offers": 90
+            },
+            {
+              "value": "односторонний",
+              "count": 75,
+              "offers": 85
+            },
+            {
+              "value": "Steel Art",
+              "count": 60,
+              "offers": 80
+            },
+            {
+              "value": "Ecosteel двухсторонний",
+              "count": 5,
+              "offers": 50
+            },
+            {
+              "value": "Printech двухсторонний",
+              "count": 20,
+              "offers": 35
+            },
+            {
+              "value": "Steel Art 3D",
+              "count": 22,
+              "offers": 35
+            },
+            {
+              "value": "GreenCoat Pural",
+              "count": 34,
+              "offers": 34
+            },
+            {
+              "value": "Norman",
+              "count": 25,
+              "offers": 30
+            },
+            {
+              "value": "MATT",
+              "count": 15,
+              "offers": 30
+            },
+            {
+              "value": "PRISMA",
+              "count": 5,
+              "offers": 25
+            },
+            {
+              "value": "Rooftop Matte",
+              "count": 24,
+              "offers": 24
+            },
+            {
+              "value": "Стальной шелк",
+              "count": 24,
+              "offers": 24
+            },
+            {
+              "value": "Velur",
+              "count": 18,
+              "offers": 23
+            },
+            {
+              "value": "Ecosteel_T",
+              "count": 5,
+              "offers": 20
+            },
+            {
+              "value": "Drap",
+              "count": 13,
+              "offers": 18
+            },
+            {
+              "value": "Пластизол двухсторонний",
+              "count": 16,
+              "offers": 16
+            },
+            {
+              "value": "Viking E",
+              "count": 15,
+              "offers": 15
+            },
+            {
+              "value": "Эмаль (с обратной стороны)",
+              "count": 15,
+              "offers": 15
+            },
+            {
+              "value": "Viking MP двухсторонний",
+              "count": 5,
+              "offers": 15
+            },
+            {
+              "value": "Quarzit Lite",
+              "count": 13,
+              "offers": 13
+            },
+            {
+              "value": "Atlas",
+              "count": 13,
+              "offers": 13
+            },
+            {
+              "value": "GreenCoat Pural Matt",
+              "count": 10,
+              "offers": 10
+            },
+            {
+              "value": "Viking",
+              "count": 10,
+              "offers": 10
+            },
+            {
+              "value": "Normal Rooftop Glance",
+              "count": 10,
+              "offers": 10
+            },
+            {
+              "value": "DEEP MAT",
+              "count": 5,
+              "offers": 10
+            },
+            {
+              "value": "Printech matt",
+              "count": 10,
+              "offers": 10
+            },
+            {
+              "value": "Matgranit",
+              "count": 5,
+              "offers": 10
+            },
+            {
+              "value": "Pema Pro",
+              "count": 5,
+              "offers": 10
+            },
+            {
+              "value": "PVDF Matt",
+              "count": 5,
+              "offers": 10
+            },
+            {
+              "value": "Коралл Matt",
+              "count": 10,
+              "offers": 10
+            },
+            {
+              "value": "Satin",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "Colority Print",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "Colority Print dp",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "Safari",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "Quarzit",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "Стальной кашемир",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Ecosteel Lite",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Plusect",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Printech Флоренция",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Pural BT",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Pural Matt BT",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "MPE Texture",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Normal",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "3D",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Print РФ",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Printech декор двухсторонний",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Safari Orange Grev",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "High Gloss Matt",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Matgranit Lux",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Multig loss",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "OSNO Mat",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "OSNO Type",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Printech RealPrint",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "PUR 50",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "PurAge",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Quarzit Cuprum Steel",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Quarzit Matt",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Satin Matt",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Solano 30",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Type",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Zinken",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Декор двухсторонний",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Optima",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "Zn 140",
+              "count": 4,
+              "offers": 4
+            },
+            {
+              "value": "PVDF односторонний",
+              "count": 4,
+              "offers": 4
+            },
+            {
+              "value": "PVDF двухсторонний",
+              "count": 4,
+              "offers": 4
+            },
+            {
+              "value": "GreenCoat Pural/Pural Matt",
+              "count": 3,
+              "offers": 3
+            },
+            {
+              "value": "Polydexter",
+              "count": 3,
+              "offers": 3
+            }
+          ]
+        },
+        {
+          "char_id": "9117115 03",
+          "char_name": "Упаковка",
+          "original_name": "Упаковка",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "рулон",
+              "count": 5919,
+              "offers": 15128
+            }
+          ]
+        },
+        {
+          "char_id": "9117115 04",
+          "char_name": "Поверхность",
+          "original_name": "Поверхность",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "матовый",
+              "count": 439,
+              "offers": 817
+            },
+            {
+              "value": "глянцевый",
+              "count": 147,
+              "offers": 180
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Лист с полимерным покрытием.json",
+        "original_category": "Лист с полимерным покрытием",
+        "total_items": 8265,
+        "selected_characteristics_count": 6,
+        "export_timestamp": "2026-06-24T11:44:51.098277"
+      }
+    },
+    "phase2": {
+      "category": "Лист с полимерным покрытием",
+      "original_category": "Лист с полимерным покрытием",
+      "markers": [
+        "лист с полимерным покрытием",
+        "стальной лист с полимерным покрытием",
+        "листовая сталь с полимерным покрытием",
+        "листы с полимерным покрытием",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Лист с полимерным покрытием",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-24T11:45:18.390416"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00003530": {
+            "prompts_per_value": 3,
+            "char_name": "Толщина"
+          },
+          "00003531": {
+            "prompts_per_value": 3,
+            "char_name": "Раскрой"
+          },
+          "00003533": {
+            "prompts_per_value": 2,
+            "char_name": "RAL"
+          },
+          "9117115 05": {
+            "prompts_per_value": 2,
+            "char_name": "Покрытие"
+          },
+          "9117115 03": {
+            "prompts_per_value": 5,
+            "char_name": "Упаковка"
+          },
+          "9117115 04": {
+            "prompts_per_value": 5,
+            "char_name": "Поверхность"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Лист с полимерным покрытием",
+    "project_name": "лист с полимерным покрытием",
+    "created_at": "2026-06-24T11:41:49.324744",
+    "updated_at": "2026-06-24T11:46:14.523559",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00003530": {
+          "prompts_per_value": 3,
+          "char_name": "Толщина"
+        },
+        "00003531": {
+          "prompts_per_value": 3,
+          "char_name": "Раскрой"
+        },
+        "00003533": {
+          "prompts_per_value": 2,
+          "char_name": "RAL"
+        },
+        "9117115 05": {
+          "prompts_per_value": 2,
+          "char_name": "Покрытие"
+        },
+        "9117115 03": {
+          "prompts_per_value": 5,
+          "char_name": "Упаковка"
+        },
+        "9117115 04": {
+          "prompts_per_value": 5,
+          "char_name": "Поверхность"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-06-24T11:41:49.324744",
+  "updated_at": "2026-06-24T11:46:15.082800",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

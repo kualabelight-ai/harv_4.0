@@ -1,0 +1,439 @@
+{
+  "project_id": "ac0122dc-6f7b-491c-82c3-521bb2569c2b",
+  "project_name": "уголок из нержавеющей стали",
+  "category": "Уголок нержавеющий",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Уголок нержавеющий",
+      "project_name": "уголок из нержавеющей стали",
+      "characteristics": [
+        {
+          "char_id": "00000937",
+          "char_name": "Ширина полки 1",
+          "original_name": "Ширина полки 1",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "30",
+              "count": 269,
+              "offers": 1031
+            },
+            {
+              "value": "40",
+              "count": 358,
+              "offers": 1016
+            },
+            {
+              "value": "50",
+              "count": 353,
+              "offers": 833
+            },
+            {
+              "value": "100",
+              "count": 240,
+              "offers": 623
+            },
+            {
+              "value": "25",
+              "count": 198,
+              "offers": 619
+            }
+          ]
+        },
+        {
+          "char_id": "00003716",
+          "char_name": "Ширина полки 2",
+          "original_name": "Ширина полки 2",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "30",
+              "count": 285,
+              "offers": 1045
+            },
+            {
+              "value": "40",
+              "count": 352,
+              "offers": 1008
+            },
+            {
+              "value": "50",
+              "count": 415,
+              "offers": 894
+            },
+            {
+              "value": "25",
+              "count": 213,
+              "offers": 632
+            },
+            {
+              "value": "100",
+              "count": 222,
+              "offers": 605
+            }
+          ]
+        },
+        {
+          "char_id": "00000938",
+          "char_name": "Толщина полки",
+          "original_name": "Толщина полки",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "3",
+              "count": 469,
+              "offers": 1805
+            },
+            {
+              "value": "4",
+              "count": 408,
+              "offers": 1006
+            },
+            {
+              "value": "5",
+              "count": 356,
+              "offers": 965
+            },
+            {
+              "value": "6",
+              "count": 282,
+              "offers": 827
+            },
+            {
+              "value": "1.5",
+              "count": 286,
+              "offers": 613
+            }
+          ]
+        },
+        {
+          "char_id": "00000939",
+          "char_name": "Марка материала",
+          "original_name": "Марка материала",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "AISI 304",
+              "count": 872,
+              "offers": 3588
+            },
+            {
+              "value": "08Х18Н10",
+              "count": 239,
+              "offers": 1384
+            },
+            {
+              "value": "AISI 321",
+              "count": 248,
+              "offers": 616
+            },
+            {
+              "value": "12Х18Н10Т",
+              "count": 283,
+              "offers": 299
+            },
+            {
+              "value": "08Х18Н10Т",
+              "count": 277,
+              "offers": 285
+            }
+          ]
+        },
+        {
+          "char_id": "00000940",
+          "char_name": "Тип поверхности",
+          "original_name": "Тип поверхности",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "зеркальный",
+              "count": 301,
+              "offers": 543
+            },
+            {
+              "value": "матовый",
+              "count": 248,
+              "offers": 454
+            },
+            {
+              "value": "шлифованный",
+              "count": 162,
+              "offers": 317
+            },
+            {
+              "value": "AISI 304",
+              "count": 17,
+              "offers": 24
+            }
+          ]
+        },
+        {
+          "char_id": "00003718",
+          "char_name": "Способ производства",
+          "original_name": "Способ производства",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "горячекатаный",
+              "count": 588,
+              "offers": 2222
+            },
+            {
+              "value": "гнутый",
+              "count": 119,
+              "offers": 180
+            },
+            {
+              "value": "холоднокатаный",
+              "count": 28,
+              "offers": 49
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Уголок нержавеющий.json",
+        "original_category": "Уголок нержавеющий",
+        "total_items": 2932,
+        "selected_characteristics_count": 6,
+        "export_timestamp": "2026-06-26T09:16:04.980866"
+      }
+    },
+    "phase2": {
+      "category": "Уголок нержавеющий",
+      "original_category": "Уголок нержавеющий",
+      "markers": [
+        "нержавеющий уголок",
+        "нержавейка уголок",
+        "уголок из нержавейки",
+        "уголок из нержавеющей стали",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Уголок нержавеющий",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-26T09:16:29.194443"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00000937": {
+            "prompts_per_value": 3,
+            "char_name": "Ширина полки 1"
+          },
+          "00003716": {
+            "prompts_per_value": 3,
+            "char_name": "Ширина полки 2"
+          },
+          "00000938": {
+            "prompts_per_value": 3,
+            "char_name": "Толщина полки"
+          },
+          "00000939": {
+            "prompts_per_value": 3,
+            "char_name": "Марка материала"
+          },
+          "00000940": {
+            "prompts_per_value": 3,
+            "char_name": "Тип поверхности"
+          },
+          "00003718": {
+            "prompts_per_value": 5,
+            "char_name": "Способ производства"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Уголок нержавеющий",
+    "project_name": "уголок из нержавеющей стали",
+    "created_at": "2026-06-26T08:52:41.566219",
+    "updated_at": "2026-06-26T09:16:54.137568",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00000937": {
+          "prompts_per_value": 3,
+          "char_name": "Ширина полки 1"
+        },
+        "00003716": {
+          "prompts_per_value": 3,
+          "char_name": "Ширина полки 2"
+        },
+        "00000938": {
+          "prompts_per_value": 3,
+          "char_name": "Толщина полки"
+        },
+        "00000939": {
+          "prompts_per_value": 3,
+          "char_name": "Марка материала"
+        },
+        "00000940": {
+          "prompts_per_value": 3,
+          "char_name": "Тип поверхности"
+        },
+        "00003718": {
+          "prompts_per_value": 5,
+          "char_name": "Способ производства"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-06-26T08:52:41.566219",
+  "updated_at": "2026-06-26T09:16:54.316535",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

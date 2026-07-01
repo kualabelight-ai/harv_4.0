@@ -2,7 +2,7 @@
   "project_id": "666296ca-4703-474f-9001-1f81b7d7b281",
   "project_name": "труба профильная нержавеющая",
   "category": "Труба профильная нержавеющая",
-  "current_phase": 4,
+  "current_phase": 5,
   "app_data": {
     "phase1": {
       "characteristics": [
@@ -28463,7 +28463,7 @@
     }
   },
   "created_at": "2026-06-22T14:22:57.987494",
-  "updated_at": "2026-06-24T12:41:06.198987",
+  "updated_at": "2026-06-24T11:06:59.393692",
   "site_name": "steelborg",
   "domain_name": "kz",
   "user_id": 2

@@ -1,0 +1,460 @@
+{
+  "project_id": "789e15c9-c7ce-4200-948e-3dac1c92ce79",
+  "project_name": "квадрат нержавеющий",
+  "category": "Квадрат нержавеющий",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Квадрат нержавеющий",
+      "project_name": "квадрат нержавеющий",
+      "characteristics": [
+        {
+          "char_id": "00000691",
+          "char_name": "Сторона А",
+          "original_name": "Сторона А",
+          "unit": "мм",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "8",
+              "items_count": 43,
+              "offers_sum": 340,
+              "percent": 2.7318932655654384
+            },
+            {
+              "value": "12",
+              "items_count": 45,
+              "offers_sum": 332,
+              "percent": 2.8589580686149936
+            },
+            {
+              "value": "40",
+              "items_count": 76,
+              "offers_sum": 331,
+              "percent": 4.8284625158831
+            },
+            {
+              "value": "30",
+              "items_count": 60,
+              "offers_sum": 318,
+              "percent": 3.8119440914866582
+            },
+            {
+              "value": "10",
+              "items_count": 38,
+              "offers_sum": 294,
+              "percent": 2.41423125794155
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "00000692",
+          "char_name": "Марка материала",
+          "original_name": "Марка материала",
+          "unit": "",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "AISI 304",
+              "items_count": 253,
+              "offers_sum": 2075,
+              "percent": 16.07369758576874
+            },
+            {
+              "value": "08Х18Н10",
+              "items_count": 121,
+              "offers_sum": 660,
+              "percent": 7.687420584498093
+            },
+            {
+              "value": "AISI 321",
+              "items_count": 156,
+              "offers_sum": 321,
+              "percent": 9.91105463786531
+            },
+            {
+              "value": "12Х18Н10Т",
+              "items_count": 152,
+              "offers_sum": 269,
+              "percent": 9.6569250317662
+            },
+            {
+              "value": "20Х13",
+              "items_count": 87,
+              "offers_sum": 147,
+              "percent": 5.527318932655654
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "00003689",
+          "char_name": "Способ производства",
+          "original_name": "Способ производства",
+          "unit": "",
+          "is_unique": true,
+          "values": [
+            {
+              "value": "горячекатаный",
+              "items_count": 725,
+              "offers_sum": 1528,
+              "percent": 46.06099110546379
+            },
+            {
+              "value": "калиброванный",
+              "items_count": 178,
+              "offers_sum": 1471,
+              "percent": 11.30876747141042
+            },
+            {
+              "value": "кованый",
+              "items_count": 113,
+              "offers_sum": 116,
+              "percent": 7.179161372299873
+            },
+            {
+              "value": "холоднотянутый",
+              "items_count": 11,
+              "offers_sum": 19,
+              "percent": 0.6988564167725541
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "9109571 01",
+          "char_name": "ГОСТ",
+          "original_name": "ГОСТ",
+          "unit": "",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "ГОСТ 2591-88",
+              "items_count": 725,
+              "offers_sum": 1528,
+              "percent": 46.06099110546379
+            },
+            {
+              "value": "ГОСТ 8559-75",
+              "items_count": 178,
+              "offers_sum": 1471,
+              "percent": 11.30876747141042
+            },
+            {
+              "value": "ГОСТ 1133-71",
+              "items_count": 113,
+              "offers_sum": 116,
+              "percent": 7.179161372299873
+            },
+            {
+              "value": "ГОСТ горячекатаный",
+              "items_count": 3,
+              "offers_sum": 3,
+              "percent": 0.1905972045743329
+            },
+            {
+              "value": "ГОСТ 5632-72",
+              "items_count": 2,
+              "offers_sum": 2,
+              "percent": 0.12706480304955528
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "9109571 02",
+          "char_name": "Вид",
+          "original_name": "Вид",
+          "unit": "",
+          "is_unique": true,
+          "values": [
+            {
+              "value": "заготовка",
+              "items_count": 30,
+              "offers_sum": 566,
+              "percent": 1.9059720457433291
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "9109571 03",
+          "char_name": "Сторона Б",
+          "original_name": "Сторона Б",
+          "unit": "мм",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "8",
+              "items_count": 43,
+              "offers_sum": 340,
+              "percent": 2.7318932655654384
+            },
+            {
+              "value": "12",
+              "items_count": 45,
+              "offers_sum": 332,
+              "percent": 2.8589580686149936
+            },
+            {
+              "value": "40",
+              "items_count": 76,
+              "offers_sum": 331,
+              "percent": 4.8284625158831
+            },
+            {
+              "value": "30",
+              "items_count": 60,
+              "offers_sum": 318,
+              "percent": 3.8119440914866582
+            },
+            {
+              "value": "10",
+              "items_count": 38,
+              "offers_sum": 294,
+              "percent": 2.41423125794155
+            }
+          ],
+          "is_duplicate": false
+        }
+      ],
+      "metadata": {
+        "source_file": "Квадрат нержавеющий.json",
+        "original_category": "Квадрат нержавеющий",
+        "total_items": 1574,
+        "selected_characteristics_count": 6,
+        "export_timestamp": "2026-06-26T15:02:04.819852"
+      }
+    },
+    "phase2": {
+      "category": "Квадрат нержавеющий",
+      "original_category": "Квадрат нержавеющий",
+      "markers": [
+        "нержавеющий квадрат",
+        "квадрат нержавейка",
+        "квадрат из нержавеющей стали",
+        "квадрат из нержавейки",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Квадрат нержавеющий",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-26T15:03:30.880829"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00000691": {
+            "prompts_per_value": 3,
+            "char_name": "Сторона А"
+          },
+          "00000692": {
+            "prompts_per_value": 3,
+            "char_name": "Марка материала"
+          },
+          "00003689": {
+            "prompts_per_value": 3,
+            "char_name": "Способ производства"
+          },
+          "9109571 01": {
+            "prompts_per_value": 3,
+            "char_name": "ГОСТ"
+          },
+          "9109571 02": {
+            "prompts_per_value": 3,
+            "char_name": "Вид"
+          },
+          "9109571 03": {
+            "prompts_per_value": 3,
+            "char_name": "Сторона Б"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Квадрат нержавеющий",
+    "project_name": "квадрат нержавеющий",
+    "created_at": "2026-06-26T15:00:01.415403",
+    "updated_at": "2026-06-26T15:03:50.776892",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00000691": {
+          "prompts_per_value": 3,
+          "char_name": "Сторона А"
+        },
+        "00000692": {
+          "prompts_per_value": 3,
+          "char_name": "Марка материала"
+        },
+        "00003689": {
+          "prompts_per_value": 3,
+          "char_name": "Способ производства"
+        },
+        "9109571 01": {
+          "prompts_per_value": 3,
+          "char_name": "ГОСТ"
+        },
+        "9109571 02": {
+          "prompts_per_value": 3,
+          "char_name": "Вид"
+        },
+        "9109571 03": {
+          "prompts_per_value": 3,
+          "char_name": "Сторона Б"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-06-26T15:00:01.415403",
+  "updated_at": "2026-06-26T15:03:51.132097",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

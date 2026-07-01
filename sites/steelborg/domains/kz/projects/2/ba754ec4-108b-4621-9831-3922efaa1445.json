@@ -1,0 +1,32 @@
+{
+  "project_id": "ba754ec4-108b-4621-9831-3922efaa1445",
+  "project_name": "ыввв",
+  "category": "ыввв",
+  "user_id": 2,
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "current_phase": 1,
+  "status": "idle",
+  "progress": 0,
+  "message": "Новый проект",
+  "created_at": "2026-06-29T11:14:41.306309",
+  "updated_at": "2026-06-29T11:14:41.306316",
+  "app_data": {
+    "phase1": {},
+    "phase2": {},
+    "phase3": {},
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "ыввв",
+    "project_name": "ыввв",
+    "created_at": "2026-06-29T11:14:41.306319",
+    "updated_at": "2026-06-29T11:14:41.306320",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz"
+  }
+}

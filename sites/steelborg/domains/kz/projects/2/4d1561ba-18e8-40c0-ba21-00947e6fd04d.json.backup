@@ -1,0 +1,350 @@
+{
+  "project_id": "4d1561ba-18e8-40c0-ba21-00947e6fd04d",
+  "project_name": "люк нержавеющий",
+  "category": "Люк нержавеющий",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Люк нержавеющий",
+      "project_name": "люк нержавеющий",
+      "characteristics": [
+        {
+          "char_id": "00005877",
+          "char_name": "Размеры",
+          "original_name": "Размеры",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "400",
+              "count": 11,
+              "offers": 18
+            },
+            {
+              "value": "300",
+              "count": 10,
+              "offers": 17
+            },
+            {
+              "value": "500",
+              "count": 9,
+              "offers": 17
+            },
+            {
+              "value": "600",
+              "count": 8,
+              "offers": 13
+            },
+            {
+              "value": "200",
+              "count": 7,
+              "offers": 10
+            }
+          ]
+        },
+        {
+          "char_id": "00005878",
+          "char_name": "Марка материала",
+          "original_name": "Марка материала",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "AISI 304",
+              "count": 58,
+              "offers": 102
+            },
+            {
+              "value": "AISI 316",
+              "count": 48,
+              "offers": 61
+            },
+            {
+              "value": "AISI 316L",
+              "count": 14,
+              "offers": 18
+            },
+            {
+              "value": "AISI 304L",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "08Х18Н10",
+              "count": 1,
+              "offers": 1
+            }
+          ]
+        },
+        {
+          "char_id": "00005879",
+          "char_name": "Форма",
+          "original_name": "Форма",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "круглый",
+              "count": 70,
+              "offers": 106
+            },
+            {
+              "value": "овальный",
+              "count": 21,
+              "offers": 28
+            },
+            {
+              "value": "прямоугольный",
+              "count": 8,
+              "offers": 10
+            },
+            {
+              "value": "кольцевой",
+              "count": 2,
+              "offers": 5
+            }
+          ]
+        },
+        {
+          "char_id": "00005880",
+          "char_name": "Назначение",
+          "original_name": "Назначение",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "под давление",
+              "count": 21,
+              "offers": 24
+            },
+            {
+              "value": "для емкостей",
+              "count": 11,
+              "offers": 11
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Люк нержавеющий.json",
+        "original_category": "Люк нержавеющий",
+        "total_items": 107,
+        "selected_characteristics_count": 4,
+        "export_timestamp": "2026-06-30T13:10:41.022976"
+      }
+    },
+    "phase2": {
+      "category": "Люк нержавеющий",
+      "original_category": "Люк нержавеющий",
+      "markers": [
+        "люк из нержавеющей стали",
+        "люк из нержавейки",
+        "люк нержавеющий",
+        "люки из нержавеющей стали",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Люк нержавеющий",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-30T13:11:03.774794"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00005877": {
+            "prompts_per_value": 3,
+            "char_name": "Размеры"
+          },
+          "00005878": {
+            "prompts_per_value": 3,
+            "char_name": "Марка материала"
+          },
+          "00005879": {
+            "prompts_per_value": 3,
+            "char_name": "Форма"
+          },
+          "00005880": {
+            "prompts_per_value": 5,
+            "char_name": "Назначение"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 15
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 15
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Люк нержавеющий",
+    "project_name": "люк нержавеющий",
+    "created_at": "2026-06-30T13:08:39.576937",
+    "updated_at": "2026-06-30T13:11:41.475789",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00005877": {
+          "prompts_per_value": 3,
+          "char_name": "Размеры"
+        },
+        "00005878": {
+          "prompts_per_value": 3,
+          "char_name": "Марка материала"
+        },
+        "00005879": {
+          "prompts_per_value": 3,
+          "char_name": "Форма"
+        },
+        "00005880": {
+          "prompts_per_value": 5,
+          "char_name": "Назначение"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 15
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 15
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-06-30T13:08:39.576937",
+  "updated_at": "2026-06-30T13:11:41.829371",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

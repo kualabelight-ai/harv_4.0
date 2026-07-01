@@ -1,0 +1,285 @@
+{
+  "project_id": "02f34b49-437d-4524-80df-2c610321e816",
+  "project_name": "проволока для пружинных шайб",
+  "category": "Проволока для пружинных шайб, ГОСТ 11850-72",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Проволока для пружинных шайб, ГОСТ 11850-72",
+      "project_name": "проволока для пружинных шайб",
+      "characteristics": [
+        {
+          "char_id": "00006289",
+          "char_name": "Диаметр",
+          "original_name": "Диаметр",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "0.6",
+              "count": 3,
+              "offers": 12
+            },
+            {
+              "value": "5",
+              "count": 3,
+              "offers": 9
+            },
+            {
+              "value": "0.8",
+              "count": 3,
+              "offers": 6
+            },
+            {
+              "value": "1.2",
+              "count": 3,
+              "offers": 6
+            },
+            {
+              "value": "1.4",
+              "count": 3,
+              "offers": 6
+            }
+          ]
+        },
+        {
+          "char_id": "00006290",
+          "char_name": "Марка материала",
+          "original_name": "Марка материала",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "65Г",
+              "count": 40,
+              "offers": 90
+            }
+          ]
+        },
+        {
+          "char_id": "9113570 01",
+          "char_name": "ГОСТ",
+          "original_name": "ГОСТ",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "ГОСТ 11850-72",
+              "count": 40,
+              "offers": 90
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Проволока для пружинных шайб, ГОСТ 11850-72.json",
+        "original_category": "Проволока для пружинных шайб, ГОСТ 11850-72",
+        "total_items": 40,
+        "selected_characteristics_count": 3,
+        "export_timestamp": "2026-06-30T13:28:04.774081"
+      }
+    },
+    "phase2": {
+      "category": "Проволока для пружинных шайб",
+      "original_category": "Проволока для пружинных шайб, ГОСТ 11850-72",
+      "markers": [
+        "проволоки для пружинных шайб",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Проволока для пружинных шайб, ГОСТ 11850-72",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-30T13:28:32.481227"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00006289": {
+            "prompts_per_value": 3,
+            "char_name": "Диаметр"
+          },
+          "00006290": {
+            "prompts_per_value": 7,
+            "char_name": "Марка материала"
+          },
+          "9113570 01": {
+            "prompts_per_value": 7,
+            "char_name": "ГОСТ"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 15
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 15
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Проволока для пружинных шайб, ГОСТ 11850-72",
+    "project_name": "проволока для пружинных шайб",
+    "created_at": "2026-06-30T13:26:06.621896",
+    "updated_at": "2026-06-30T13:28:58.647432",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00006289": {
+          "prompts_per_value": 3,
+          "char_name": "Диаметр"
+        },
+        "00006290": {
+          "prompts_per_value": 7,
+          "char_name": "Марка материала"
+        },
+        "9113570 01": {
+          "prompts_per_value": 7,
+          "char_name": "ГОСТ"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 15
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 15
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-06-30T13:26:06.621896",
+  "updated_at": "2026-06-30T13:53:21.194987",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

@@ -74,6 +74,187 @@ from project_status_manager import ProjectStatusManager
 logging.getLogger("streamlit.scriptrunner").setLevel(logging.ERROR)
 # Или более агрессивно - подавляем все предупреждения Streamlit в потоках
 logging.getLogger("streamlit").setLevel(logging.ERROR)
+# === В НАЧАЛЕ ФАЙЛА (ПОСЛЕ ИМПОРТОВ) ===
+import os
+import sys
+import builtins
+import logging
+import warnings
+
+# ============================================
+# 1. ПОДАВЛЕНИЕ КОНСОЛЬНОГО ВЫВОДА (print, stdout)
+# ============================================
+
+class SuppressConsole:
+    """Подавляет ВЕСЬ консольный вывод без трогания Streamlit"""
+
+    def __init__(self):
+        self.original_stdout = None
+        self.original_stderr = None
+        self.original_print = None
+        self.null_file = None
+        self._active = False
+
+    def enable(self):
+        """Включает подавление"""
+        if self._active:
+            return
+
+        # Сохраняем оригиналы
+        self.original_stdout = sys.stdout
+        self.original_stderr = sys.stderr
+
+        # Открываем /dev/null (Windows: nul)
+        import platform
+        if platform.system() == 'Windows':
+            self.null_file = open('nul', 'w')
+        else:
+            self.null_file = open('/dev/null', 'w')
+
+        # Перенаправляем stdout/stderr в null
+        sys.stdout = self.null_file
+        sys.stderr = self.null_file
+
+        # Перехватываем print
+        self.original_print = builtins.print
+        builtins.print = lambda *args, **kwargs: None
+
+        self._active = True
+
+    def disable(self):
+        """Выключает подавление"""
+        if not self._active:
+            return
+
+        # Восстанавливаем
+        if self.original_stdout:
+            sys.stdout = self.original_stdout
+        if self.original_stderr:
+            sys.stderr = self.original_stderr
+        if self.original_print:
+            builtins.print = self.original_print
+
+        if self.null_file:
+            self.null_file.close()
+
+        self._active = False
+
+# Создаем экземпляр
+console_suppressor = SuppressConsole()
+
+# ============================================
+# 2. КАСТОМНЫЙ ЛОГГЕР (ВМЕСТО st.write ДЛЯ ОТЛАДКИ)
+# ============================================
+
+class DebugLogger:
+    """Логгер для отладочной информации - НЕ использует st.write()"""
+
+    def __init__(self):
+        self.logs = []
+        self.max_logs = 500
+        self.enabled = False
+
+    def enable(self):
+        self.enabled = True
+
+    def disable(self):
+        self.enabled = False
+
+    def log(self, msg, level="INFO"):
+        """Сохраняет лог в память (НЕ ВЫВОДИТ НА ЭКРАН)"""
+        if not self.enabled:
+            return
+
+        from datetime import datetime
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        log_entry = f"[{timestamp}] {level} | {msg}"
+        self.logs.append(log_entry)
+
+        if len(self.logs) > self.max_logs:
+            self.logs.pop(0)
+
+    def show_logs(self):
+        """Показывает логи в Streamlit (только если включено)"""
+        if not self.enabled or not self.logs:
+            return
+
+        import streamlit as st
+        with st.expander("🐛 Логи отладки", expanded=False):
+            st.code("\n".join(self.logs[-100:]), language="text")
+
+    def clear(self):
+        self.logs = []
+
+# Создаем глобальный логгер
+debug_logger = DebugLogger()
+
+# ============================================
+# 3. КОНТРОЛЬ РЕЖИМА ОТЛАДКИ
+# ============================================
+
+def setup_debug_mode():
+    """
+    Настраивает режим отладки.
+    НЕ ТРОГАЕТ Streamlit функции (st.write, st.info и т.д.)
+    """
+    # Проверяем переменную окружения
+    debug_env = os.environ.get('DEBUG_MODE', 'false').lower()
+    is_debug = debug_env in ['true', '1', 'yes']
+
+    if is_debug:
+        print("🐛 РЕЖИМ ОТЛАДКИ ВКЛЮЧЕН")
+        # Включаем вывод в консоль
+        console_suppressor.disable()
+        # Включаем логирование
+        debug_logger.enable()
+    else:
+        print("🚀 РЕЖИМ ОТЛАДКИ ОТКЛЮЧЕН")
+        # Подавляем консольный вывод
+        console_suppressor.enable()
+        # Отключаем логирование (но сохраняем логи в памяти на всякий случай)
+        debug_logger.disable()
+
+    return is_debug
+
+def suppress_all_warnings():
+    """Подавляет все предупреждения"""
+    warnings.filterwarnings("ignore")
+
+    # Подавляем логи Streamlit
+    logging.getLogger("streamlit").setLevel(logging.ERROR)
+    logging.getLogger("streamlit.scriptrunner").setLevel(logging.ERROR)
+    logging.getLogger("urllib3").setLevel(logging.ERROR)
+    logging.getLogger("requests").setLevel(logging.ERROR)
+
+    for logger_name in ['watchdog', 'tornado', 'asyncio', 'socketio']:
+        logging.getLogger(logger_name).setLevel(logging.ERROR)
+
+# ============================================
+# 4. ЗАМЕНА log() ФУНКЦИИ
+# ============================================
+
+def log(msg, level="INFO"):
+    """
+    Заменяет старую функцию log().
+    В production просто игнорирует вывод.
+    """
+    debug_logger.log(msg, level)
+
+# ============================================
+# 5. ФУНКЦИЯ ДЛЯ ПОКАЗА ЛОГОВ (ОПЦИОНАЛЬНО)
+# ============================================
+
+def render_debug_logs():
+    """Показывает логи отладки (только для админа)"""
+    try:
+        from database_settings.auth import is_admin
+        if not is_admin():
+            return
+    except:
+        return
+
+    if st.button("🐛 Показать логи отладки", key="show_debug_logs"):
+        debug_logger.show_logs()
 def debug_json_structure(project_id: str = None):
     """Показывает полную структуру JSON проекта"""
     import json
@@ -3941,6 +4122,9 @@ def init_session_state_keys():
 def main():
     st.set_page_config(page_title="Data Harvester Pro", layout="wide", initial_sidebar_state="expanded")
     init_session_state_keys()
+    load_css()
+
+
     # ✅ Восстанавливаем сохранённый домен при запуске
     app_state = AppState()
 
@@ -4075,7 +4259,6 @@ def main():
         auth.logout()
         return
 
-    load_css()
 
     # ===== НОВЫЙ КОД: ВЫБОР МОДУЛЯ =====
     # Показываем выбор модуля только если не выбран режим работы

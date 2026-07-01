@@ -1,0 +1,427 @@
+{
+  "project_id": "235c99ed-8dad-43fd-9dd6-9a9b55305343",
+  "project_name": "жесть листовая",
+  "category": "Жесть",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Жесть",
+      "project_name": "жесть листовая",
+      "characteristics": [
+        {
+          "char_id": "00002185",
+          "char_name": "Толщина",
+          "original_name": "Толщина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "0.22",
+              "count": 76,
+              "offers": 100
+            },
+            {
+              "value": "0.32",
+              "count": 76,
+              "offers": 100
+            },
+            {
+              "value": "0.25",
+              "count": 68,
+              "offers": 88
+            },
+            {
+              "value": "0.18",
+              "count": 32,
+              "offers": 38
+            },
+            {
+              "value": "0.2",
+              "count": 19,
+              "offers": 26
+            }
+          ]
+        },
+        {
+          "char_id": "9113555 01",
+          "char_name": "Ширина",
+          "original_name": "Ширина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "712",
+              "count": 161,
+              "offers": 250
+            },
+            {
+              "value": "235",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "770",
+              "count": 4,
+              "offers": 8
+            },
+            {
+              "value": "745",
+              "count": 4,
+              "offers": 4
+            },
+            {
+              "value": "70",
+              "count": 4,
+              "offers": 4
+            }
+          ]
+        },
+        {
+          "char_id": "00002186",
+          "char_name": "Маркировка",
+          "original_name": "Маркировка",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "ЭЖК",
+              "count": 74,
+              "offers": 95
+            },
+            {
+              "value": "ГЖК",
+              "count": 35,
+              "offers": 69
+            },
+            {
+              "value": "ЭЖР",
+              "count": 49,
+              "offers": 58
+            },
+            {
+              "value": "ЧЖК",
+              "count": 18,
+              "offers": 35
+            },
+            {
+              "value": "ЧЖР",
+              "count": 18,
+              "offers": 35
+            },
+            {
+              "value": "ГЖР",
+              "count": 18,
+              "offers": 18
+            },
+            {
+              "value": "ЭЖК-Д",
+              "count": 17,
+              "offers": 17
+            },
+            {
+              "value": "ЭЖК-РН",
+              "count": 17,
+              "offers": 17
+            },
+            {
+              "value": "ЭЖОН",
+              "count": 17,
+              "offers": 17
+            }
+          ]
+        },
+        {
+          "char_id": "00002189",
+          "char_name": "Класс",
+          "original_name": "Класс",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "А2",
+              "count": 25,
+              "offers": 32
+            },
+            {
+              "value": "1",
+              "count": 16,
+              "offers": 16
+            },
+            {
+              "value": "2",
+              "count": 16,
+              "offers": 16
+            },
+            {
+              "value": "3",
+              "count": 16,
+              "offers": 16
+            }
+          ]
+        },
+        {
+          "char_id": "9113555 02",
+          "char_name": "Длина",
+          "original_name": "Длина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "512",
+              "count": 119,
+              "offers": 170
+            },
+            {
+              "value": "820",
+              "count": 38,
+              "offers": 76
+            },
+            {
+              "value": "770",
+              "count": 4,
+              "offers": 8
+            },
+            {
+              "value": "780",
+              "count": 4,
+              "offers": 4
+            },
+            {
+              "value": "270",
+              "count": 4,
+              "offers": 4
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Жесть.json",
+        "original_category": "Жесть",
+        "total_items": 313,
+        "selected_characteristics_count": 5,
+        "export_timestamp": "2026-06-30T12:43:47.659454"
+      }
+    },
+    "phase2": {
+      "category": "Жесть листовая",
+      "original_category": "Жесть",
+      "markers": [
+        "листовая жесть",
+        "лист жести",
+        "жестяной лист",
+        "листы жести",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Жесть",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-30T12:44:12.048245"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00002185": {
+            "prompts_per_value": 3,
+            "char_name": "Толщина"
+          },
+          "9113555 01": {
+            "prompts_per_value": 3,
+            "char_name": "Ширина"
+          },
+          "00002186": {
+            "prompts_per_value": 3,
+            "char_name": "Маркировка"
+          },
+          "00002189": {
+            "prompts_per_value": 3,
+            "char_name": "Класс"
+          },
+          "9113555 02": {
+            "prompts_per_value": 3,
+            "char_name": "Длина"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 15
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 15
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 15
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Жесть",
+    "project_name": "жесть листовая",
+    "created_at": "2026-06-30T12:42:18.443769",
+    "updated_at": "2026-06-30T12:45:03.300206",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00002185": {
+          "prompts_per_value": 3,
+          "char_name": "Толщина"
+        },
+        "9113555 01": {
+          "prompts_per_value": 3,
+          "char_name": "Ширина"
+        },
+        "00002186": {
+          "prompts_per_value": 3,
+          "char_name": "Маркировка"
+        },
+        "00002189": {
+          "prompts_per_value": 3,
+          "char_name": "Класс"
+        },
+        "9113555 02": {
+          "prompts_per_value": 3,
+          "char_name": "Длина"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 15
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 15
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 15
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-06-30T12:42:18.443769",
+  "updated_at": "2026-06-30T12:45:03.573166",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

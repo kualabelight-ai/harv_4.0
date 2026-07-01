@@ -1,0 +1,1162 @@
+{
+  "project_id": "fcbf0255-7fff-4159-9d43-9323bb60aa57",
+  "project_name": "саморезы",
+  "category": "Саморезы",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Саморезы",
+      "project_name": "саморезы",
+      "characteristics": [
+        {
+          "char_id": "00004982",
+          "char_name": "Форма",
+          "original_name": "Форма",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "с потайной головкой",
+              "count": 3282,
+              "offers": 7584
+            },
+            {
+              "value": "наконечник-сверло",
+              "count": 1570,
+              "offers": 5086
+            },
+            {
+              "value": "с пресс-шайбой",
+              "count": 1185,
+              "offers": 4906
+            },
+            {
+              "value": "острый наконечник",
+              "count": 1452,
+              "offers": 3697
+            },
+            {
+              "value": "с полукруглой головкой",
+              "count": 1012,
+              "offers": 3112
+            },
+            {
+              "value": "с шестигранной головкой",
+              "count": 1628,
+              "offers": 2386
+            },
+            {
+              "value": "с полупотайной головкой",
+              "count": 393,
+              "offers": 2104
+            },
+            {
+              "value": "с крупной резьбой",
+              "count": 830,
+              "offers": 1580
+            },
+            {
+              "value": "с шайбой",
+              "count": 887,
+              "offers": 1533
+            },
+            {
+              "value": "с полусферической головкой",
+              "count": 763,
+              "offers": 1498
+            },
+            {
+              "value": "сверло",
+              "count": 657,
+              "offers": 1109
+            },
+            {
+              "value": "с частой резьбой",
+              "count": 625,
+              "offers": 953
+            },
+            {
+              "value": "острый",
+              "count": 410,
+              "offers": 893
+            },
+            {
+              "value": "крестообразный шлиц",
+              "count": 413,
+              "offers": 807
+            },
+            {
+              "value": "наконечик-сверло",
+              "count": 199,
+              "offers": 448
+            },
+            {
+              "value": "с острым концом",
+              "count": 250,
+              "offers": 300
+            },
+            {
+              "value": "с цилиндрической головкой",
+              "count": 194,
+              "offers": 278
+            },
+            {
+              "value": "с полуцилиндрической головкой",
+              "count": 78,
+              "offers": 248
+            },
+            {
+              "value": "резиновой шайбой",
+              "count": 166,
+              "offers": 186
+            },
+            {
+              "value": "внутренний шестигранник",
+              "count": 96,
+              "offers": 172
+            },
+            {
+              "value": "со шлицем",
+              "count": 112,
+              "offers": 169
+            },
+            {
+              "value": "без шайбы",
+              "count": 126,
+              "offers": 160
+            },
+            {
+              "value": "наконечник-сверло увеличенный",
+              "count": 72,
+              "offers": 134
+            },
+            {
+              "value": "с буром",
+              "count": 92,
+              "offers": 116
+            },
+            {
+              "value": "клоп",
+              "count": 75,
+              "offers": 103
+            },
+            {
+              "value": "с прессшайбой",
+              "count": 26,
+              "offers": 96
+            },
+            {
+              "value": "с мелкой резьбой",
+              "count": 63,
+              "offers": 93
+            },
+            {
+              "value": "крестообразый шлиц",
+              "count": 66,
+              "offers": 78
+            },
+            {
+              "value": "с резиновой шайбой",
+              "count": 69,
+              "offers": 69
+            },
+            {
+              "value": "с рожковой головкой",
+              "count": 51,
+              "offers": 63
+            },
+            {
+              "value": "с уменьшенной потайной головкой",
+              "count": 47,
+              "offers": 60
+            },
+            {
+              "value": "двухзаходный",
+              "count": 41,
+              "offers": 58
+            },
+            {
+              "value": "с полусфер. головой",
+              "count": 21,
+              "offers": 50
+            },
+            {
+              "value": "с пресс-шайбой и сверлом",
+              "count": 21,
+              "offers": 50
+            },
+            {
+              "value": "наконечник-усиленное сверло",
+              "count": 50,
+              "offers": 50
+            },
+            {
+              "value": "со сверлом",
+              "count": 38,
+              "offers": 47
+            },
+            {
+              "value": "тарельчатый",
+              "count": 23,
+              "offers": 28
+            },
+            {
+              "value": "с насечками",
+              "count": 23,
+              "offers": 27
+            },
+            {
+              "value": "с насечками для раззенковки",
+              "count": 21,
+              "offers": 21
+            },
+            {
+              "value": "пресс-шайба",
+              "count": 13,
+              "offers": 21
+            },
+            {
+              "value": "с полной резьбой",
+              "count": 20,
+              "offers": 20
+            },
+            {
+              "value": "с уменьшенной потайной головкой с насечками,сверло",
+              "count": 15,
+              "offers": 20
+            },
+            {
+              "value": "наконечник-сверло увелич.",
+              "count": 14,
+              "offers": 15
+            },
+            {
+              "value": "с уменьшенной головкой",
+              "count": 5,
+              "offers": 9
+            },
+            {
+              "value": "увеличенная головка",
+              "count": 9,
+              "offers": 9
+            },
+            {
+              "value": "с фрезой",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "винт-саморез",
+              "count": 7,
+              "offers": 7
+            },
+            {
+              "value": "с редкой резьбой",
+              "count": 7,
+              "offers": 7
+            },
+            {
+              "value": "наконечник-сверло удлинненный",
+              "count": 6,
+              "offers": 6
+            },
+            {
+              "value": "с небольшой головкой",
+              "count": 4,
+              "offers": 4
+            },
+            {
+              "value": "ост",
+              "count": 4,
+              "offers": 4
+            },
+            {
+              "value": "без сверла",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "с усеченным конусом",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "с термошайбой",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "наконечник-сверло уменьшенный",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "с цилиндрическим сверлом",
+              "count": 1,
+              "offers": 1
+            }
+          ]
+        },
+        {
+          "char_id": "00002196",
+          "char_name": "Диаметр",
+          "original_name": "Диаметр",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "4.8",
+              "count": 3146,
+              "offers": 9464
+            },
+            {
+              "value": "4.2",
+              "count": 2092,
+              "offers": 7410
+            },
+            {
+              "value": "3.5",
+              "count": 1907,
+              "offers": 6780
+            },
+            {
+              "value": "5.5",
+              "count": 1493,
+              "offers": 4537
+            },
+            {
+              "value": "6.3",
+              "count": 1258,
+              "offers": 2979
+            }
+          ]
+        },
+        {
+          "char_id": "00002197",
+          "char_name": "Длина",
+          "original_name": "Длина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "25",
+              "count": 1200,
+              "offers": 4046
+            },
+            {
+              "value": "19",
+              "count": 1145,
+              "offers": 3942
+            },
+            {
+              "value": "35",
+              "count": 720,
+              "offers": 2737
+            },
+            {
+              "value": "16",
+              "count": 802,
+              "offers": 2680
+            },
+            {
+              "value": "70",
+              "count": 683,
+              "offers": 2359
+            }
+          ]
+        },
+        {
+          "char_id": "00004984",
+          "char_name": "Покрытие",
+          "original_name": "Покрытие",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "оцинкованный",
+              "count": 2717,
+              "offers": 7603
+            },
+            {
+              "value": "желтый цинк",
+              "count": 1264,
+              "offers": 4776
+            },
+            {
+              "value": "белый цинк",
+              "count": 455,
+              "offers": 2450
+            },
+            {
+              "value": "фосфатированный",
+              "count": 632,
+              "offers": 2436
+            },
+            {
+              "value": "оксидированный",
+              "count": 657,
+              "offers": 2224
+            },
+            {
+              "value": "без покрытия",
+              "count": 613,
+              "offers": 707
+            },
+            {
+              "value": "RAL 6005",
+              "count": 157,
+              "offers": 605
+            },
+            {
+              "value": "RAL 8017",
+              "count": 171,
+              "offers": 567
+            },
+            {
+              "value": "RAL 3005",
+              "count": 156,
+              "offers": 564
+            },
+            {
+              "value": "RAL 5005",
+              "count": 160,
+              "offers": 560
+            },
+            {
+              "value": "RAL 9003",
+              "count": 157,
+              "offers": 498
+            },
+            {
+              "value": "черный цинк",
+              "count": 305,
+              "offers": 462
+            },
+            {
+              "value": "окрашенный",
+              "count": 70,
+              "offers": 364
+            },
+            {
+              "value": "RAL 1014",
+              "count": 108,
+              "offers": 363
+            },
+            {
+              "value": "RAL 3003",
+              "count": 108,
+              "offers": 337
+            },
+            {
+              "value": "RAL 7004",
+              "count": 115,
+              "offers": 316
+            },
+            {
+              "value": "RAL 6002",
+              "count": 107,
+              "offers": 313
+            },
+            {
+              "value": "RAL 5002",
+              "count": 91,
+              "offers": 285
+            },
+            {
+              "value": "RAL 3011",
+              "count": 98,
+              "offers": 254
+            },
+            {
+              "value": "лакокрасочное покрытие",
+              "count": 78,
+              "offers": 243
+            },
+            {
+              "value": "RAL 5021",
+              "count": 89,
+              "offers": 240
+            },
+            {
+              "value": "RAL 7024",
+              "count": 83,
+              "offers": 234
+            },
+            {
+              "value": "RAL 8019",
+              "count": 60,
+              "offers": 197
+            },
+            {
+              "value": "RAL 3009",
+              "count": 62,
+              "offers": 162
+            },
+            {
+              "value": "RAL 1018",
+              "count": 80,
+              "offers": 147
+            },
+            {
+              "value": "RAL 1015",
+              "count": 53,
+              "offers": 120
+            },
+            {
+              "value": "RAL 6029",
+              "count": 44,
+              "offers": 116
+            },
+            {
+              "value": "RAL 8004",
+              "count": 53,
+              "offers": 88
+            },
+            {
+              "value": "RAL 5010",
+              "count": 31,
+              "offers": 56
+            },
+            {
+              "value": "RAL 6020",
+              "count": 28,
+              "offers": 40
+            },
+            {
+              "value": "RAL 1011",
+              "count": 20,
+              "offers": 40
+            },
+            {
+              "value": "RAL 9005",
+              "count": 26,
+              "offers": 29
+            },
+            {
+              "value": "RAL 6026",
+              "count": 18,
+              "offers": 27
+            },
+            {
+              "value": "Ruspert",
+              "count": 18,
+              "offers": 27
+            },
+            {
+              "value": "RAL 5009",
+              "count": 15,
+              "offers": 25
+            },
+            {
+              "value": "RAL 8014",
+              "count": 10,
+              "offers": 24
+            },
+            {
+              "value": "RAL 8028",
+              "count": 13,
+              "offers": 21
+            },
+            {
+              "value": "RAL 3020",
+              "count": 16,
+              "offers": 17
+            },
+            {
+              "value": "RAL 9016",
+              "count": 15,
+              "offers": 16
+            },
+            {
+              "value": "Printech",
+              "count": 8,
+              "offers": 16
+            },
+            {
+              "value": "RAL 9002",
+              "count": 14,
+              "offers": 14
+            },
+            {
+              "value": "хроматированный",
+              "count": 8,
+              "offers": 14
+            },
+            {
+              "value": "RAL 5015",
+              "count": 11,
+              "offers": 12
+            },
+            {
+              "value": "RAL 5012",
+              "count": 8,
+              "offers": 11
+            },
+            {
+              "value": "RAL 2004",
+              "count": 9,
+              "offers": 10
+            },
+            {
+              "value": "RAL 9006",
+              "count": 9,
+              "offers": 9
+            },
+            {
+              "value": "RAL 8012",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "RAL 7005",
+              "count": 6,
+              "offers": 8
+            },
+            {
+              "value": "RAL 7015",
+              "count": 4,
+              "offers": 7
+            },
+            {
+              "value": "RAL 9001",
+              "count": 6,
+              "offers": 6
+            },
+            {
+              "value": "RAL 9010",
+              "count": 6,
+              "offers": 6
+            },
+            {
+              "value": "RAL 5020",
+              "count": 6,
+              "offers": 6
+            },
+            {
+              "value": "RAL 7020",
+              "count": 6,
+              "offers": 6
+            },
+            {
+              "value": "цветной",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "RAL 6019",
+              "count": 4,
+              "offers": 4
+            },
+            {
+              "value": "RAL 1021",
+              "count": 4,
+              "offers": 4
+            },
+            {
+              "value": "RAL 1003",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "RAL 5008",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "RAL 7043",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "RAL 7012",
+              "count": 1,
+              "offers": 2
+            },
+            {
+              "value": "RAL 6018",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "RAL 5001",
+              "count": 1,
+              "offers": 2
+            },
+            {
+              "value": "RAL 6007",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "RAL 7035",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "RAL 7040",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "RAL 1001",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "RAL 5023",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "RAL 6027",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "RAL 8016",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "RAL 7002",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "RAL 7047",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "RAL 8001",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "RAL 5024",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "RAL 6003",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "RAL 7001",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "RAL 5017",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "RAL 3000",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "RAL 7000",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "RAL 5003",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "RAL 7032",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "RAL 7006",
+              "count": 1,
+              "offers": 1
+            }
+          ]
+        },
+        {
+          "char_id": "00004985",
+          "char_name": "Назначение",
+          "original_name": "Назначение",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "для дерева",
+              "count": 2194,
+              "offers": 8438
+            },
+            {
+              "value": "для металла",
+              "count": 2568,
+              "offers": 8040
+            },
+            {
+              "value": "для кровельных материалов",
+              "count": 2177,
+              "offers": 8034
+            },
+            {
+              "value": "универсальный",
+              "count": 1212,
+              "offers": 5550
+            },
+            {
+              "value": "для гипсокартона",
+              "count": 1418,
+              "offers": 4747
+            },
+            {
+              "value": "для оконного профиля",
+              "count": 368,
+              "offers": 1092
+            },
+            {
+              "value": "фасадный",
+              "count": 105,
+              "offers": 991
+            },
+            {
+              "value": "для сэндвич-панелей",
+              "count": 322,
+              "offers": 961
+            },
+            {
+              "value": "для гипсоволокна",
+              "count": 114,
+              "offers": 391
+            },
+            {
+              "value": "конструкционный",
+              "count": 220,
+              "offers": 235
+            },
+            {
+              "value": "для пластика",
+              "count": 165,
+              "offers": 207
+            },
+            {
+              "value": "для бетона",
+              "count": 23,
+              "offers": 28
+            },
+            {
+              "value": "для ГД",
+              "count": 17,
+              "offers": 17
+            },
+            {
+              "value": "террасный",
+              "count": 14,
+              "offers": 16
+            },
+            {
+              "value": "для ДСП",
+              "count": 16,
+              "offers": 16
+            },
+            {
+              "value": "для твердых пород дерева",
+              "count": 8,
+              "offers": 14
+            },
+            {
+              "value": "для раззенковки",
+              "count": 12,
+              "offers": 12
+            },
+            {
+              "value": "для забора",
+              "count": 10,
+              "offers": 10
+            },
+            {
+              "value": "для ГМ",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "для армировки",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "для фурнитуры",
+              "count": 6,
+              "offers": 7
+            },
+            {
+              "value": "для паркетной доски",
+              "count": 7,
+              "offers": 7
+            },
+            {
+              "value": "для глухих отверстий",
+              "count": 7,
+              "offers": 7
+            },
+            {
+              "value": "для перфорированного крепежа",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "для крепления ГВЛ",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "для прижимных элементов",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "для несущих стен",
+              "count": 1,
+              "offers": 2
+            },
+            {
+              "value": "для поликарбоната",
+              "count": 2,
+              "offers": 2
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Саморезы.json",
+        "original_category": "Саморезы",
+        "total_items": 14502,
+        "selected_characteristics_count": 5,
+        "export_timestamp": "2026-06-25T10:38:04.739900"
+      }
+    },
+    "phase2": {
+      "category": "Саморез",
+      "original_category": "Саморезы",
+      "markers": [
+        "саморез",
+        "саморезы",
+        "металлический саморез",
+        "саморезы металлические",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Саморезы",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-25T10:38:22.777142"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00004982": {
+            "prompts_per_value": 3,
+            "char_name": "Форма"
+          },
+          "00002196": {
+            "prompts_per_value": 3,
+            "char_name": "Диаметр"
+          },
+          "00002197": {
+            "prompts_per_value": 3,
+            "char_name": "Длина"
+          },
+          "00004984": {
+            "prompts_per_value": 3,
+            "char_name": "Покрытие"
+          },
+          "00004985": {
+            "prompts_per_value": 3,
+            "char_name": "Назначение"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Саморезы",
+    "project_name": "саморезы",
+    "created_at": "2026-06-25T10:36:07.419838",
+    "updated_at": "2026-06-25T10:38:39.116956",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00004982": {
+          "prompts_per_value": 3,
+          "char_name": "Форма"
+        },
+        "00002196": {
+          "prompts_per_value": 3,
+          "char_name": "Диаметр"
+        },
+        "00002197": {
+          "prompts_per_value": 3,
+          "char_name": "Длина"
+        },
+        "00004984": {
+          "prompts_per_value": 3,
+          "char_name": "Покрытие"
+        },
+        "00004985": {
+          "prompts_per_value": 3,
+          "char_name": "Назначение"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-06-25T10:36:07.419838",
+  "updated_at": "2026-06-25T10:38:39.337289",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

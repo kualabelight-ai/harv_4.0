@@ -1,0 +1,995 @@
+{
+  "project_id": "7ab8986f-fa4f-416b-a65a-8482f24ef926",
+  "project_name": "винт",
+  "category": "Винт",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Винт",
+      "project_name": "винт",
+      "characteristics": [
+        {
+          "char_id": "9112352 01",
+          "char_name": "Форма",
+          "original_name": "Форма",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "с цилиндрической головкой",
+              "count": 6726,
+              "offers": 11346
+            },
+            {
+              "value": "с потайной головкой",
+              "count": 3451,
+              "offers": 9590
+            },
+            {
+              "value": "с полукруглой головкой",
+              "count": 2787,
+              "offers": 8010
+            },
+            {
+              "value": "прямой шлиц",
+              "count": 4208,
+              "offers": 5779
+            },
+            {
+              "value": "с внутренним шестигранником",
+              "count": 1536,
+              "offers": 5259
+            },
+            {
+              "value": "внутренний шестигранник",
+              "count": 2998,
+              "offers": 4930
+            },
+            {
+              "value": "крестообразный шлиц",
+              "count": 1752,
+              "offers": 3683
+            },
+            {
+              "value": "с потайной головкой и внутренним шестигранником",
+              "count": 1512,
+              "offers": 3118
+            },
+            {
+              "value": "со шлицем",
+              "count": 1341,
+              "offers": 2159
+            },
+            {
+              "value": "с полупотайной головкой",
+              "count": 1062,
+              "offers": 1893
+            },
+            {
+              "value": "с полусферической головкой",
+              "count": 539,
+              "offers": 1229
+            },
+            {
+              "value": "барашковый",
+              "count": 372,
+              "offers": 1161
+            },
+            {
+              "value": "самонарезающий с полукруглой головкой",
+              "count": 561,
+              "offers": 1117
+            },
+            {
+              "value": "с низкой цилиндрической головкой",
+              "count": 729,
+              "offers": 1087
+            },
+            {
+              "value": "установочный с плоским концом",
+              "count": 741,
+              "offers": 1069
+            },
+            {
+              "value": "с полукруглой головкой и внутренним шестигранником",
+              "count": 609,
+              "offers": 1014
+            },
+            {
+              "value": "установочный с острым концом",
+              "count": 345,
+              "offers": 932
+            },
+            {
+              "value": "установочный с внутренним шестигранником",
+              "count": 537,
+              "offers": 844
+            },
+            {
+              "value": "установочный",
+              "count": 624,
+              "offers": 840
+            },
+            {
+              "value": "установочный с коническим концом",
+              "count": 672,
+              "offers": 838
+            },
+            {
+              "value": "с цилиндрической скгругленной головкой",
+              "count": 304,
+              "offers": 764
+            },
+            {
+              "value": "установочный с засверленным концом",
+              "count": 481,
+              "offers": 718
+            },
+            {
+              "value": "мебельный",
+              "count": 145,
+              "offers": 701
+            },
+            {
+              "value": "самонарезающий с потайной головкой",
+              "count": 408,
+              "offers": 600
+            },
+            {
+              "value": "с полуцилиндрической головкой",
+              "count": 305,
+              "offers": 406
+            },
+            {
+              "value": "с цилиндрической скругленной головкой",
+              "count": 357,
+              "offers": 357
+            },
+            {
+              "value": "с внутренним шестигранником и тупым концом",
+              "count": 326,
+              "offers": 326
+            },
+            {
+              "value": "с уменьшенной цилиндрической головкой",
+              "count": 298,
+              "offers": 304
+            },
+            {
+              "value": "с внутренним шестигранником и засверленным концом",
+              "count": 279,
+              "offers": 279
+            },
+            {
+              "value": "с кольцом",
+              "count": 88,
+              "offers": 274
+            },
+            {
+              "value": "антивандальный с полукруглой головкой",
+              "count": 178,
+              "offers": 272
+            },
+            {
+              "value": "шуруп",
+              "count": 112,
+              "offers": 237
+            },
+            {
+              "value": "с внутренним шестигранником и плоским концом",
+              "count": 203,
+              "offers": 221
+            },
+            {
+              "value": "полукольцо",
+              "count": 79,
+              "offers": 214
+            },
+            {
+              "value": "с прессшайбой",
+              "count": 150,
+              "offers": 211
+            },
+            {
+              "value": "самонарезающий с полупотайной головкой",
+              "count": 204,
+              "offers": 204
+            },
+            {
+              "value": "с полуцилиндрической головкой и полной резьбой",
+              "count": 155,
+              "offers": 200
+            },
+            {
+              "value": "с потайной головкой и полной резьбой",
+              "count": 154,
+              "offers": 181
+            },
+            {
+              "value": "с накатанной головкой",
+              "count": 109,
+              "offers": 179
+            },
+            {
+              "value": "самонарезающий",
+              "count": 118,
+              "offers": 168
+            },
+            {
+              "value": "установочный с заостренным концом",
+              "count": 116,
+              "offers": 163
+            },
+            {
+              "value": "крестообразный шлиц с прессшайбой",
+              "count": 91,
+              "offers": 147
+            },
+            {
+              "value": "установочный с острым наконечником",
+              "count": 143,
+              "offers": 146
+            },
+            {
+              "value": "потайной с метрической резьбой",
+              "count": 74,
+              "offers": 133
+            },
+            {
+              "value": "с полной резьбой",
+              "count": 104,
+              "offers": 130
+            },
+            {
+              "value": "самонарезающий с шестигранной головкой",
+              "count": 127,
+              "offers": 129
+            },
+            {
+              "value": "установочный с цапфой",
+              "count": 106,
+              "offers": 129
+            },
+            {
+              "value": "костыль",
+              "count": 73,
+              "offers": 120
+            },
+            {
+              "value": "с цилиндрической головкой и полной резьбой",
+              "count": 109,
+              "offers": 117
+            },
+            {
+              "value": "установочный с цилиндрическим концом",
+              "count": 88,
+              "offers": 99
+            },
+            {
+              "value": "высокий",
+              "count": 95,
+              "offers": 95
+            },
+            {
+              "value": "самонарезающий с буром и шайбой",
+              "count": 19,
+              "offers": 92
+            },
+            {
+              "value": "нажимной с накатанной головкой",
+              "count": 91,
+              "offers": 91
+            },
+            {
+              "value": "мебельный с внутренним шест. и плоской головкой",
+              "count": 58,
+              "offers": 90
+            },
+            {
+              "value": "с полукруглой головкой и полной резьбой",
+              "count": 41,
+              "offers": 83
+            },
+            {
+              "value": "с шестигранной головкой",
+              "count": 68,
+              "offers": 81
+            },
+            {
+              "value": "с полупотайной головкой и внутренним шестигранником",
+              "count": 79,
+              "offers": 79
+            },
+            {
+              "value": "мебельный с прессшайбой",
+              "count": 64,
+              "offers": 76
+            },
+            {
+              "value": "с шестигранной головкой и фланцем",
+              "count": 74,
+              "offers": 75
+            },
+            {
+              "value": "с скругленной цилиндрической головкой",
+              "count": 72,
+              "offers": 72
+            },
+            {
+              "value": "с плоским концом",
+              "count": 65,
+              "offers": 65
+            },
+            {
+              "value": "мебельный с полусферической головкой",
+              "count": 57,
+              "offers": 57
+            },
+            {
+              "value": "с плоской головкой и шлицем",
+              "count": 57,
+              "offers": 57
+            },
+            {
+              "value": "с плоской головкой и внутренним шестигранником",
+              "count": 39,
+              "offers": 57
+            },
+            {
+              "value": "с полукруглой головкой и шестигранным углублением",
+              "count": 51,
+              "offers": 56
+            },
+            {
+              "value": "с внутренним шестигранником и полной резьбой",
+              "count": 43,
+              "offers": 51
+            },
+            {
+              "value": "с внутренним шестигранником и неполной резьбой",
+              "count": 48,
+              "offers": 49
+            },
+            {
+              "value": "с низкой головкой и внутренним шестигранником",
+              "count": 47,
+              "offers": 49
+            },
+            {
+              "value": "костыль с метрической резьбой",
+              "count": 44,
+              "offers": 49
+            },
+            {
+              "value": "с неполной резьбой",
+              "count": 48,
+              "offers": 48
+            },
+            {
+              "value": "установочный с квадратной головкой",
+              "count": 47,
+              "offers": 48
+            },
+            {
+              "value": "с полусферической головкой и прессшайбой",
+              "count": 34,
+              "offers": 46
+            },
+            {
+              "value": "мебельный с внутренним шестигранником",
+              "count": 44,
+              "offers": 44
+            },
+            {
+              "value": "с цилиндрической головкой и шестигранным углубл.",
+              "count": 18,
+              "offers": 44
+            },
+            {
+              "value": "комбинированный шлиц",
+              "count": 36,
+              "offers": 40
+            },
+            {
+              "value": "конфирмат",
+              "count": 14,
+              "offers": 38
+            },
+            {
+              "value": "с потайной головкой и крестообразным  шлицем",
+              "count": 32,
+              "offers": 32
+            },
+            {
+              "value": "с цилиндрической полукруглой головкой",
+              "count": 30,
+              "offers": 30
+            },
+            {
+              "value": "с полукруглой увеличенной головкой",
+              "count": 7,
+              "offers": 28
+            },
+            {
+              "value": "конфирмат с внутренним шестигранником",
+              "count": 13,
+              "offers": 27
+            },
+            {
+              "value": "с внутренним шестигранником и коническим концом",
+              "count": 26,
+              "offers": 26
+            },
+            {
+              "value": "невыпадающий с цилиндрической головкой",
+              "count": 9,
+              "offers": 25
+            },
+            {
+              "value": "с цилиндрической головкой и неполной резьбой",
+              "count": 24,
+              "offers": 25
+            },
+            {
+              "value": "с большой полукруглой головкой",
+              "count": 22,
+              "offers": 22
+            },
+            {
+              "value": "полусфера с прессшайбой",
+              "count": 18,
+              "offers": 20
+            },
+            {
+              "value": "самонарезающий с буром",
+              "count": 15,
+              "offers": 19
+            },
+            {
+              "value": "самонарезающий с прессшайбой",
+              "count": 9,
+              "offers": 17
+            },
+            {
+              "value": "невыпадающие",
+              "count": 10,
+              "offers": 15
+            },
+            {
+              "value": "с внутренним шестигранником и острым наконечником",
+              "count": 12,
+              "offers": 14
+            },
+            {
+              "value": "невыпадающий с шестигранной головкой",
+              "count": 8,
+              "offers": 13
+            },
+            {
+              "value": "установочный с коническим концом и шест. углубл.",
+              "count": 13,
+              "offers": 13
+            },
+            {
+              "value": "невыпадающий",
+              "count": 9,
+              "offers": 9
+            },
+            {
+              "value": "с потайной головкой и шестигранным углублением",
+              "count": 9,
+              "offers": 9
+            },
+            {
+              "value": "самонарезающий с цилиндрической головкой и сферой",
+              "count": 9,
+              "offers": 9
+            },
+            {
+              "value": "невыпадающий с потайной головкой",
+              "count": 9,
+              "offers": 9
+            },
+            {
+              "value": "с плоской головкой",
+              "count": 9,
+              "offers": 9
+            },
+            {
+              "value": "самонарез. с полусферической головкой",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "с низкой головкой и шестигранным отверстием",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "с отверстиями",
+              "count": 7,
+              "offers": 7
+            },
+            {
+              "value": "самонарезающий со сверлом",
+              "count": 7,
+              "offers": 7
+            },
+            {
+              "value": "самонарезающий с шайбой",
+              "count": 6,
+              "offers": 6
+            },
+            {
+              "value": "с шестигранной головкой и сверлом",
+              "count": 6,
+              "offers": 6
+            },
+            {
+              "value": "резьбонакатывающий",
+              "count": 3,
+              "offers": 4
+            },
+            {
+              "value": "с рифленой головкой",
+              "count": 4,
+              "offers": 4
+            },
+            {
+              "value": "установочный с полукруглой головкой",
+              "count": 3,
+              "offers": 3
+            },
+            {
+              "value": "с крестообразным шлицем",
+              "count": 3,
+              "offers": 3
+            },
+            {
+              "value": "с полусферической головкой и сверлом",
+              "count": 3,
+              "offers": 3
+            },
+            {
+              "value": "антивандальный с плоской головкой",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "с потайной головкой и сверлом",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "с острым наконечником",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "с полукруглой головкой и квадратным подголовником",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "с увеличенной плоской головкой",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "со сверлом",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "ступенчатый с цилиндрической головкой и шлицем",
+              "count": 1,
+              "offers": 1
+            }
+          ]
+        },
+        {
+          "char_id": "00002154",
+          "char_name": "Диаметр",
+          "original_name": "Диаметр",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "6",
+              "count": 4381,
+              "offers": 10499
+            },
+            {
+              "value": "5",
+              "count": 3837,
+              "offers": 9121
+            },
+            {
+              "value": "4",
+              "count": 3574,
+              "offers": 8567
+            },
+            {
+              "value": "8",
+              "count": 3796,
+              "offers": 8202
+            },
+            {
+              "value": "3",
+              "count": 2718,
+              "offers": 6083
+            }
+          ]
+        },
+        {
+          "char_id": "00002155",
+          "char_name": "Длина",
+          "original_name": "Длина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "20",
+              "count": 1776,
+              "offers": 4359
+            },
+            {
+              "value": "16",
+              "count": 1897,
+              "offers": 4273
+            },
+            {
+              "value": "25",
+              "count": 1763,
+              "offers": 4217
+            },
+            {
+              "value": "30",
+              "count": 1603,
+              "offers": 3941
+            },
+            {
+              "value": "12",
+              "count": 1577,
+              "offers": 3565
+            }
+          ]
+        },
+        {
+          "char_id": "00004948",
+          "char_name": "Марка материала",
+          "original_name": "Марка материала",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "A2",
+              "count": 7761,
+              "offers": 13390
+            },
+            {
+              "value": "A4",
+              "count": 5956,
+              "offers": 10195
+            },
+            {
+              "value": "А2",
+              "count": 4605,
+              "offers": 7306
+            },
+            {
+              "value": "А2-70",
+              "count": 822,
+              "offers": 944
+            },
+            {
+              "value": "A4-80",
+              "count": 236,
+              "offers": 306
+            }
+          ]
+        },
+        {
+          "char_id": "00004949",
+          "char_name": "Покрытие",
+          "original_name": "Покрытие",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "оцинкованный",
+              "count": 4252,
+              "offers": 16955
+            },
+            {
+              "value": "без покрытия",
+              "count": 2672,
+              "offers": 4253
+            },
+            {
+              "value": "нержавеющая сталь",
+              "count": 1081,
+              "offers": 1198
+            },
+            {
+              "value": "латунированный",
+              "count": 667,
+              "offers": 879
+            },
+            {
+              "value": "оксидированный",
+              "count": 631,
+              "offers": 737
+            },
+            {
+              "value": "белый цинк",
+              "count": 358,
+              "offers": 433
+            },
+            {
+              "value": "фосфатированный",
+              "count": 137,
+              "offers": 169
+            },
+            {
+              "value": "полиамид",
+              "count": 44,
+              "offers": 44
+            },
+            {
+              "value": "желтый цинк",
+              "count": 30,
+              "offers": 30
+            },
+            {
+              "value": "кадмий",
+              "count": 3,
+              "offers": 3
+            },
+            {
+              "value": "нержавеющий",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "лакокрасочное покрытие",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "никелированный",
+              "count": 2,
+              "offers": 2
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Винт.json",
+        "original_category": "Винт",
+        "total_items": 33720,
+        "selected_characteristics_count": 5,
+        "export_timestamp": "2026-06-25T10:30:52.130300"
+      }
+    },
+    "phase2": {
+      "category": "Винт",
+      "original_category": "Винт",
+      "markers": [
+        "Винт",
+        "Винты",
+        "продукция",
+        "изделие"
+      ],
+      "source_category": "Винт",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-25T10:31:19.168273"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "9112352 01": {
+            "prompts_per_value": 3,
+            "char_name": "Форма"
+          },
+          "00002154": {
+            "prompts_per_value": 5,
+            "char_name": "Диаметр"
+          },
+          "00002155": {
+            "prompts_per_value": 5,
+            "char_name": "Длина"
+          },
+          "00004948": {
+            "prompts_per_value": 5,
+            "char_name": "Марка материала"
+          },
+          "00004949": {
+            "prompts_per_value": 3,
+            "char_name": "Покрытие"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Винт",
+    "project_name": "винт",
+    "created_at": "2026-06-25T10:29:42.722930",
+    "updated_at": "2026-06-25T10:32:07.146146",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "9112352 01": {
+          "prompts_per_value": 3,
+          "char_name": "Форма"
+        },
+        "00002154": {
+          "prompts_per_value": 5,
+          "char_name": "Диаметр"
+        },
+        "00002155": {
+          "prompts_per_value": 5,
+          "char_name": "Длина"
+        },
+        "00004948": {
+          "prompts_per_value": 5,
+          "char_name": "Марка материала"
+        },
+        "00004949": {
+          "prompts_per_value": 3,
+          "char_name": "Покрытие"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-06-25T10:29:42.722930",
+  "updated_at": "2026-06-25T10:32:07.350874",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

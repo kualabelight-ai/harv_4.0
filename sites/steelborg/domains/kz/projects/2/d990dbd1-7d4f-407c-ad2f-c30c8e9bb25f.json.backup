@@ -1,0 +1,394 @@
+{
+  "project_id": "d990dbd1-7d4f-407c-ad2f-c30c8e9bb25f",
+  "project_name": "арматура рифленая",
+  "category": "Рифленая арматура",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Рифленая арматура",
+      "project_name": "арматура рифленая",
+      "characteristics": [
+        {
+          "char_id": "00000215",
+          "char_name": "Диаметр",
+          "original_name": "Диаметр",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "10",
+              "count": 479,
+              "offers": 5997
+            },
+            {
+              "value": "12",
+              "count": 441,
+              "offers": 5256
+            },
+            {
+              "value": "8",
+              "count": 376,
+              "offers": 5158
+            },
+            {
+              "value": "14",
+              "count": 384,
+              "offers": 4370
+            },
+            {
+              "value": "16",
+              "count": 354,
+              "offers": 4219
+            }
+          ]
+        },
+        {
+          "char_id": "00000223",
+          "char_name": "Класс",
+          "original_name": "Класс",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "А500С",
+              "count": 1614,
+              "offers": 23294
+            },
+            {
+              "value": "А400 (А3)",
+              "count": 1788,
+              "offers": 21547
+            },
+            {
+              "value": "А500",
+              "count": 670,
+              "offers": 4219
+            },
+            {
+              "value": "А500СП",
+              "count": 48,
+              "offers": 96
+            },
+            {
+              "value": "В500С",
+              "count": 24,
+              "offers": 72
+            }
+          ]
+        },
+        {
+          "char_id": "00000224",
+          "char_name": "Марка материала",
+          "original_name": "Марка материала",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "25Г2С",
+              "count": 524,
+              "offers": 7454
+            },
+            {
+              "value": "35ГС",
+              "count": 786,
+              "offers": 6034
+            },
+            {
+              "value": "Ст3",
+              "count": 314,
+              "offers": 1167
+            },
+            {
+              "value": "Ст3пс",
+              "count": 246,
+              "offers": 325
+            },
+            {
+              "value": "Ст3сп",
+              "count": 213,
+              "offers": 288
+            }
+          ]
+        },
+        {
+          "char_id": "00000225",
+          "char_name": "Длина",
+          "original_name": "Длина",
+          "is_unique": false,
+          "unit": "м",
+          "values": [
+            {
+              "value": "11.7",
+              "count": 886,
+              "offers": 23042
+            },
+            {
+              "value": "12",
+              "count": 431,
+              "offers": 5255
+            },
+            {
+              "value": "6",
+              "count": 267,
+              "offers": 4638
+            },
+            {
+              "value": "11.75",
+              "count": 379,
+              "offers": 2007
+            },
+            {
+              "value": "5.9",
+              "count": 222,
+              "offers": 726
+            }
+          ]
+        },
+        {
+          "char_id": "00003389",
+          "char_name": "Способ поставки",
+          "original_name": "Способ поставки",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "в бухте",
+              "count": 168,
+              "offers": 1119
+            },
+            {
+              "value": "в мотках",
+              "count": 59,
+              "offers": 323
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Рифленая арматура.json",
+        "original_category": "Рифленая арматура",
+        "total_items": 4240,
+        "selected_characteristics_count": 5,
+        "export_timestamp": "2026-06-24T11:36:37.798938"
+      }
+    },
+    "phase2": {
+      "category": "Рифленая арматура",
+      "original_category": "Рифленая арматура",
+      "markers": [
+        "арматура рифленая",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Рифленая арматура",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-24T11:36:56.647299"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00000215": {
+            "prompts_per_value": 3,
+            "char_name": "Диаметр"
+          },
+          "00000223": {
+            "prompts_per_value": 3,
+            "char_name": "Класс"
+          },
+          "00000224": {
+            "prompts_per_value": 3,
+            "char_name": "Марка материала"
+          },
+          "00000225": {
+            "prompts_per_value": 3,
+            "char_name": "Длина"
+          },
+          "00003389": {
+            "prompts_per_value": 5,
+            "char_name": "Способ поставки"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Рифленая арматура",
+    "project_name": "арматура рифленая",
+    "created_at": "2026-06-24T11:36:05.155744",
+    "updated_at": "2026-06-24T11:37:23.332812",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00000215": {
+          "prompts_per_value": 3,
+          "char_name": "Диаметр"
+        },
+        "00000223": {
+          "prompts_per_value": 3,
+          "char_name": "Класс"
+        },
+        "00000224": {
+          "prompts_per_value": 3,
+          "char_name": "Марка материала"
+        },
+        "00000225": {
+          "prompts_per_value": 3,
+          "char_name": "Длина"
+        },
+        "00003389": {
+          "prompts_per_value": 5,
+          "char_name": "Способ поставки"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-06-24T11:36:05.155744",
+  "updated_at": "2026-06-24T11:37:23.561671",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

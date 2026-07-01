@@ -1,0 +1,507 @@
+{
+  "project_id": "f7b2ae8d-597f-468f-aed8-208496ac6017",
+  "project_name": "дюбель гвоздь",
+  "category": "Дюбель-гвоздь",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Дюбель-гвоздь",
+      "project_name": "дюбель гвоздь",
+      "characteristics": [
+        {
+          "char_id": "9113686 01",
+          "char_name": "Форма",
+          "original_name": "Форма",
+          "unit": "",
+          "is_unique": true,
+          "values": [
+            {
+              "value": "с потайным бортиком",
+              "items_count": 7,
+              "offers_sum": 307,
+              "percent": 5.147058823529411
+            },
+            {
+              "value": "с потайной головкой",
+              "items_count": 9,
+              "offers_sum": 133,
+              "percent": 6.61764705882353
+            },
+            {
+              "value": "с грибовидным бортиком",
+              "items_count": 7,
+              "offers_sum": 84,
+              "percent": 5.147058823529411
+            },
+            {
+              "value": "с шайбой",
+              "items_count": 6,
+              "offers_sum": 73,
+              "percent": 4.411764705882353
+            },
+            {
+              "value": "без воротника",
+              "items_count": 8,
+              "offers_sum": 67,
+              "percent": 5.88235294117647
+            },
+            {
+              "value": "с цилиндрическим бортиком",
+              "items_count": 5,
+              "offers_sum": 59,
+              "percent": 3.6764705882352944
+            },
+            {
+              "value": "с бортиком",
+              "items_count": 6,
+              "offers_sum": 32,
+              "percent": 4.411764705882353
+            },
+            {
+              "value": "с термоголовкой",
+              "items_count": 4,
+              "offers_sum": 31,
+              "percent": 2.941176470588235
+            },
+            {
+              "value": "с насаженной шайбой",
+              "items_count": 5,
+              "offers_sum": 23,
+              "percent": 3.6764705882352944
+            },
+            {
+              "value": "с металлическим гвоздем",
+              "items_count": 2,
+              "offers_sum": 16,
+              "percent": 1.4705882352941175
+            },
+            {
+              "value": "с увеличенной термоголовкой",
+              "items_count": 2,
+              "offers_sum": 16,
+              "percent": 1.4705882352941175
+            },
+            {
+              "value": "с цилиндрической головкой",
+              "items_count": 1,
+              "offers_sum": 8,
+              "percent": 0.7352941176470588
+            },
+            {
+              "value": "с воротником и грибовидным бортиком",
+              "items_count": 1,
+              "offers_sum": 6,
+              "percent": 0.7352941176470588
+            },
+            {
+              "value": "с воротником",
+              "items_count": 2,
+              "offers_sum": 6,
+              "percent": 1.4705882352941175
+            },
+            {
+              "value": "с грибовидной головкой",
+              "items_count": 2,
+              "offers_sum": 4,
+              "percent": 1.4705882352941175
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "00002150",
+          "char_name": "Диаметр",
+          "original_name": "Диаметр",
+          "unit": "мм",
+          "is_unique": false,
+          "values": [
+            {
+              "value": "6",
+              "items_count": 43,
+              "offers_sum": 683,
+              "percent": 31.61764705882353
+            },
+            {
+              "value": "8",
+              "items_count": 25,
+              "offers_sum": 468,
+              "percent": 18.38235294117647
+            },
+            {
+              "value": "10",
+              "items_count": 23,
+              "offers_sum": 313,
+              "percent": 16.911764705882355
+            },
+            {
+              "value": "4.5",
+              "items_count": 13,
+              "offers_sum": 186,
+              "percent": 9.558823529411764
+            },
+            {
+              "value": "3.7",
+              "items_count": 6,
+              "offers_sum": 57,
+              "percent": 4.411764705882353
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "00004969",
+          "char_name": "Вид",
+          "original_name": "Вид",
+          "unit": "",
+          "is_unique": true,
+          "values": [
+            {
+              "value": "потайной",
+              "items_count": 21,
+              "offers_sum": 149,
+              "percent": 15.441176470588236
+            },
+            {
+              "value": "распорный",
+              "items_count": 28,
+              "offers_sum": 134,
+              "percent": 20.588235294117645
+            },
+            {
+              "value": "монтажный",
+              "items_count": 7,
+              "offers_sum": 75,
+              "percent": 5.147058823529411
+            },
+            {
+              "value": "забивной",
+              "items_count": 6,
+              "offers_sum": 55,
+              "percent": 4.411764705882353
+            },
+            {
+              "value": "рамный",
+              "items_count": 3,
+              "offers_sum": 25,
+              "percent": 2.2058823529411766
+            },
+            {
+              "value": "фасадный",
+              "items_count": 3,
+              "offers_sum": 14,
+              "percent": 2.2058823529411766
+            },
+            {
+              "value": "с насаженными шайбами",
+              "items_count": 1,
+              "offers_sum": 4,
+              "percent": 0.7352941176470588
+            },
+            {
+              "value": "гриб",
+              "items_count": 1,
+              "offers_sum": 3,
+              "percent": 0.7352941176470588
+            },
+            {
+              "value": "гвоздевой",
+              "items_count": 2,
+              "offers_sum": 2,
+              "percent": 1.4705882352941175
+            },
+            {
+              "value": "пистолетный",
+              "items_count": 1,
+              "offers_sum": 1,
+              "percent": 0.7352941176470588
+            },
+            {
+              "value": "универсальный",
+              "items_count": 1,
+              "offers_sum": 1,
+              "percent": 0.7352941176470588
+            }
+          ],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "00004970",
+          "char_name": "Назначение",
+          "original_name": "Назначение",
+          "unit": "",
+          "is_unique": true,
+          "values": [
+            {
+              "value": "для изоляции",
+              "items_count": 6,
+              "offers_sum": 111,
+              "percent": 4.411764705882353
+            },
+            {
+              "value": "для монтажа",
+              "items_count": 15,
+              "offers_sum": 80,
+              "percent": 11.029411764705882
+            },
+            {
+              "value": "для бетона",
+              "items_count": 15,
+              "offers_sum": 60,
+              "percent": 11.029411764705882
+            },
+            {
+              "value": "для кирпича",
+              "items_count": 14,
+              "offers_sum": 53,
+              "percent": 10.294117647058822
+            },
+            {
+              "value": "для монтажного пистолета",
+              "items_count": 7,
+              "offers_sum": 35,
+              "percent": 5.147058823529411
+            },
+            {
+              "value": "для газобетона",
+              "items_count": 14,
+              "offers_sum": 26,
+              "percent": 10.294117647058822
+            },
+            {
+              "value": "для камня",
+              "items_count": 10,
+              "offers_sum": 22,
+              "percent": 7.352941176470589
+            },
+            {
+              "value": "для гипсокартона",
+              "items_count": 3,
+              "offers_sum": 4,
+              "percent": 2.2058823529411766
+            }
+          ],
+          "is_duplicate": false
+        }
+      ],
+      "metadata": {
+        "source_file": "Дюбель-гвоздь.json",
+        "original_category": "Дюбель-гвоздь",
+        "total_items": 136,
+        "selected_characteristics_count": 4,
+        "export_timestamp": "2026-06-26T16:12:27.962915"
+      }
+    },
+    "phase2": {
+      "category": "Дюбель-гвоздь",
+      "original_category": "Дюбель-гвоздь",
+      "markers": [
+        "дюбель гвоздь",
+        "дюбельный гвоздь",
+        "дюбель гвоздевой",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Дюбель-гвоздь",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-26T16:14:20.221508"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "9113686 01": {
+            "prompts_per_value": 3,
+            "char_name": "Форма"
+          },
+          "00002150": {
+            "prompts_per_value": 3,
+            "char_name": "Диаметр"
+          },
+          "00004969": {
+            "prompts_per_value": 3,
+            "char_name": "Вид"
+          },
+          "00004970": {
+            "prompts_per_value": 3,
+            "char_name": "Назначение"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Дюбель-гвоздь",
+    "project_name": "дюбель гвоздь",
+    "created_at": "2026-06-26T16:00:55.421807",
+    "updated_at": "2026-06-26T16:14:51.929991",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "9113686 01": {
+          "prompts_per_value": 3,
+          "char_name": "Форма"
+        },
+        "00002150": {
+          "prompts_per_value": 3,
+          "char_name": "Диаметр"
+        },
+        "00004969": {
+          "prompts_per_value": 3,
+          "char_name": "Вид"
+        },
+        "00004970": {
+          "prompts_per_value": 3,
+          "char_name": "Назначение"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-06-26T16:00:55.421807",
+  "updated_at": "2026-06-26T16:14:52.480542",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

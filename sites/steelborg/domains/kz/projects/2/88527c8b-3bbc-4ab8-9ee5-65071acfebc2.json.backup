@@ -1,0 +1,579 @@
+{
+  "project_id": "88527c8b-3bbc-4ab8-9ee5-65071acfebc2",
+  "project_name": "заклепки",
+  "category": "Заклепки",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Заклепки",
+      "project_name": "заклепки",
+      "characteristics": [
+        {
+          "char_id": "00004971",
+          "char_name": "Форма",
+          "original_name": "Форма",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "с полукруглой головкой",
+              "count": 1115,
+              "offers": 1912
+            },
+            {
+              "value": "с потайной головкой",
+              "count": 527,
+              "offers": 723
+            },
+            {
+              "value": "со стандартным бортиком",
+              "count": 171,
+              "offers": 256
+            },
+            {
+              "value": "с потайным бортиком",
+              "count": 125,
+              "offers": 204
+            },
+            {
+              "value": "с цилиндрическим бортиком",
+              "count": 60,
+              "offers": 105
+            },
+            {
+              "value": "с широким бортиком",
+              "count": 76,
+              "offers": 81
+            },
+            {
+              "value": "заклепка-гайка",
+              "count": 62,
+              "offers": 79
+            },
+            {
+              "value": "с плоской головкой",
+              "count": 54,
+              "offers": 74
+            },
+            {
+              "value": "с насечками",
+              "count": 57,
+              "offers": 67
+            },
+            {
+              "value": "с насечкой",
+              "count": 58,
+              "offers": 60
+            },
+            {
+              "value": "цилиндрическая",
+              "count": 57,
+              "offers": 57
+            },
+            {
+              "value": "с уменьшенным бортиком",
+              "count": 44,
+              "offers": 44
+            },
+            {
+              "value": "шестигранная",
+              "count": 28,
+              "offers": 35
+            },
+            {
+              "value": "с цилиндрической головкой",
+              "count": 35,
+              "offers": 35
+            },
+            {
+              "value": "с увеличенным бортиком",
+              "count": 22,
+              "offers": 34
+            },
+            {
+              "value": "с полупотайной головкой",
+              "count": 25,
+              "offers": 25
+            },
+            {
+              "value": "с фланцем",
+              "count": 13,
+              "offers": 24
+            },
+            {
+              "value": "с потайным бортом",
+              "count": 12,
+              "offers": 12
+            },
+            {
+              "value": "с уменьшенным бортом",
+              "count": 7,
+              "offers": 7
+            },
+            {
+              "value": "с шестигранной головкой",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "со скругленной головкой",
+              "count": 3,
+              "offers": 3
+            },
+            {
+              "value": "полушестигранная",
+              "count": 3,
+              "offers": 3
+            },
+            {
+              "value": "уменьшен. бортик",
+              "count": 3,
+              "offers": 3
+            },
+            {
+              "value": "с плосковыпуклой головкой",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "с полушестигранной головкой",
+              "count": 1,
+              "offers": 1
+            }
+          ]
+        },
+        {
+          "char_id": "00002952",
+          "char_name": "Диаметр",
+          "original_name": "Диаметр",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "4",
+              "count": 800,
+              "offers": 2637
+            },
+            {
+              "value": "4.8",
+              "count": 427,
+              "offers": 1760
+            },
+            {
+              "value": "3.2",
+              "count": 272,
+              "offers": 1487
+            },
+            {
+              "value": "5",
+              "count": 598,
+              "offers": 906
+            },
+            {
+              "value": "6",
+              "count": 482,
+              "offers": 742
+            }
+          ]
+        },
+        {
+          "char_id": "00002954",
+          "char_name": "Длина",
+          "original_name": "Длина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "10",
+              "count": 330,
+              "offers": 1588
+            },
+            {
+              "value": "8",
+              "count": 271,
+              "offers": 1366
+            },
+            {
+              "value": "12",
+              "count": 311,
+              "offers": 1149
+            },
+            {
+              "value": "16",
+              "count": 318,
+              "offers": 752
+            },
+            {
+              "value": "14",
+              "count": 237,
+              "offers": 561
+            }
+          ]
+        },
+        {
+          "char_id": "9112370 01",
+          "char_name": "Материал",
+          "original_name": "Материал",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "алюминиевые/стальные",
+              "count": 530,
+              "offers": 3106
+            },
+            {
+              "value": "нержавеющие",
+              "count": 836,
+              "offers": 1712
+            },
+            {
+              "value": "алюминиевые",
+              "count": 601,
+              "offers": 792
+            },
+            {
+              "value": "латунные",
+              "count": 26,
+              "offers": 27
+            },
+            {
+              "value": "алюминиевые/нержавеющие",
+              "count": 15,
+              "offers": 19
+            }
+          ]
+        },
+        {
+          "char_id": "9112370 03",
+          "char_name": "ГОСТ",
+          "original_name": "ГОСТ",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "ГОСТ 10299-80",
+              "count": 754,
+              "offers": 1436
+            },
+            {
+              "value": "DIN 7337",
+              "count": 327,
+              "offers": 650
+            },
+            {
+              "value": "ГОСТ 10300-80",
+              "count": 325,
+              "offers": 411
+            },
+            {
+              "value": "DIN 660",
+              "count": 252,
+              "offers": 398
+            },
+            {
+              "value": "DIN 661",
+              "count": 224,
+              "offers": 333
+            }
+          ]
+        },
+        {
+          "char_id": "9112370 02",
+          "char_name": "Вид",
+          "original_name": "Вид",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "вытяжные",
+              "count": 1132,
+              "offers": 3869
+            },
+            {
+              "value": "комбинированные",
+              "count": 348,
+              "offers": 1357
+            },
+            {
+              "value": "резьбовые",
+              "count": 156,
+              "offers": 217
+            },
+            {
+              "value": "с внутренней резьбой",
+              "count": 53,
+              "offers": 97
+            },
+            {
+              "value": "закрытые",
+              "count": 57,
+              "offers": 78
+            },
+            {
+              "value": "полупустотелые",
+              "count": 32,
+              "offers": 32
+            },
+            {
+              "value": "многозажимные",
+              "count": 17,
+              "offers": 26
+            },
+            {
+              "value": "тяговые",
+              "count": 12,
+              "offers": 12
+            },
+            {
+              "value": "лепестковые",
+              "count": 6,
+              "offers": 6
+            },
+            {
+              "value": "распорные",
+              "count": 3,
+              "offers": 3
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Заклепки.json",
+        "original_category": "Заклепки",
+        "total_items": 4241,
+        "selected_characteristics_count": 6,
+        "export_timestamp": "2026-06-26T08:47:31.700069"
+      }
+    },
+    "phase2": {
+      "category": "Заклепки",
+      "original_category": "Заклепки",
+      "markers": [
+        "клепки",
+        "клепка",
+        "клепки металлические",
+        "заклепки металлические",
+        "продукция",
+        "изделие"
+      ],
+      "source_category": "Заклепки",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-06-26T08:47:57.873433"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00004971": {
+            "prompts_per_value": 3,
+            "char_name": "Форма"
+          },
+          "00002952": {
+            "prompts_per_value": 3,
+            "char_name": "Диаметр"
+          },
+          "00002954": {
+            "prompts_per_value": 3,
+            "char_name": "Длина"
+          },
+          "9112370 01": {
+            "prompts_per_value": 3,
+            "char_name": "Материал"
+          },
+          "9112370 03": {
+            "prompts_per_value": 3,
+            "char_name": "ГОСТ"
+          },
+          "9112370 02": {
+            "prompts_per_value": 3,
+            "char_name": "Вид"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Заклепки",
+    "project_name": "заклепки",
+    "created_at": "2026-06-26T08:46:29.921702",
+    "updated_at": "2026-06-26T08:48:11.461155",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00004971": {
+          "prompts_per_value": 3,
+          "char_name": "Форма"
+        },
+        "00002952": {
+          "prompts_per_value": 3,
+          "char_name": "Диаметр"
+        },
+        "00002954": {
+          "prompts_per_value": 3,
+          "char_name": "Длина"
+        },
+        "9112370 01": {
+          "prompts_per_value": 3,
+          "char_name": "Материал"
+        },
+        "9112370 03": {
+          "prompts_per_value": 3,
+          "char_name": "ГОСТ"
+        },
+        "9112370 02": {
+          "prompts_per_value": 3,
+          "char_name": "Вид"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-06-26T08:46:29.921702",
+  "updated_at": "2026-06-26T08:48:11.672449",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}
