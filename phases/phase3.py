@@ -1409,8 +1409,43 @@ def check_all_instructions_exist():
 
     return missing_count == 0
 
+def show_all_ai_instructions_for_category():
+    """
+    Отображает все сгенерированные AI-инструкции для текущей категории.
+    Инструкции группируются по блокам и переменным, доступно редактирование.
+    """
+    phase2_data = get_phase2_data()
+    category = phase2_data.get('category', '').strip()
+    if not category:
+        st.warning("⚠️ Категория не загружена. Сначала выполните фазу 2.")
+        return
 
-def main(app_state=None, settings_mode=False, context=None):
+    if 'ai_instruction_manager' not in st.session_state:
+        st.error("❌ Менеджер AI-инструкций не инициализирован.")
+        return
+
+    blocks = st.session_state.block_manager.get_all_blocks()
+    found = False
+
+    st.subheader(f"📋 Все сгенерированные инструкции для категории: **{category}**")
+    st.markdown("---")
+
+    for block_id, block in blocks.items():
+        variables_data = block.get("variables_data", {})
+        for var_name, var_data in variables_data.items():
+            if var_data.get("type") == "ai":
+                # Проверяем, есть ли инструкции для этой категории
+                if has_instructions_for_category(block_id, var_name, category):
+                    found = True
+                    block_name = block.get("name", block_id)
+                    st.markdown(f"### 🧱 Блок: {block_name}  |  Переменная: `{var_name}`")
+                    # Используем существующую функцию для отображения и редактирования
+                    show_ai_instructions_full(block_id, var_name, block)
+                    st.divider()
+
+    if not found:
+        st.info(f"📭 Нет сгенерированных инструкций для категории «{category}».")
+def main(app_state=None, settings_mode=False, context=None, show_instructions_only=False):
     load_css()
 
     # ✅ ПРИНУДИТЕЛЬНАЯ СИНХРОНИЗАЦИЯ ДОМЕНА ИЗ ФАЙЛА
@@ -1485,7 +1520,9 @@ def main(app_state=None, settings_mode=False, context=None):
     else:
         print(f"   ⚠️ Блоков в домене НЕТ")
     # ====================================================
-
+    if show_instructions_only:
+        show_all_ai_instructions_for_category()
+        return
     # === ЗАЩИТА ОТ АВТОМАТИЧЕСКОГО СОЗДАНИЯ ДЕФОЛТНЫХ БЛОКОВ ===
     is_auto_mode = context is not None and hasattr(context, 'project_id')
 
@@ -1924,6 +1961,9 @@ def show_ai_variables_overview():
             if st.button("🚀", key=f"gen_single_{block_id}_{var_name}"):
                 # одиночная генерация
                 pass
+    if st.button("📋 Показать все инструкции для текущей категории", use_container_width=True):
+        st.session_state.phase3_tab = 6  # индекс вкладки "Все инструкции"
+        st.rerun()
 def show_edit_mode(app_state=None):
     # Проверяем, нужно ли переключиться на редактирование переменной
     if st.session_state.get('edit_variable_direct', False):
@@ -1978,12 +2018,13 @@ def show_edit_mode(app_state=None):
         show_block_editor()
     else:
         # Показываем все вкладки
-        tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
             "📋 Управление блоками",
             "✏️ Редактирование блока",
             "📊 Обзор переменных",
             "🌀 Редактирование глобальных переменных",
-            "🤖 Управление AI‑переменными"
+            "🤖 Управление AI‑переменными",
+            "📋 Все инструкции"
         ])
 
         with tab1:
@@ -2000,7 +2041,8 @@ def show_edit_mode(app_state=None):
 
         with tab5:
             show_ai_variables_overview()
-
+        with tab6:
+            show_all_ai_instructions_for_category()
     # Сохраняем блоки после любых изменений
 
 

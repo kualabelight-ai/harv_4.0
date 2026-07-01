@@ -2368,20 +2368,12 @@ def render_auto_project_settings(app_state, context=None):
 
         # ========== ФАЗА 3 - ТОЛЬКО ПРОСМОТР ==========
         with tabs[2]:
-            st.subheader("📝 Фаза 3: Блоки и AI-инструкции")
-            phase3_data = st.session_state.app_data.get('phase3', {})
-            blocks = phase3_data.get('blocks', {})
-
-            if blocks:
-                st.write(f"**Всего блоков:** {len(blocks)}")
-                with st.expander("Показать все блоки", expanded=False):
-                    for block_id, block_info in blocks.items():
-                        st.markdown(f"**{block_info.get('name', block_id)}**")
-                        st.write(f"Тип: {block_info.get('block_type', 'unknown')}")
-                        st.write(f"Переменные: {', '.join(block_info.get('variables', []))}")
-                        st.divider()
-            else:
-                st.info("Нет данных фазы 3")
+            st.subheader("📝 Фаза 3: Сгенерированные AI-инструкции")
+            try:
+                # Передаём show_instructions_only=True, чтобы показать только инструкции
+                phase3.main(app_state=app_state, settings_mode=True, context=context, show_instructions_only=True)
+            except Exception as e:
+                st.error(f"Ошибка отображения инструкций: {e}")
 
         # ========== ФАЗА 4 - ТОЛЬКО ПРОСМОТР ==========
         with tabs[3]:

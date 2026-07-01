@@ -13,8 +13,10 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import secrets
+
 from database_settings.database import get_db, validate_session, create_session, delete_session, is_admin, hash_password, verify_password
 from admin_queues import render_queues_admin_panel
+from admin import dashboard, users_manager, api_keys_manager, projects_viewer, stats_viewer, audit_viewer
 import warnings
 warnings.filterwarnings("ignore", message=r".*ScriptRunContext.*")
 # Настройка логирования
@@ -23,7 +25,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
-
+from admin.backup_manager import render_backup_manager
 # Конфигурация email (замените на свои данные или используйте st.secrets)
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
@@ -510,315 +512,39 @@ def profile_page():
 
 # -------------------- Админ панель --------------------
 def admin_panel():
-    st.title("👥 Панель администратора")
+    """Полноценная панель администратора с использованием всех модулей"""
+    st.title("👑 Панель администратора")
 
-    tab1, tab2, tab3 = st.tabs(["📋 Заявки на регистрацию", "👤 Все пользователи", "🔐 Права на домены"])
+    # Импортируем все необходимые функции из модулей admin/
+    from admin.dashboard import render_admin_dashboard
+    from admin.users_manager import render_users_manager
+    from admin.api_keys_manager import render_api_keys_manager
+    from admin.projects_viewer import render_projects_viewer
+    from admin.stats_viewer import render_stats_viewer
+    from admin.audit_viewer import render_audit_viewer
 
-    with tab1:
-        st.subheader("Новые заявки")
+    # Создаём вкладки
+    tabs = st.tabs([
+        "📊 Дашборд",
+        "👥 Пользователи и права",
+        "🔑 API ключи",
+        "📁 Все проекты",
+        "📊 Статистика API",
+        "📋 Аудит",
+        "💾 Бэкапы и очистка"   # Новая вкладка
+    ])
 
-        with get_db() as conn:
-            pending_users = conn.execute(
-                "SELECT id, username, email, created_at FROM users WHERE status = 'pending' ORDER BY created_at ASC"
-            ).fetchall()
-
-        if not pending_users:
-            st.info("✅ Нет новых заявок на регистрацию.")
-        else:
-            st.warning(f"⚠️ Найдено {len(pending_users)} заявок, ожидающих рассмотрения.")
-            st.markdown("---")
-
-            for user in pending_users:
-                col1, col2, col3, col4 = st.columns([2, 2, 2, 1])
-                with col1:
-                    st.write(f"**{user['username']}**")
-                with col2:
-                    st.write(user['email'])
-                with col3:
-                    created = datetime.fromisoformat(user['created_at']).strftime("%d.%m.%Y %H:%M")
-                    st.write(f"📅 {created}")
-                with col4:
-                    if st.button("✅ Одобрить", key=f"approve_{user['id']}", type="primary"):
-                        with get_db() as conn:
-                            conn.execute(
-                                "UPDATE users SET status = 'approved' WHERE id = ?",
-                                (user['id'],)
-                            )
-                            conn.commit()
-                        st.success(f"✅ Пользователь {user['username']} одобрен!")
-                        time.sleep(0.5)
-                        st.rerun()
-                st.divider()
-
-    with tab2:
-        st.subheader("Управление пользователями")
-        with get_db() as conn:
-            users = conn.execute("""
-                SELECT id, username, email, status, is_admin, totp_enabled, banned, 
-                       failed_attempts, locked_until, created_at
-                FROM users 
-                ORDER BY 
-                    CASE status 
-                        WHEN 'pending' THEN 0 
-                        ELSE 1 
-                    END,
-                    created_at DESC
-            """).fetchall()
-
-        if users:
-            users_list = []
-            for u in users:
-                status_emoji = {
-                    'approved': '✅',
-                    'pending': '⏳',
-                    'rejected': '❌'
-                }.get(u["status"], '❓')
-
-                users_list.append({
-                    "ID": u["id"],
-                    "Username": u["username"],
-                    "Email": u["email"],
-                    "Status": f"{status_emoji} {u['status']}",
-                    "Admin": "✅" if u["is_admin"] else "❌",
-                    "2FA": "✅" if u["totp_enabled"] else "❌",
-                    "Banned": "✅" if u["banned"] else "❌",
-                    "Created": u["created_at"][:10] if u["created_at"] else "N/A"
-                })
-            st.dataframe(users_list, use_container_width=True)
-
-        st.markdown("---")
-        st.subheader("Действия с пользователем")
-
-        with get_db() as conn:
-            users = conn.execute(
-                "SELECT id, username, status, is_admin, banned FROM users ORDER BY username"
-            ).fetchall()
-
-            if users:
-                user_options = {f"{u['username']} (ID: {u['id']})": u['id'] for u in users}
-                selected_display = st.selectbox("Выберите пользователя", list(user_options.keys()))
-                selected_id = user_options[selected_display]
-
-                user = conn.execute(
-                    "SELECT id, username, email, status, is_admin, banned FROM users WHERE id = ?",
-                    (selected_id,)
-                ).fetchone()
-
-                if user:
-                    st.write(f"**Текущий статус:** {user['status']}, Админ: {'да' if user['is_admin'] else 'нет'}, Бан: {'да' if user['banned'] else 'нет'}")
-
-                    col1, col2, col3, col4 = st.columns(4)
-
-                    with col1:
-                        if user["banned"]:
-                            if st.button("🔓 Разблокировать", key=f"unban_{user['id']}"):
-                                with get_db() as conn:
-                                    conn.execute("UPDATE users SET banned = 0 WHERE id = ?", (user['id'],))
-                                    conn.commit()
-                                st.success(f"Пользователь {user['username']} разблокирован.")
-                                st.rerun()
-                        else:
-                            if st.button("🔒 Заблокировать", key=f"ban_{user['id']}"):
-                                if user["id"] == st.session_state["user_id"]:
-                                    st.error("Нельзя заблокировать самого себя.")
-                                else:
-                                    with get_db() as conn:
-                                        conn.execute("UPDATE users SET banned = 1 WHERE id = ?", (user['id'],))
-                                        conn.commit()
-                                    st.success(f"Пользователь {user['username']} заблокирован.")
-                                    st.rerun()
-
-                    with col2:
-                        if user["is_admin"]:
-                            if st.button("👤 Снять админа", key=f"deadmin_{user['id']}"):
-                                if user["id"] == st.session_state["user_id"]:
-                                    st.error("Нельзя снять админа с самого себя.")
-                                else:
-                                    with get_db() as conn:
-                                        conn.execute("UPDATE users SET is_admin = 0 WHERE id = ?", (user['id'],))
-                                        conn.commit()
-                                    st.success(f"Пользователь {user['username']} больше не администратор.")
-                                    st.rerun()
-                        else:
-                            if st.button("👑 Назначить админом", key=f"admin_{user['id']}"):
-                                with get_db() as conn:
-                                    conn.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (user['id'],))
-                                    conn.commit()
-                                st.success(f"Пользователь {user['username']} теперь администратор.")
-                                st.rerun()
-
-                    with col3:
-                        if st.button("🔄 Сбросить 2FA", key=f"reset2fa_{user['id']}"):
-                            with get_db() as conn:
-                                conn.execute(
-                                    "UPDATE users SET totp_enabled = 0, totp_secret = NULL WHERE id = ?",
-                                    (user['id'],)
-                                )
-                                conn.commit()
-                            st.success(f"2FA для {user['username']} сброшена.")
-                            st.rerun()
-
-                    with col4:
-                        if st.button("❌ Удалить", key=f"delete_{user['id']}"):
-                            if user["id"] == st.session_state["user_id"]:
-                                st.error("Нельзя удалить самого себя.")
-                            else:
-                                with get_db() as conn:
-                                    conn.execute("DELETE FROM password_resets WHERE user_id = ?", (user['id'],))
-                                    conn.execute("DELETE FROM user_sessions WHERE user_id = ?", (user['id'],))
-                                    conn.execute("DELETE FROM user_domain_permissions WHERE user_id = ?", (user['id'],))
-                                    conn.execute("DELETE FROM users WHERE id = ?", (user['id'],))
-                                    conn.commit()
-                                st.success(f"Пользователь {user['username']} удален.")
-                                st.rerun()
-
-    # ========== НОВАЯ ВКЛАДКА: ПРАВА НА ДОМЕНЫ ==========
-    with tab3:
-        st.subheader("🔐 Управление правами на домены")
-
-        # Выбор пользователя
-        with get_db() as conn:
-            users = conn.execute(
-                "SELECT id, username, email, status FROM users WHERE status = 'approved' ORDER BY username"
-            ).fetchall()
-
-            if not users:
-                st.warning("Нет активных пользователей для выдачи прав")
-                return
-
-            user_options = {f"{u['username']} ({u['email']})": u['id'] for u in users}
-            selected_user_label = st.selectbox("👤 Выберите пользователя", list(user_options.keys()))
-            user_id = user_options[selected_user_label]
-
-            # Получаем данные пользователя
-            user = conn.execute(
-                "SELECT id, username, email FROM users WHERE id = ?",
-                (user_id,)
-            ).fetchone()
-
-        st.markdown("---")
-
-        # Выбор сайта и домена
-        from site_manager import SiteManager
-        from domain_manager import DomainManager
-
-        sm = SiteManager()
-        sites = sm.get_available_sites()
-
-        if not sites:
-            st.warning("Нет доступных сайтов")
-            return
-
-        col1, col2 = st.columns(2)
-        with col1:
-            site_name = st.selectbox("🏢 Сайт", sites)
-
-        dm = DomainManager(site_name)
-        domains = dm.get_available_domains()
-
-        with col2:
-            domain_name = st.selectbox("🌐 Домен", domains)
-
-        # Проверяем текущие права
-        from domain_permissions import DomainPermissionManager
-        perm_manager = DomainPermissionManager()
-
-        # Получаем текущие права
-        with get_db() as conn:
-            current_perms = conn.execute("""
-                SELECT can_read, can_write, can_delete
-                FROM user_domain_permissions
-                WHERE user_id = ? AND site_name = ? AND domain_name = ?
-            """, (user_id, site_name, domain_name)).fetchone()
-
-        has_access = current_perms is not None
-
-        st.markdown("---")
-
-        # Отображаем текущие права
-        col_status, col_action = st.columns([1, 1])
-
-        with col_status:
-            if has_access:
-                st.success(f"✅ Пользователь **{user['username']}** уже имеет доступ к **{site_name}/{domain_name}**")
-
-                # Показываем текущие права
-                st.write(f"📖 Чтение: {'✅' if current_perms['can_read'] else '❌'}")
-                st.write(f"✏️ Запись: {'✅' if current_perms['can_write'] else '❌'}")
-                st.write(f"🗑️ Удаление: {'✅' if current_perms['can_delete'] else '❌'}")
-            else:
-                st.info(f"ℹ️ Пользователь **{user['username']}** не имеет доступа к **{site_name}/{domain_name}**")
-
-        with col_action:
-            if has_access:
-                if st.button("🔒 Отозвать доступ", type="secondary", use_container_width=True):
-                    if perm_manager.revoke_access(user_id, site_name, domain_name):
-                        st.success("✅ Доступ отозван")
-                        st.rerun()
-            else:
-                if st.button("📝 Выдать доступ", type="primary", use_container_width=True):
-                    st.session_state.show_grant_permissions = True
-
-        # Форма выдачи прав
-        if st.session_state.get("show_grant_permissions", False) or not has_access:
-            st.markdown("---")
-            st.subheader("✏️ Настройка прав доступа")
-
-            with st.form("grant_permissions_form"):
-                st.write(f"**Выдача прав для:** {user['username']} → {site_name}/{domain_name}")
-
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    can_read = st.checkbox("📖 Чтение", value=True)
-                with col2:
-                    can_write = st.checkbox("✏️ Запись", value=True)
-                with col3:
-                    can_delete = st.checkbox("🗑️ Удаление", value=False)
-
-                col_btn1, col_btn2 = st.columns(2)
-                with col_btn1:
-                    if st.form_submit_button("💾 Сохранить права", type="primary", use_container_width=True):
-                        if perm_manager.grant_access(
-                                st.session_state.user_id,  # admin_user_id
-                                user_id,                    # target_user_id
-                                site_name,
-                                domain_name,
-                                can_read,
-                                can_write,
-                                can_delete
-                        ):
-                            st.success("✅ Права успешно сохранены!")
-                            st.session_state.pop("show_grant_permissions", None)
-                            time.sleep(0.5)
-                            st.rerun()
-                        else:
-                            st.error("❌ Ошибка сохранения прав")
-
-                with col_btn2:
-                    if st.form_submit_button("❌ Отмена", use_container_width=True):
-                        st.session_state.pop("show_grant_permissions", None)
-                        st.rerun()
-
-        st.markdown("---")
-
-        # Список пользователей с доступом к текущему домену
-        st.subheader(f"👥 Пользователи с доступом к {site_name}/{domain_name}")
-
-        users_with_access = perm_manager.get_users_with_access(site_name, domain_name)
-
-        if users_with_access:
-            for u in users_with_access:
-                col1, col2, col3 = st.columns([2, 2, 1])
-                with col1:
-                    st.write(f"**{u['username']}**")
-                    st.caption(u['email'])
-                with col2:
-                    st.write(f"📖 {'✅' if u['can_read'] else '❌'}  ✏️ {'✅' if u['can_write'] else '❌'}  🗑️ {'✅' if u['can_delete'] else '❌'}")
-                with col3:
-                    if st.button("🔒 Отозвать", key=f"revoke_{u['id']}_{site_name}_{domain_name}"):
-                        if perm_manager.revoke_access(u['id'], site_name, domain_name):
-                            st.success(f"✅ Доступ отозван у {u['username']}")
-                            st.rerun()
-                st.divider()
-        else:
-            st.info("Нет пользователей с доступом к этому домену")
+    with tabs[0]:
+        render_admin_dashboard()
+    with tabs[1]:
+        render_users_manager()
+    with tabs[2]:
+        render_api_keys_manager()
+    with tabs[3]:
+        render_projects_viewer()
+    with tabs[4]:
+        render_stats_viewer()
+    with tabs[5]:
+        render_audit_viewer()
+    with tabs[6]:
+        render_backup_manager()

@@ -492,11 +492,21 @@ class Phase5DataManager:
 
         return True
 
-    def complete_phase5_and_prepare_phase6(self):
-        """Завершить фазу 5 и подготовить данные для фазы 6 — исправленная версия"""
+    def complete_phase5_and_prepare_phase6(self, force=False):
+        """Завершить фазу 5 и подготовить данные для фазы 6.
+        Аргумент force=True позволяет завершить даже при наличии ошибок/pending.
+        """
         results = st.session_state.phase5.get('results', {})
-        success_count = sum(1 for r in results.values() if r.get('status') == 'success')
+        selected_ids = st.session_state.phase5.get('selected_prompt_ids', [])
+        pending_ids = [pid for pid in selected_ids if results.get(pid, {}).get('status') != 'success']
 
+        if pending_ids and not force:
+            # Показываем предупреждение и даём выбор
+            st.warning(f"Остались недогенерированные промпты: {len(pending_ids)}")
+            if not st.checkbox("Завершить фазу, игнорируя ошибки (принудительно)", key="force_complete_phase5"):
+                return False
+
+        success_count = sum(1 for r in results.values() if r.get('status') == 'success')
         print(f"📊 complete_phase5: всего results={len(results)}, success={success_count}")
 
         if success_count == 0:
@@ -504,7 +514,9 @@ class Phase5DataManager:
             return False
 
         # === ФОРМИРУЕМ АКТУАЛЬНЫЕ ДАННЫЕ ===
+        # Берём ВСЕ результаты, даже с ошибками, чтобы они попали в фазу 6
         phase6_data = {
+
             'generation_results': results.copy(),           # ← все актуальные результаты
             'generation_stats': st.session_state.phase5.get('statistics', {}).copy(),
             'generation_settings': st.session_state.phase5.get('generation_settings', {}).copy(),
@@ -780,7 +792,27 @@ class GenerationManager:
             status = result.get('status')
             response = str(result.get('ai_response', '')).strip()
 
-            if status != 'success' or len(response) < 30:   # надёжная проверка
+            # Если записи нет или статус не success – добавляем в очередь
+            if pid not in results or status != 'success' or len(response) < 30:
+                # Создаём запись, если отсутствует
+                if pid not in results:
+                    results[pid] = {
+                        'prompt_id': pid,
+                        'status': 'pending',
+                        'ai_response': '',
+                        'edited_text': '',
+                        'error_message': None,
+                        'model': '',
+                        'provider': '',
+                        'tokens_used': 0,
+                        'generated_at': None,
+                        'characteristic_name': p.get('characteristic_name', ''),
+                        'characteristic_value': p.get('value', ''),
+                        'block_name': p.get('block_name', ''),
+                        'prompt_num': p.get('prompt_num', 1),
+                        'type': p.get('type', p.get('block_type', 'unknown'))
+                    }
+                    print(f"   ✅ Создана запись для {pid}")
                 to_generate.append(p)
 
         print(f"Реально будут генерироваться: {len(to_generate)} промптов")
@@ -1021,15 +1053,17 @@ class GenerationManager:
         print(f"      generation_queue len: {len(phase5['generation_queue'])}")
 
         # Завершение генерации
+        # Завершение генерации
         if phase5['current_index'] >= len(phase5['generation_queue']):
             phase5['generation_status'] = 'completed'
             phase5['generation_running'] = False
             phase5['generation_end_time'] = datetime.now().isoformat()
-            print(f"   ✅ Генерация успешно завершена! Обработано {processed_count} промптов")
+            # Явно сохраняем данные в файл, чтобы все результаты были зафиксированы
+            self.data_manager.save_to_app_data()
+            print(f"   ✅ Генерация успешно завершена! Обработано {processed_count} промптов, данные сохранены")
         else:
             phase5['generation_status'] = 'running'
-            print(
-                f"   ⏳ Генерация продолжается, осталось {len(phase5['generation_queue']) - phase5['current_index']} промптов")
+            print(f"   ⏳ Генерация продолжается, осталось {len(phase5['generation_queue']) - phase5['current_index']} промптов")
 
         print(f"📦 process_batch END: processed={processed_count}\n")
         return processed_count
@@ -1685,17 +1719,27 @@ class Phase5UIComponents:
             st.write(f"{status} {description}")
 
         # Кнопка завершения
+        # Кнопка завершения (обычная)
         can_complete = all([cond for cond, _ in completion_conditions[:-1]])  # игнорируем последнее если чекбокс
 
-        if st.button("🏁 Завершить фазу 5 и перейти к фазе 6",
-                     type="primary",
-                     disabled=not can_complete,
-                     key="complete_phase5_btn"):
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🏁 Завершить фазу 5 и перейти к фазе 6",
+                         type="primary",
+                         disabled=not can_complete,
+                         key="complete_phase5_btn"):
+                if data_manager.complete_phase5_and_prepare_phase6():
+                    st.session_state.current_phase = 6
+                    st.rerun()
 
-            if data_manager.complete_phase5_and_prepare_phase6():
-                # Меняем текущую фазу в основном приложении
-                st.session_state.current_phase = 6
-                st.rerun()
+        with col2:
+            # Кнопка принудительного завершения (игнорирует ошибки)
+            if st.button("⚠️ Принудительно завершить фазу (с ошибками)",
+                         help="Завершить фазу даже если есть недогенерированные промпты",
+                         key="force_complete_phase5_btn"):
+                if data_manager.complete_phase5_and_prepare_phase6(force=True):
+                    st.session_state.current_phase = 6
+                    st.rerun()
 
     @staticmethod
     def show_results(data_manager: Phase5DataManager):
@@ -2075,9 +2119,18 @@ def force_load_phase5_from_file(context=None):
                 print(f"✅ ВЫБРАНЫ ВСЕ ПРОМПТЫ (force_load): {len(all_ids)}")
 
         # Если есть статус завершения
+        # Если есть статус завершения – проверяем, все ли промпты сгенерированы
         if phase5_data.get('phase_completed', False):
-            st.session_state.phase5['generation_status'] = 'completed'
-            st.session_state.phase5_completed = True
+            total_prompts = len(st.session_state.phase5_prompts) if 'phase5_prompts' in st.session_state else 0
+            success_count = sum(1 for r in st.session_state.phase5.get('results', {}).values() if r.get('status') == 'success')
+            if success_count < total_prompts:
+                # Есть недосгенерированные – сбрасываем статус
+                st.session_state.phase5['phase_completed'] = False
+                st.session_state.phase5['generation_status'] = 'idle'
+                print("⚠️ Сброс phase_completed, т.к. есть недогенерированные промпты")
+            else:
+                st.session_state.phase5['generation_status'] = 'completed'
+                st.session_state.phase5_completed = True
 
         return True
 
