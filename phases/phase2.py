@@ -7,6 +7,14 @@ from styles import load_css
 from domain_manager import DomainManager
 import warnings
 warnings.filterwarnings("ignore", message=r".*ScriptRunContext.*")
+import os
+
+import os
+from pathlib import Path
+
+# Определяем корневую папку проекта (родительскую по отношению к папке phases)
+BASE_DIR = Path(__file__).resolve().parent.parent
+MARKERS_FILE = BASE_DIR / "markers.json"
 def _get_context_data(context, st_session):
     """
     Возвращает данные контекста.
@@ -113,13 +121,14 @@ def local_css():
     """, unsafe_allow_html=True)
 
 
-def load_markers(markers_file="markers.json"):
-    """Загружает глобальную базу маркеров"""
+def load_markers(markers_file=MARKERS_FILE):
+    """Загружает глобальную базу маркеров из файла по абсолютному пути"""
     try:
         if os.path.exists(markers_file):
             with open(markers_file, 'r', encoding='utf-8') as f:
                 markers_data = json.load(f)
         else:
+            # Создаём структуру по умолчанию, если файла нет
             markers_data = {
                 "Абразивные материалы": [
                     {"name": "абразивные материалы", "priority": 1},
@@ -128,22 +137,25 @@ def load_markers(markers_file="markers.json"):
                 "Адаптер котла": [{"name": "адаптер котла", "priority": 2}],
                 "Алюмель": [{"name": "алюмель", "priority": None}]
             }
-            save_markers(markers_data, markers_file)
+            save_markers(markers_data, markers_file)  # создаём файл с начальными данными
         return markers_data
     except Exception as e:
         st.error(f"Ошибка загрузки маркеров: {e}")
         return {}
 
-
-def save_markers(markers_data, markers_file="markers.json"):
+def save_markers(markers_data, markers_file=MARKERS_FILE):
+    """Сохраняет базу маркеров в файл по абсолютному пути"""
     try:
+        # Убедимся, что папка существует (на всякий случай)
+        os.makedirs(os.path.dirname(markers_file), exist_ok=True)
         with open(markers_file, 'w', encoding='utf-8') as f:
             json.dump(markers_data, f, ensure_ascii=False, indent=2)
+        print(f"✅ Маркеры сохранены в {os.path.abspath(markers_file)}")
         return True
     except Exception as e:
         st.error(f"Ошибка сохранения маркеров: {e}")
+        print(f"❌ Ошибка записи: {e}")
         return False
-
 
 def normalize_category_name(name):
     if not name:
@@ -791,8 +803,10 @@ def main(app_state=None, settings_mode=False, site_config=None, task_config=None
 
                     st.session_state.markers_data[st.session_state.selected_category] = new_objects
                     if save_markers(st.session_state.markers_data):
-                        st.success(f"✅ Маркеры для категории '{st.session_state.selected_category}' сохранены!")
+                        st.success(f"✅ Маркеры для категории '{st.session_state.selected_category}' сохранены в файл {MARKERS_FILE}!")
+                        # Очищаем временные данные
                         st.session_state.new_markers_priority = {}
+                        # Сохраняем в проект (фаза 2)
                         save_to_session_state(app_state, context)
                         st.rerun()
                     else:
