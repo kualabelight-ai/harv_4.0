@@ -325,6 +325,7 @@ def main(app_state=None, settings_mode=False, site_config=None, task_config=None
         'selected_category': "",
         'custom_category_mode': False,
         'search_query': "",
+        'manual_search_value': "",
         'new_marker_input': "",
         'loaded_data': None,
         'markers_data': load_markers(),
@@ -338,9 +339,7 @@ def main(app_state=None, settings_mode=False, site_config=None, task_config=None
         if key not in st.session_state:
             st.session_state[key] = value
 
-    # === ЗАГРУЗКА КАТЕГОРИИ ИЗ ФАЗЫ 1 (ГЛАВНЫЙ ПРИОРИТЕТ) ===
-    # === ЗАГРУЗКА КАТЕГОРИИ ИЗ ФАЗЫ 1 ===
-    # === ЗАГРУЗКА КАТЕГОРИИ ИЗ ФАЗЫ 1 ===
+        # === ЗАГРУЗКА КАТЕГОРИИ ИЗ ФАЗЫ 1 ===
     category_from_phase1 = ""
 
     # ========== ПОЛУЧАЕМ КОНТЕКСТ ==========
@@ -376,16 +375,15 @@ def main(app_state=None, settings_mode=False, site_config=None, task_config=None
             if category_from_phase1:
                 print(f"📌 Категория из st.session_state (фаза 1): {category_from_phase1}")
 
-    # Устанавливаем search_query ТОЛЬКО если есть категория
+    # Сохраняем оригинальную категорию
+    # НЕ перезаписываем search_query, если пользователь ввёл ручной поиск
     if category_from_phase1:
         st.session_state.original_category_from_phase1 = category_from_phase1
-        st.session_state.search_query = category_from_phase1  # <-- Теперь тут будет правильная категория
-        print(f"✅ Установлен search_query: {category_from_phase1}")
 
-    # 3. Сохраняем оригинальную категорию
-    if category_from_phase1:
-        st.session_state.original_category_from_phase1 = category_from_phase1
-        st.session_state.search_query = category_from_phase1
+        # Проверяем, есть ли ручной поиск
+        if not st.session_state.get('manual_search_value'):
+            st.session_state.search_query = category_from_phase1
+            print(f"✅ Установлен search_query из фазы 1: {category_from_phase1}")
 
         # Загружаем данные фазы 1 если нужно
         if not st.session_state.loaded_data:
@@ -495,20 +493,50 @@ def main(app_state=None, settings_mode=False, site_config=None, task_config=None
                 st.session_state.search_query = category_from_phase1
             st.rerun()
 
-    # --- ОСНОВНОЙ КОНТЕНТ ---
+    #    # --- ОСНОВНОЙ КОНТЕНТ ---
 
-    # Показываем текущую категорию из фазы 1
+    # Показываем текущую категорию из фазы 1 (если есть)
     if category_from_phase1:
         st.info(f"📂 **Категория из фазы 1:** {category_from_phase1}")
 
-    # --- ПОИСК КАТЕГОРИИ ---
+    # --- РУЧНОЙ ПОИСК КАТЕГОРИЙ ---
+    st.markdown("---")
+    st.subheader("🔎 Ручной поиск категории")
+
+    # Поле для ручного ввода
+    manual_search = st.text_input(
+        "Введите название категории для поиска в базе:",
+        placeholder="Например: Абразивные материалы, Адаптер, Котлы...",
+        key="manual_search_input",
+        value=st.session_state.get('manual_search_value', '')
+    )
+
+    col_search_btn, col_clear_btn = st.columns([1, 4])
+    with col_search_btn:
+        if st.button("🔍 Найти", use_container_width=True, type="primary"):
+            if manual_search.strip():
+                st.session_state.search_query = manual_search.strip()
+                st.session_state.manual_search_value = manual_search.strip()
+                st.rerun()
+
+    with col_clear_btn:
+        if st.button("❌ Очистить поиск", use_container_width=True):
+            st.session_state.search_query = ""
+            st.session_state.manual_search_value = ""
+            if category_from_phase1:
+                st.session_state.search_query = category_from_phase1
+            st.rerun()
+
+    # --- ПОИСК КАТЕГОРИИ (результаты) ---
+    # Этот блок теперь НЕ ЗАВИСИТ от category_from_phase1
     if st.session_state.search_query:
-        st.subheader(f"🔍 Поиск маркеров для категории: **{st.session_state.search_query}**")
+        st.markdown("---")
+        st.subheader(f"📋 Результаты поиска по запросу: **{st.session_state.search_query}**")
 
         matches = find_category_matches(st.session_state.search_query, st.session_state.markers_data)
 
         if matches:
-            with st.expander(f"Найдено {len(matches)} совпадение(ий)", expanded=True):
+            with st.expander(f"🔍 Найдено {len(matches)} совпадение(ий)", expanded=True):
                 for i, match in enumerate(matches):
                     match_icon = '✅' if match['match_type'] == 'exact' else '🔍'
 
@@ -552,7 +580,7 @@ def main(app_state=None, settings_mode=False, site_config=None, task_config=None
             st.markdown("</div>", unsafe_allow_html=True)
 
         else:
-            st.warning("Совпадений не найдено. Создайте новую категорию или попробуйте другой поиск.")
+            st.warning("⚠️ Совпадений не найдено. Создайте новую категорию или попробуйте другой поиск.")
 
             col_new1, col_new2 = st.columns([3, 1])
             with col_new1:

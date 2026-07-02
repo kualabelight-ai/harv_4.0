@@ -187,10 +187,19 @@
         "original_category": "Лента электротехническая",
         "total_items": 149,
         "selected_characteristics_count": 7,
-        "export_timestamp": "2026-07-02T10:28:14.835066"
+        "export_timestamp": "2026-07-02T10:36:35.384294"
       }
     },
-    "phase2": {},
+    "phase2": {
+      "category": "Профиль С-образный",
+      "original_category": "Лента электротехническая",
+      "markers": [
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Лента электротехническая",
+      "custom_category_mode": false
+    },
     "phase3": {},
     "phase4": {},
     "phase5": {},
@@ -199,7 +208,7 @@
     "category": "Лента электротехническая",
     "project_name": "sdfhgапрпр",
     "created_at": "2026-07-02T10:27:59.217122",
-    "updated_at": "2026-07-02T10:28:14.838084",
+    "updated_at": "2026-07-02T10:38:35.651531",
     "phase5_completed": false,
     "phase5_results": {},
     "phase4_generated_prompts": [],
@@ -207,7 +216,7 @@
     "domain_name": "kz"
   },
   "created_at": "2026-07-02T10:27:59.217122",
-  "updated_at": "2026-07-02T10:28:20.380473",
+  "updated_at": "2026-07-02T10:38:36.617353",
   "site_name": "steelborg",
   "domain_name": "kz",
   "user_id": 2
