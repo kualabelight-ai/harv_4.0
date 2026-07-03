@@ -1,0 +1,347 @@
+{
+  "project_id": "5b4f4129-8567-4e79-8f79-45bb884b88d9",
+  "project_name": "манометр",
+  "category": "Манометр",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Манометр",
+      "project_name": "манометр",
+      "characteristics": [
+        {
+          "char_id": "00008922",
+          "char_name": "Маркировка",
+          "original_name": "Маркировка",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "ТМ-510",
+              "count": 4,
+              "offers": 17
+            },
+            {
+              "value": "MPGE2000",
+              "count": 1,
+              "offers": 14
+            },
+            {
+              "value": "ТМж-520",
+              "count": 2,
+              "offers": 12
+            },
+            {
+              "value": "TEMA MDM1200",
+              "count": 1,
+              "offers": 12
+            },
+            {
+              "value": "ТМ-310",
+              "count": 4,
+              "offers": 12
+            }
+          ]
+        },
+        {
+          "char_id": "9114388 06",
+          "char_name": "Вид",
+          "original_name": "Вид",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "цифровой",
+              "count": 31,
+              "offers": 31
+            },
+            {
+              "value": "ручной",
+              "count": 6,
+              "offers": 6
+            },
+            {
+              "value": "электронный",
+              "count": 5,
+              "offers": 5
+            },
+            {
+              "value": "диафрагменный",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "сильфонный",
+              "count": 1,
+              "offers": 1
+            }
+          ]
+        },
+        {
+          "char_id": "00008924",
+          "char_name": "Диаметр корпуса",
+          "original_name": "Диаметр корпуса",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "101.6",
+              "count": 228,
+              "offers": 228
+            },
+            {
+              "value": "100",
+              "count": 99,
+              "offers": 190
+            },
+            {
+              "value": "150",
+              "count": 73,
+              "offers": 124
+            },
+            {
+              "value": "63",
+              "count": 71,
+              "offers": 124
+            },
+            {
+              "value": "127",
+              "count": 60,
+              "offers": 60
+            }
+          ]
+        },
+        {
+          "char_id": "9114388 01",
+          "char_name": "Материал корпуса",
+          "original_name": "Материал корпуса",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "нержавеющая сталь",
+              "count": 222,
+              "offers": 344
+            },
+            {
+              "value": "стальной",
+              "count": 224,
+              "offers": 290
+            }
+          ]
+        },
+        {
+          "char_id": "9114388 02",
+          "char_name": "Среда",
+          "original_name": "Среда",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "для воздуха и газа",
+              "count": 383,
+              "offers": 396
+            },
+            {
+              "value": "для жидкости и газа",
+              "count": 122,
+              "offers": 122
+            },
+            {
+              "value": "для нефти и газа",
+              "count": 27,
+              "offers": 29
+            },
+            {
+              "value": "для аммиака",
+              "count": 8,
+              "offers": 15
+            },
+            {
+              "value": "для газа",
+              "count": 11,
+              "offers": 12
+            }
+          ]
+        },
+        {
+          "char_id": "9114388 03",
+          "char_name": "Степень защиты и стойкость",
+          "original_name": "Степень защиты и стойкость",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "виброустойчивый",
+              "count": 46,
+              "offers": 128
+            },
+            {
+              "value": "коррозионностойкий",
+              "count": 44,
+              "offers": 108
+            },
+            {
+              "value": "безопасный",
+              "count": 71,
+              "offers": 71
+            },
+            {
+              "value": "пылевлагозащитный",
+              "count": 13,
+              "offers": 25
+            },
+            {
+              "value": "взрывозащищенный",
+              "count": 9,
+              "offers": 9
+            },
+            {
+              "value": "кислотостойкий",
+              "count": 1,
+              "offers": 1
+            }
+          ]
+        },
+        {
+          "char_id": "9114388 04",
+          "char_name": "Материал механизма",
+          "original_name": "Материал механизма",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "латунный",
+              "count": 25,
+              "offers": 25
+            },
+            {
+              "value": "алюминиевый сплава",
+              "count": 4,
+              "offers": 24
+            }
+          ]
+        },
+        {
+          "char_id": "9114388 05",
+          "char_name": "Назначение",
+          "original_name": "Назначение",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "дифференциальный",
+              "count": 255,
+              "offers": 296
+            },
+            {
+              "value": "электроконтактный",
+              "count": 143,
+              "offers": 147
+            },
+            {
+              "value": "общетехнический",
+              "count": 67,
+              "offers": 123
+            },
+            {
+              "value": "для точных измерений",
+              "count": 6,
+              "offers": 22
+            },
+            {
+              "value": "железнодорожный",
+              "count": 6,
+              "offers": 21
+            },
+            {
+              "value": "технический",
+              "count": 4,
+              "offers": 17
+            },
+            {
+              "value": "для низких давлений газов",
+              "count": 9,
+              "offers": 17
+            },
+            {
+              "value": "котловой",
+              "count": 3,
+              "offers": 4
+            },
+            {
+              "value": "испытательный",
+              "count": 4,
+              "offers": 4
+            },
+            {
+              "value": "судовой",
+              "count": 3,
+              "offers": 3
+            },
+            {
+              "value": "санитарный",
+              "count": 2,
+              "offers": 2
+            },
+            {
+              "value": "промышленный",
+              "count": 1,
+              "offers": 1
+            }
+          ]
+        },
+        {
+          "char_id": "9114388 07",
+          "char_name": "Исполнение",
+          "original_name": "Исполнение",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "с электроконтактной приставкой",
+              "count": 15,
+              "offers": 24
+            },
+            {
+              "value": "с корректировкой нуля",
+              "count": 3,
+              "offers": 18
+            },
+            {
+              "value": "с LED-подсветкой",
+              "count": 3,
+              "offers": 14
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Манометр.json",
+        "original_category": "Манометр",
+        "total_items": 764,
+        "selected_characteristics_count": 9,
+        "export_timestamp": "2026-07-03T12:37:18.871589"
+      }
+    },
+    "phase2": {},
+    "phase3": {},
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Манометр",
+    "project_name": "манометр",
+    "created_at": "2026-07-03T12:35:34.647031",
+    "updated_at": "2026-07-03T12:37:18.876547",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz"
+  },
+  "created_at": "2026-07-03T12:35:34.647031",
+  "updated_at": "2026-07-03T12:37:20.292134",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

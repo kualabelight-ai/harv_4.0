@@ -1,0 +1,407 @@
+{
+  "project_id": "1e866ade-afbd-40ca-8f3c-75acc037b859",
+  "project_name": "стяжные ремни",
+  "category": "Ремни стяжные",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Ремни стяжные",
+      "project_name": "стяжные ремни",
+      "characteristics": [
+        {
+          "char_id": "00003346",
+          "char_name": "Ширина",
+          "original_name": "Ширина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "50",
+              "count": 205,
+              "offers": 297
+            },
+            {
+              "value": "35",
+              "count": 173,
+              "offers": 225
+            },
+            {
+              "value": "25",
+              "count": 151,
+              "offers": 199
+            },
+            {
+              "value": "75",
+              "count": 151,
+              "offers": 191
+            },
+            {
+              "value": "100",
+              "count": 136,
+              "offers": 175
+            }
+          ]
+        },
+        {
+          "char_id": "00003348",
+          "char_name": "Длина",
+          "original_name": "Длина",
+          "is_unique": false,
+          "unit": "м",
+          "values": [
+            {
+              "value": "6",
+              "count": 153,
+              "offers": 203
+            },
+            {
+              "value": "10",
+              "count": 98,
+              "offers": 130
+            },
+            {
+              "value": "5",
+              "count": 99,
+              "offers": 119
+            },
+            {
+              "value": "4",
+              "count": 97,
+              "offers": 109
+            },
+            {
+              "value": "3",
+              "count": 92,
+              "offers": 102
+            }
+          ]
+        },
+        {
+          "char_id": "00003347",
+          "char_name": "Грузоподъемность",
+          "original_name": "Грузоподъемность",
+          "is_unique": false,
+          "unit": "т",
+          "values": [
+            {
+              "value": "5/10",
+              "count": 91,
+              "offers": 118
+            },
+            {
+              "value": "5",
+              "count": 83,
+              "offers": 90
+            },
+            {
+              "value": "3.5/7",
+              "count": 65,
+              "offers": 88
+            },
+            {
+              "value": "10",
+              "count": 55,
+              "offers": 86
+            },
+            {
+              "value": "2.5/5",
+              "count": 51,
+              "offers": 80
+            }
+          ]
+        },
+        {
+          "char_id": "9109685 01",
+          "char_name": "Вид",
+          "original_name": "Вид",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "кольцевой",
+              "count": 295,
+              "offers": 306
+            }
+          ]
+        },
+        {
+          "char_id": "9109685 02",
+          "char_name": "Исполнение",
+          "original_name": "Исполнение",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "с натяжным храповым устройством",
+              "count": 239,
+              "offers": 254
+            },
+            {
+              "value": "с крюками",
+              "count": 215,
+              "offers": 220
+            },
+            {
+              "value": "с храповым механизмом",
+              "count": 22,
+              "offers": 71
+            },
+            {
+              "value": "усиленный строп лентой",
+              "count": 39,
+              "offers": 39
+            },
+            {
+              "value": "с пряжкой",
+              "count": 15,
+              "offers": 15
+            },
+            {
+              "value": "с пружинным замком",
+              "count": 10,
+              "offers": 10
+            },
+            {
+              "value": "с двумя концевиками",
+              "count": 3,
+              "offers": 3
+            },
+            {
+              "value": "с пружинной стяжкой",
+              "count": 2,
+              "offers": 2
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Ремни стяжные.json",
+        "original_category": "Ремни стяжные",
+        "total_items": 991,
+        "selected_characteristics_count": 5,
+        "export_timestamp": "2026-07-03T12:17:16.055511"
+      }
+    },
+    "phase2": {
+      "category": "Стяжные ремни",
+      "original_category": "Ремни стяжные",
+      "markers": [
+        "ремень стяжной",
+        "стяжной ремень",
+        "ремни стяжные",
+        "ремень стяжной для крепления груза",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Ремни стяжные",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-07-03T12:17:37.654416"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00003346": {
+            "prompts_per_value": 3,
+            "char_name": "Ширина"
+          },
+          "00003348": {
+            "prompts_per_value": 3,
+            "char_name": "Длина"
+          },
+          "00003347": {
+            "prompts_per_value": 3,
+            "char_name": "Грузоподъемность"
+          },
+          "9109685 01": {
+            "prompts_per_value": 10,
+            "char_name": "Вид"
+          },
+          "9109685 02": {
+            "prompts_per_value": 3,
+            "char_name": "Исполнение"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Ремни стяжные",
+    "project_name": "стяжные ремни",
+    "created_at": "2026-07-03T12:16:29.953612",
+    "updated_at": "2026-07-03T12:18:11.906065",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00003346": {
+          "prompts_per_value": 3,
+          "char_name": "Ширина"
+        },
+        "00003348": {
+          "prompts_per_value": 3,
+          "char_name": "Длина"
+        },
+        "00003347": {
+          "prompts_per_value": 3,
+          "char_name": "Грузоподъемность"
+        },
+        "9109685 01": {
+          "prompts_per_value": 10,
+          "char_name": "Вид"
+        },
+        "9109685 02": {
+          "prompts_per_value": 3,
+          "char_name": "Исполнение"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-07-03T12:16:29.953612",
+  "updated_at": "2026-07-03T12:18:12.170836",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

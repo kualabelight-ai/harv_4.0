@@ -365,12 +365,36 @@ class AIGenerator:
         """Вызов через agentplatform.ru (OpenAI-совместимый API)"""
         results = []
 
-        # ✅ Используем переданные параметры
-        # user_id и project_id уже переданы в функцию
+        # ===== ЗАГРУЖАЕМ ДОМЕН ИЗ ФАЙЛА ПОЛЬЗОВАТЕЛЯ =====
+        site_name = "steelborg"
+        domain_name = "default"
 
-        # Получаем сайт и домен
-        site_name = "unknown"
-        domain_name = "unknown"
+        if user_id:
+            try:
+                from pathlib import Path
+                import json
+                settings_file = Path(f"sites/users/{user_id}/settings.json")
+                if settings_file.exists():
+                    with open(settings_file, 'r', encoding='utf-8') as f:
+                        settings = json.load(f)
+                        if settings.get('selected_domain'):
+                            domain_name = settings['selected_domain']
+                            site_name = settings.get('selected_site', 'steelborg')
+                            print(f"📂 _call_agentplatform загружен домен из файла: {site_name}/{domain_name}")
+            except Exception as e:
+                print(f"⚠️ Ошибка загрузки домена: {e}")
+
+        # Если не загрузился – пробуем из domain_manager
+        if domain_name == "default":
+            try:
+                if 'domain_manager' in st.session_state:
+                    dm = st.session_state.domain_manager
+                    site_name = dm.site_name
+                    domain_name = dm.get_current_domain()
+            except:
+                pass
+
+            # ... остальной код метода ...
 
         # ПРИОРИТЕТ 1: Пытаемся получить из domain_manager
         try:

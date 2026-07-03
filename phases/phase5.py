@@ -1,7 +1,5 @@
 
 
-
-
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -25,10 +23,64 @@ from typing import Dict, List, Optional, Any
 import traceback
 from datetime import datetime
 import streamlit as st
+def clear_phase5_data(keep_prompts=False):
+    """
+    ПОЛНАЯ ОЧИСТКА ДАННЫХ PHASE 5
+    Args:
+        keep_prompts: если True, оставляет phase5_prompts
+    """
+    print(f"\n{'='*60}")
+    print("🗑️  ОЧИСТКА ДАННЫХ PHASE 5")
+    print(f"{'='*60}")
+
+    # 1. Очищаем phase5 в session_state
+    if 'phase5' in st.session_state:
+        st.session_state.phase5 = {
+            'generation_status': 'idle',
+            'selected_prompt_ids': [],
+            'results': {},
+            'statistics': {
+                'total': 0, 'selected': 0, 'completed': 0,
+                'success': 0, 'error': 0, 'pending': 0
+            },
+            'generation_settings': {  # ✅ ДОБАВЛЯЕМ!
+                'provider': 'agentplatform',
+                'temperature': 0.7,
+                'max_tokens': 2000,
+                'retry_count': 3,
+                'delay_between_requests': 2.0
+            },
+            'generation_queue': [],
+            'current_index': 0,
+            'generation_running': False,
+            'initialized': True,
+            'phase_completed': False,
+            'project_id': st.session_state.get('current_project_id')
+        }
+        print("   ✅ phase5 очищен")
+def generate_phase5_id(prompt_data, fallback_index=None):
+    """
+    Генерирует единый идентификатор для промпта фазы 5.
+    Используется во всех местах создания промптов и результатов.
+    """
+    # Приоритет: characteristic_id > block_id > характеристика + значение + номер
+    if 'characteristic_id' in prompt_data:
+        # ✅ КАК В РАБОЧЕЙ ВЕРСИИ
+        return f"char_{prompt_data['characteristic_id']}_{prompt_data.get('value', '')}_{prompt_data.get('prompt_num', fallback_index or 0)}"
+    elif 'block_id' in prompt_data:
+        # ✅ КАК В РАБОЧЕЙ ВЕРСИИ
+        return f"block_{prompt_data['block_id']}_{prompt_data.get('prompt_num', fallback_index or 0)}"
+    else:
+        # fallback – используем characteristic_name + value + prompt_num
+        name = prompt_data.get('characteristic_name', prompt_data.get('block_name', 'unknown'))
+        value = prompt_data.get('value', '')
+        num = prompt_data.get('prompt_num', fallback_index or 0)
+        return f"fallback_{name}_{value}_{num}"
+
 def _get_context_data(context, st_session):
     """
     Возвращает данные контекста.
-    Приоритет: context > st.session_state
+    Приоритет: context > st.session_state > файл пользователя
     """
     if context is not None:
         return {
@@ -42,11 +94,31 @@ def _get_context_data(context, st_session):
             'has_context': True
         }
     else:
+        # Пытаемся загрузить домен из файла пользователя
+        user_id = st_session.get('user_id')
+        domain = st_session.get('current_domain', 'default')
+        site = st_session.get('current_site', 'steelborg')
+
+        if user_id:
+            try:
+                from pathlib import Path
+                import json
+                settings_file = Path(f"sites/users/{user_id}/settings.json")
+                if settings_file.exists():
+                    with open(settings_file, 'r', encoding='utf-8') as f:
+                        settings = json.load(f)
+                        if settings.get('selected_domain'):
+                            domain = settings['selected_domain']
+                            site = settings.get('selected_site', 'steelborg')
+                            print(f"📂 _get_context_data загружен домен из файла: {site}/{domain}")
+            except Exception as e:
+                print(f"⚠️ Ошибка загрузки настроек пользователя: {e}")
+
         return {
-            'user_id': st_session.get('user_id'),
+            'user_id': user_id,
             'project_id': st_session.get('current_project_id'),
-            'site_name': st_session.get('current_site', 'steelborg'),
-            'domain_name': st_session.get('current_domain', 'default'),
+            'site_name': site,
+            'domain_name': domain,
             'project_name': st_session.get('project_name', 'Новый проект'),
             'category': st_session.get('category', ''),
             'app_data': st_session.get('app_data', {}),
@@ -156,52 +228,50 @@ def local_css():
     """, unsafe_allow_html=True)
 
 def init_phase5_structure():
-    """Надёжная инициализация - НЕ ПЕРЕЗАПИСЫВАЕТ существующие данные"""
+    """Гарантирует наличие всех ключей phase5, включая generation_settings"""
     if 'phase5' not in st.session_state:
-        st.session_state.phase5 = {}
+        st.session_state.phase5 = {
+            'generation_status': 'idle',
+            'selected_prompt_ids': [],
+            'results': {},
+            'statistics': {
+                'total': 0, 'selected': 0, 'completed': 0,
+                'success': 0, 'error': 0, 'pending': 0
+            },
+            'generation_settings': {   # ← этот блок обязателен
+                'provider': 'agentplatform',
+                'temperature': 0.7,
+                'max_tokens': 2000,
+                'retry_count': 3,
+                'delay_between_requests': 2.0
+            },
+            'generation_queue': [],
+            'current_index': 0,
+            'generation_running': False,
+            'initialized': True,
+            'phase_completed': False,
+            'project_id': st.session_state.get('current_project_id')
+        }
+    else:
+        # ← ДОБАВЬТЕ ЭТОТ БЛОК
+        if 'generation_settings' not in st.session_state.phase5:
+            st.session_state.phase5['generation_settings'] = {
+                'provider': 'agentplatform',
+                'temperature': 0.7,
+                'max_tokens': 2000,
+                'retry_count': 3,
+                'delay_between_requests': 2.0
+            }
 
-    phase5 = st.session_state.phase5
-
-    defaults = {
-        'generation_status': 'idle',
-        'selected_prompt_ids': [],
-        'results': {},  # ← НЕ ПЕРЕЗАПИСЫВАТЬ, если есть!
-        'statistics': {
-            'total': 0, 'selected': 0, 'completed': 0, 'success': 0, 'error': 0, 'pending': 0
-        },
-        'generation_settings': {
-            'provider': 'agentplatform', 'temperature': 0.7, 'max_tokens': 2000,
-            'retry_count': 3, 'delay_between_requests': 2.0
-        },
-        'generation_queue': [], 'current_index': 0, 'generation_running': False,
-        'initialized': True, 'phase_completed': False
-    }
-
-    for key, default in defaults.items():
-        if key not in phase5:
-            phase5[key] = default
-        elif isinstance(phase5[key], dict) and not phase5[key]:
-            phase5[key] = default
-        # ✅ НЕ ПЕРЕЗАПИСЫВАЕМ, если уже есть данные!
-        elif key == 'results' and phase5['results']:
-            # Уже есть результаты - не трогаем
-            pass
-        elif key == 'statistics' and phase5['statistics'].get('success', 0) > 0:
-            # Уже есть успешные генерации - не трогаем
-            pass
-
-    # ✅ Дополнительная страховка - не перезаписываем существующие результаты
-    if 'results' not in phase5:
-        phase5['results'] = {}
-    if 'statistics' not in phase5:
-        phase5['statistics'] = defaults['statistics'].copy()
+    if 'phase5_prompts' not in st.session_state:
+        st.session_state.phase5_prompts = []
 # --- Менеджер данных фазы 5 ---
 class Phase5DataManager:
     """Управление данными для фазы 5"""
 
     def __init__(self):
         self._ensure_session_state()
-        self._load_from_current_project()
+        #self._load_from_current_project()
         # После force_load_phase5_from_file()
         if 'phase5' in st.session_state:
             # Обновляем статистику без data_manager
@@ -264,7 +334,7 @@ class Phase5DataManager:
                 'statistics': {
                     'total': 0, 'selected': 0, 'completed': 0, 'success': 0, 'error': 0, 'pending': 0
                 },
-                'generation_settings': {
+                'generation_settings': {  # ✅ ДОБАВЛЯЕМ!
                     'provider': 'agentplatform',
                     'temperature': 0.7,
                     'max_tokens': 2000,
@@ -371,7 +441,7 @@ class Phase5DataManager:
             print(f"⚠️ Нет данных phase5 в проекте")
 
     def load_prompts_from_phase4(self, context=None):
-        """Загружает ГОТОВЫЕ промпты из фазы 4"""
+        """Загружает ГОТОВЫЕ промпты из фазы 4 - С ОЧИСТКОЙ"""
         import json
         from pathlib import Path
 
@@ -379,7 +449,46 @@ class Phase5DataManager:
         print("🔍 load_prompts_from_phase4 STARTED")
         print("=" * 80)
 
-        # ===== 1. ЗАГРУЖАЕМ ГОТОВЫЕ ПРОМПТЫ ИЗ ФАЙЛА =====
+        # ===== 1. ПОЛНАЯ ОЧИСТКА ДАННЫХ =====
+        print("   🗑️ Очистка существующих данных phase5...")
+
+        # Очищаем session_state
+        if 'phase5' in st.session_state:
+            st.session_state.phase5 = {
+                'generation_status': 'idle',
+                'selected_prompt_ids': [],
+                'results': {},
+                'statistics': {
+                    'total': 0, 'selected': 0, 'completed': 0,
+                    'success': 0, 'error': 0, 'pending': 0
+                },
+                'generation_settings': {  # ✅ ДОБАВЛЯЕМ!
+                    'provider': 'agentplatform',
+                    'temperature': 0.7,
+                    'max_tokens': 2000,
+                    'retry_count': 3,
+                    'delay_between_requests': 2.0
+                },
+                'generation_queue': [],
+                'current_index': 0,
+                'generation_running': False,
+                'initialized': True,
+                'phase_completed': False,
+                'project_id': st.session_state.get('current_project_id')
+            }
+
+        if 'phase5_prompts' in st.session_state:
+            st.session_state.phase5_prompts = []
+
+        if 'phase5_results' in st.session_state:
+            st.session_state.phase5_results = {}
+
+        if 'temp_selections' in st.session_state:
+            st.session_state.temp_selections = {}
+
+        print("   ✅ Данные очищены")
+
+        # ===== 2. ЗАГРУЖАЕМ ГОТОВЫЕ ПРОМПТЫ ИЗ ФАЙЛА =====
         app_data = self._load_from_project_file(context)
         phase4_data = app_data.get('phase4', {})
 
@@ -392,23 +501,16 @@ class Phase5DataManager:
 
         print(f"   ✅ Загружено {len(prompts)} готовых промптов из phase4.prompts")
 
-        # ===== 2. СОХРАНЯЕМ ИХ В SESSION_STATE =====
+        # ===== 3. СОХРАНЯЕМ ИХ В SESSION_STATE =====
         st.session_state.phase5_prompts = prompts
 
-        # ===== 3. СОЗДАЕМ ЗАПИСИ ДЛЯ ВСЕХ ПРОМПТОВ =====
+        # ===== 4. СОЗДАЕМ ЗАПИСИ ДЛЯ ВСЕХ ПРОМПТОВ =====
         new_results = {}
         for i, prompt in enumerate(prompts):
             # ✅ БЕРЕМ ГОТОВЫЙ phase5_id ИЗ ПРОМПТА
             prompt_id = prompt.get('phase5_id')
-
-            # Если нет phase5_id - создаем
             if not prompt_id:
-                if 'characteristic_id' in prompt:
-                    prompt_id = f"char_{prompt['characteristic_id']}_{prompt.get('value', '')}_{prompt.get('prompt_num', i)}"
-                elif 'block_id' in prompt:
-                    prompt_id = f"block_{prompt['block_id']}_{prompt.get('prompt_num', i)}"
-                else:
-                    prompt_id = f"prompt_{i}"
+                prompt_id = generate_phase5_id(prompt, fallback_index=i)
                 prompt['phase5_id'] = prompt_id
 
             # ✅ ИСПОЛЬЗУЕМ ГОТОВЫЙ ПРОМПТ
@@ -431,12 +533,13 @@ class Phase5DataManager:
             }
 
         st.session_state.phase5['results'] = new_results
+        st.session_state.phase5['project_id'] = st.session_state.get('current_project_id')  # ✅ Сохраняем ID
 
-        # ===== 4. ВЫБИРАЕМ ВСЕ ПРОМПТЫ =====
+        # ===== 5. ВЫБИРАЕМ ВСЕ ПРОМПТЫ =====
         all_ids = list(new_results.keys())
         st.session_state.phase5['selected_prompt_ids'] = all_ids
 
-        # ===== 5. СТАТИСТИКА =====
+        # ===== 6. СТАТИСТИКА =====
         st.session_state.phase5['statistics'] = {
             'total': len(prompts),
             'selected': len(all_ids),
@@ -449,17 +552,22 @@ class Phase5DataManager:
         print(f"\n✅ Загружено {len(prompts)} готовых промптов")
         print(f"   Создано {len(new_results)} записей")
         print("=" * 80 + "\n")
-        # В load_prompts_from_phase4
-        print(f"\n📊 ПРОВЕРКА:")
-        print(f"   phase4.prompts: {len(phase4_data.get('prompts', []))} промптов")
-        print(f"   Первый промпт: {phase4_data['prompts'][0].get('characteristic_name')} = {phase4_data['prompts'][0].get('value')}")
-        print(f"   Всего создано результатов: {len(new_results)}")
+
+        # ===== 7. СОХРАНЯЕМ В ФАЙЛ =====
+        self.save_to_app_data()
+        print("   💾 Данные сохранены в файл")
+
         return prompts
 
     def save_to_app_data(self, app_state=None):
-        """Сохраняет данные фазы 5 в файл ПРОЕКТА"""
+        """Сохраняет данные фазы 5 в файл ПРОЕКТА с ID проекта"""
+
+        # ✅ ПОЛУЧАЕМ ID ПРОЕКТА
+        project_id = st.session_state.get('current_project_id')
+
         # ✅ СОХРАНЯЕМ ВСЕ РЕЗУЛЬТАТЫ, БЕЗ ФИЛЬТРАЦИИ!
         phase5_data = {
+            'project_id': project_id,  # ← ДОБАВЛЯЕМ ID ПРОЕКТА!
             'results': st.session_state.phase5.get('results', {}).copy(),
             'statistics': st.session_state.phase5.get('statistics', {}).copy(),
             'generation_settings': st.session_state.phase5.get('generation_settings', {}).copy(),
@@ -479,13 +587,18 @@ class Phase5DataManager:
         app_data = self._load_from_project_file()
         app_data['phase5'] = phase5_data
         app_data['phase5_completed'] = st.session_state.phase5.get('generation_status') == 'completed'
+        app_data['project_id'] = project_id  # ← ДОБАВЛЯЕМ ID В КОРЕНЬ
         self._save_to_project_file(app_data)
+
+        # ... остальной код
 
         # ✅ ОБНОВЛЯЕМ ТОЛЬКО ФЛАГ В session_state ДЛЯ UI (НЕ ДАННЫЕ!)
         if 'app_data' not in st.session_state:
             st.session_state.app_data = {}
         st.session_state.app_data['phase5'] = phase5_data  # ← для отображения в UI
-
+        # Синхронизируем phase5_results для совместимости с AppState.save_project
+        st.session_state.phase5_results = phase5_data['results']
+        st.session_state.phase5_completed = phase5_data.get('phase_completed', False)
         log(f"✅ Данные phase5 сохранены в файл проекта {st.session_state.get('current_project_id', '')}")
         print(f"   Сохранено результатов: {len(phase5_data['results'])}")
         print(f"   Промптов: {len(phase5_data['prompts'])}")
@@ -657,7 +770,7 @@ class Phase5DataManager:
             'statistics': {
                 'total': 0, 'selected': 0, 'completed': 0, 'success': 0, 'error': 0, 'pending': 0
             },
-            'generation_settings': {
+            'generation_settings': {  # ✅ ДОБАВЛЯЕМ!
                 'provider': 'agentplatform',
                 'temperature': 0.7,
                 'max_tokens': 2000,
@@ -1150,108 +1263,27 @@ class Phase5UIComponents:
             st.info("Нет загруженных промптов. Загрузите данные из фазы 4.")
 
             col1, col2 = st.columns(2)
+            # В функции show_prompts_selection, замените блок с кнопкой:
+
             with col1:
                 if st.button("🔄 Загрузить промпты из фазы 4", key="load_prompts_btn"):
                     print("\n" + "=" * 80)
-                    print("🔥 КНОПКА НАЖАТА - ПОЛНАЯ ОЧИСТКА ВСЕХ ДАННЫХ PHASE 5")
+                    print("🔥 КНОПКА НАЖАТА - ПОЛНАЯ ОЧИСТКА И ЗАГРУЗКА ИЗ ФАЗЫ 4")
                     print("=" * 80)
 
-                    # ===== 1. ОЧИЩАЕМ session_state ПОЛНОСТЬЮ =====
-                    keys_to_remove = []
-                    for key in list(st.session_state.keys()):
-                        if key.startswith('phase5') or key == 'temp_selections' or key == '_phase5_loaded_from_phase4':
-                            keys_to_remove.append(key)
+                    # ===== 1. ПОЛНАЯ ОЧИСТКА =====
+                    clear_phase5_data(keep_prompts=False)  # ← Используем новую функцию
 
-                    for key in keys_to_remove:
-                        del st.session_state[key]
-                        print(f"   🗑️ Удален ключ: {key}")
-
-                    # ===== 2. ОЧИЩАЕМ app_data =====
-                    if 'app_data' in st.session_state:
-                        if 'phase5' in st.session_state.app_data:
-                            del st.session_state.app_data['phase5']
-                            print("   🗑️ Удален app_data.phase5")
-                        if 'phase5_results' in st.session_state.app_data:
-                            del st.session_state.app_data['phase5_results']
-                            print("   🗑️ Удален app_data.phase5_results")
-                        if 'phase5_completed' in st.session_state.app_data:
-                            del st.session_state.app_data['phase5_completed']
-                            print("   🗑️ Удален app_data.phase5_completed")
-                        if 'phase5_settings' in st.session_state.app_data:
-                            del st.session_state.app_data['phase5_settings']
-                            print("   🗑️ Удален app_data.phase5_settings")
-                        st.session_state.app_data['phase5_completed'] = False
-
-                    # ===== 3. ОЧИЩАЕМ ФАЙЛ =====
-                    project_file = data_manager._get_project_file()
-                    if project_file and project_file.exists():
-                        try:
-                            import json
-                            with open(project_file, 'r', encoding='utf-8') as f:
-                                file_data = json.load(f)
-
-                            # Удаляем ВСЕ ключи phase5
-                            if 'app_data' in file_data:
-                                keys_to_remove_from_file = ['phase5', 'phase5_results', 'phase5_completed',
-                                                            'phase5_settings']
-                                for key in keys_to_remove_from_file:
-                                    if key in file_data['app_data']:
-                                        del file_data['app_data'][key]
-                                        print(f"   🗑️ Удален из файла: app_data.{key}")
-
-                            if 'phase5_results' in file_data:
-                                del file_data['phase5_results']
-                                print("   🗑️ Удален из файла: phase5_results")
-
-                            file_data['updated_at'] = datetime.now().isoformat()
-
-                            with open(project_file, 'w', encoding='utf-8') as f:
-                                json.dump(file_data, f, ensure_ascii=False, indent=2)
-                            print(f"   ✅ Файл очищен: {project_file}")
-                        except Exception as e:
-                            print(f"   ❌ Ошибка очистки файла: {e}")
-
-                    # ===== 4. ПЕРЕСОЗДАЕМ СТРУКТУРУ =====
-                    st.session_state.phase5 = {
-                        'generation_status': 'idle',
-                        'selected_prompt_ids': [],
-                        'results': {},
-                        'statistics': {
-                            'total': 0,
-                            'selected': 0,
-                            'completed': 0,
-                            'success': 0,
-                            'error': 0,
-                            'pending': 0
-                        },
-                        'generation_settings': {
-                            'provider': 'agentplatform',
-                            'temperature': 0.7,
-                            'max_tokens': 2000,
-                            'retry_count': 3,
-                            'delay_between_requests': 2.0
-                        },
-                        'generation_queue': [],
-                        'current_index': 0,
-                        'generation_running': False,
-                        'initialized': True,
-                        'phase_completed': False
-                    }
-                    st.session_state.phase5_prompts = []
-                    st.session_state.temp_selections = {}
-                    st.session_state._phase5_loaded_from_phase4 = True
-                    print("   ✅ Создана новая пустая структура phase5")
-
-                    # ===== 5. ЗАГРУЖАЕМ ПРОМПТЫ ИЗ ФАЗЫ 4 =====
+                    # ===== 2. ЗАГРУЖАЕМ ПРОМПТЫ ИЗ ФАЗЫ 4 =====
                     print("   📥 Загрузка промптов из фазы 4...")
                     data_manager.load_prompts_from_phase4()
 
-                    # ===== 6. СОХРАНЯЕМ В ФАЙЛ =====
+                    # ===== 3. СОХРАНЯЕМ В ФАЙЛ =====
                     data_manager.save_to_app_data()
                     print("   💾 Данные сохранены в файл")
 
                     print("=" * 80)
-                    print("✅ ВСЕ ДАННЫЕ PHASE 5 ПОЛНОСТЬЮ ОЧИЩЕНЫ И ПЕРЕЗАГРУЖЕНЫ!")
+                    print("✅ ВСЕ ДАННЫЕ PHASE 5 ОЧИЩЕНЫ И ЗАГРУЖЕНЫ ЗАНОВО!")
                     print("=" * 80 + "\n")
 
                     st.success("✅ Данные фазы 5 полностью очищены и загружены из фазы 4!")
@@ -1514,6 +1546,7 @@ class Phase5UIComponents:
     @staticmethod
     def show_generation_settings():
         """Показать настройки генерации"""
+        init_phase5_structure()
         st.header("⚙️ Настройки генерации")
 
         with st.expander("Параметры AI", expanded=True):
@@ -1986,163 +2019,127 @@ def debug_phase5_file(project_file: Path):
 # phase5.py - добавить функцию принудительной загрузки
 
 def force_load_phase5_from_file(context=None):
-    """Принудительно загружает данные фазы 5 из файла"""
+    """
+    ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА ДАННЫХ ИЗ ФАЙЛА
+    ✅ С проверкой, что данные принадлежат ТЕКУЩЕМУ проекту
+    """
     from pathlib import Path
     import json
 
-    # Получаем путь к проекту
-    ctx_data = _get_context_data(context, st.session_state)
+    print(f"\n{'='*60}")
+    print("📂 force_load_phase5_from_file STARTED")
+    print(f"{'='*60}")
 
-    if ctx_data['has_context'] and context is not None:
-        user_id = context.user_id
-        project_id = context.project_id
-        site = context.site_name
-        domain = context.domain_name
-    else:
-        user_id = st.session_state.get('user_id')
-        project_id = st.session_state.get('current_project_id')
-        site = st.session_state.get('current_site', 'steelborg')
-        domain = st.session_state.get('current_domain', 'default')
+    # ===== 1. ПОЛУЧАЕМ ТЕКУЩИЙ ПРОЕКТ =====
+    current_project_id = st.session_state.get('current_project_id')
+    current_user_id = st.session_state.get('user_id')
+    current_site = st.session_state.get('current_site', 'steelborg')
+    current_domain = st.session_state.get('current_domain', 'default')
 
-    if not user_id or not project_id:
-        print("❌ Нет данных для загрузки phase5")
+    if not current_project_id or not current_user_id:
+        print("❌ Нет текущего проекта или пользователя")
         return False
 
-    project_file = Path(f"sites/{site}/domains/{domain}/projects/{user_id}/{project_id}.json")
+    print(f"📌 Текущий проект: {current_project_id}")
+    print(f"📌 Текущий пользователь: {current_user_id}")
+    print(f"📌 Сайт/домен: {current_site}/{current_domain}")
+
+    # ===== 2. ПРОВЕРЯЕМ ID В SESSION_STATE =====
+    if 'phase5' in st.session_state:
+        saved_project_id = st.session_state.phase5.get('project_id')
+        if saved_project_id and saved_project_id != current_project_id:
+            print(f"⚠️ Данные в session_state принадлежат другому проекту: {saved_project_id}")
+            print(f"   🔄 Очищаем session_state...")
+            clear_phase5_data(keep_prompts=False)
+            # Создаём новую структуру с правильным ID
+            if 'phase5' not in st.session_state:
+                st.session_state.phase5 = {}
+            st.session_state.phase5['project_id'] = current_project_id
+
+    # ===== 3. ЗАГРУЖАЕМ ИЗ ФАЙЛА =====
+    project_file = Path(f"sites/{current_site}/domains/{current_domain}/projects/{current_user_id}/{current_project_id}.json")
 
     if not project_file.exists():
         print(f"❌ Файл не существует: {project_file}")
+        # ❌ НЕ ЗАГРУЖАЕМ ДАННЫЕ ИЗ ДРУГИХ ПРОЕКТОВ!
         return False
+
+    print(f"📁 Файл проекта: {project_file}")
 
     try:
         with open(project_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
+        # ✅ ПРОВЕРКА: файл принадлежит текущему проекту?
+        file_project_id = data.get('project_id') or data.get('id')
+        if file_project_id and file_project_id != current_project_id:
+            print(f"⚠️ Файл принадлежит другому проекту: {file_project_id} != {current_project_id}")
+            # ❌ НЕ ЗАГРУЖАЕМ ДАННЫЕ!
+            return False
+
         app_data = data.get('app_data', {})
         phase5_data = app_data.get('phase5', {})
         results = phase5_data.get('results', {})
+
+        print(f"📊 Найдено результатов в файле: {len(results)}")
+
+        # ===== 4. ЗАГРУЖАЕМ ДАННЫЕ (ТОЛЬКО ЕСЛИ ПРОВЕРКА ПРОШЛА) =====
+        if 'phase5' not in st.session_state:
+            st.session_state.phase5 = {}
+
+        # ✅ СОХРАНЯЕМ ID ПРОЕКТА
+        st.session_state.phase5['project_id'] = current_project_id
+
+        # ✅ ЗАГРУЖАЕМ РЕЗУЛЬТАТЫ (ТОЛЬКО ИЗ ФАЙЛА)
+        st.session_state.phase5['results'] = results.copy()
+        print(f"✅ Загружены результаты: {len(st.session_state.phase5['results'])}")
 
         # ✅ ЗАГРУЖАЕМ ПРОМПТЫ ИЗ PHASE4
         phase4_data = app_data.get('phase4', {})
         prompts_from_phase4 = phase4_data.get('prompts', [])
 
-        if prompts_from_phase4 and (not st.session_state.phase5_prompts or len(st.session_state.phase5_prompts) != len(prompts_from_phase4)):
+        if prompts_from_phase4:
             loaded_prompts = []
             for i, prompt in enumerate(prompts_from_phase4):
-                if 'characteristic_id' in prompt:
-                    prompt_id = f"char_{prompt['characteristic_id']}_{prompt.get('value', '')}_{prompt.get('prompt_num', i)}"
-                elif 'block_id' in prompt:
-                    prompt_id = f"block_{prompt['block_id']}_{prompt.get('prompt_num', i)}"
-                elif 'characteristic_name' in prompt:
-                    prompt_id = f"char_{prompt['characteristic_name']}_{prompt.get('value', '')}_{prompt.get('prompt_num', i)}"
-                else:
-                    prompt_id = f"prompt_{i}"
+                prompt_id = generate_phase5_id(prompt, fallback_index=i)
                 prompt['phase5_id'] = prompt_id
                 loaded_prompts.append(prompt)
 
             st.session_state.phase5_prompts = loaded_prompts
             print(f"✅ Загружены промпты из phase4: {len(loaded_prompts)}")
 
-        # Обновляем session_state
-        if 'phase5' not in st.session_state:
-            st.session_state.phase5 = {}
-
-        # ✅ НЕ ПЕРЕЗАПИСЫВАЕМ СУЩЕСТВУЮЩИЕ РЕЗУЛЬТАТЫ
-        existing_results = st.session_state.phase5.get('results', {})
-
-        # Добавляем результаты из файла
-        for pid, result in results.items():
-            if pid not in existing_results:
-                existing_results[pid] = result
-
-        st.session_state.phase5['results'] = existing_results
-
-        # ✅ СОЗДАЕМ НЕДОСТАЮЩИЕ ЗАПИСИ ДЛЯ ВСЕХ ПРОМПТОВ
-        prompts = st.session_state.phase5_prompts if 'phase5_prompts' in st.session_state else []
-        if prompts:
-            missing_count = 0
-            for p in prompts:
-                pid = p.get('phase5_id')
-                if pid and pid not in st.session_state.phase5['results']:
-                    st.session_state.phase5['results'][pid] = {
-                        'prompt_id': pid,
-                        'prompt': p.get('prompt', ''),
-                        'ai_response': '',
-                        'status': 'pending',
-                        'model': '',
-                        'provider': '',
-                        'tokens_used': 0,
-                        'generated_at': None,
-                        'error_message': None,
-                        'edited_text': '',
-                        'characteristic_name': p.get('characteristic_name', ''),
-                        'characteristic_value': p.get('value', ''),
-                        'block_name': p.get('block_name', ''),
-                        'prompt_num': p.get('prompt_num', 1),
-                        'type': p.get('type', p.get('block_type', 'unknown'))
-                    }
-                    missing_count += 1
-                    print(f"   ✅ СОЗДАН НЕДОСТАЮЩИЙ РЕЗУЛЬТАТ для: {pid}")
-
-            if missing_count > 0:
-                print(f"   ✅ СОЗДАНО {missing_count} НЕДОСТАЮЩИХ РЕЗУЛЬТАТОВ")
-
-        # ✅ ОБНОВЛЯЕМ СТАТИСТИКУ - ИСПРАВЛЕНО: НЕ ИСПОЛЬЗУЕМ data_manager
-        total_prompts = len(st.session_state.phase5_prompts) if 'phase5_prompts' in st.session_state else 0
-        current_results = st.session_state.phase5['results']
-
-        success = sum(1 for r in current_results.values() if r.get('status') == 'success')
-        error = sum(1 for r in current_results.values() if r.get('status') == 'error')
-        completed = success + error
-        pending = total_prompts - completed
-
+        # ✅ ЗАГРУЖАЕМ СТАТИСТИКУ
+        stats = phase5_data.get('statistics', {})
         st.session_state.phase5['statistics'] = {
-            'total': total_prompts,
-            'success': success,
-            'error': error,
-            'completed': completed,
-            'pending': pending,
-            'selected': st.session_state.phase5.get('statistics', {}).get('selected', total_prompts)  # ← ИСПРАВЛЕНО
+            'total': len(prompts_from_phase4) if prompts_from_phase4 else len(results),
+            'success': sum(1 for r in results.values() if r.get('status') == 'success'),
+            'error': sum(1 for r in results.values() if r.get('status') == 'error'),
+            'completed': sum(1 for r in results.values() if r.get('status') in ['success', 'error']),
+            'pending': len(results) - sum(1 for r in results.values() if r.get('status') in ['success', 'error']),
+            'selected': len(results)
         }
 
         # ✅ ВЫБИРАЕМ ВСЕ ПРОМПТЫ
-        prompts = st.session_state.phase5_prompts if 'phase5_prompts' in st.session_state else []
-        if prompts:
-            all_ids = [p.get('phase5_id') for p in prompts if p.get('phase5_id')]
-            if not st.session_state.phase5.get('selected_prompt_ids'):
-                st.session_state.phase5['selected_prompt_ids'] = all_ids
-                st.session_state.phase5['statistics']['selected'] = len(all_ids)
-                if 'temp_selections' not in st.session_state:
-                    st.session_state.temp_selections = {}
-                for pid in all_ids:
-                    st.session_state.temp_selections[pid] = True
-                print(f"✅ ВЫБРАНЫ ВСЕ ПРОМПТЫ (force_load): {len(all_ids)}")
+        all_ids = list(results.keys()) if results else []
+        st.session_state.phase5['selected_prompt_ids'] = all_ids
+        if all_ids and 'temp_selections' not in st.session_state:
+            st.session_state.temp_selections = {}
+            for pid in all_ids:
+                st.session_state.temp_selections[pid] = True
 
-        # Если есть статус завершения
-        # Если есть статус завершения – проверяем, все ли промпты сгенерированы
-        if phase5_data.get('phase_completed', False):
-            total_prompts = len(st.session_state.phase5_prompts) if 'phase5_prompts' in st.session_state else 0
-            success_count = sum(1 for r in st.session_state.phase5.get('results', {}).values() if r.get('status') == 'success')
-            if success_count < total_prompts:
-                # Есть недосгенерированные – сбрасываем статус
-                st.session_state.phase5['phase_completed'] = False
-                st.session_state.phase5['generation_status'] = 'idle'
-                print("⚠️ Сброс phase_completed, т.к. есть недогенерированные промпты")
-            else:
-                st.session_state.phase5['generation_status'] = 'completed'
-                st.session_state.phase5_completed = True
-
+        print(f"✅ Загрузка завершена успешно!")
+        print(f"{'='*60}\n")
         return True
 
     except Exception as e:
-        print(f"❌ Ошибка загрузки phase5: {e}")
+        print(f"❌ Ошибка загрузки: {e}")
         import traceback
         traceback.print_exc()
         return False
 def auto_generate_all_texts(app_state=None, context=None):
     """
     АВТОМАТИЧЕСКАЯ ГЕНЕРАЦИЯ ТЕКСТОВ - БАТЧЕВАЯ ВЕРСИЯ
-    Обрабатывает по BATCH_SIZE промптов за раз
+    ✅ Исправлена: загружает ТОЛЬКО из текущего проекта
     """
     from pathlib import Path
     import json
@@ -2171,22 +2168,57 @@ def auto_generate_all_texts(app_state=None, context=None):
         domain = st.session_state.get('current_domain', 'default')
         print(f"📌 Используем session_state: user={user_id}, project={project_id}")
 
-    project_file = Path(f"sites/{site}/domains/{domain}/projects/{user_id}/{project_id}.json")
-
-    print(f"📁 Проект: {project_file}")
-
-    if not project_file.exists():
+    # ✅ ПРОВЕРКА: есть ли проект
+    if not user_id or not project_id:
+        print("❌ Нет данных пользователя или проекта")
         return {
             'success': False,
-            'message': f'❌ Файл проекта не найден',
+            'message': '❌ Нет данных пользователя или проекта',
             'count': 0,
             'errors': 0
         }
 
-    # ========== 2. ЗАГРУЖАЕМ ПРОМПТЫ ИЗ ФАЙЛА ==========
+    # ========== 2. ИЩЕМ ФАЙЛ ТОЛЬКО В ТЕКУЩЕМ ДОМЕНЕ ==========
+    project_file = Path(f"sites/{site}/domains/{domain}/projects/{user_id}/{project_id}.json")
+
+    if not project_file.exists():
+        print(f"❌ Файл не найден: {project_file}")
+        return {
+            'success': False,
+            'message': f'❌ Файл проекта не найден: {project_file}',
+            'count': 0,
+            'errors': 0
+        }
+
+    print(f"📁 Проект: {project_file}")
+
+    # ========== 3. ПРОВЕРКА: файл принадлежит текущему проекту ==========
+    try:
+        with open(project_file, 'r', encoding='utf-8') as f:
+            file_data = json.load(f)
+
+        # ✅ Проверяем project_id в файле
+        file_project_id = file_data.get('project_id') or file_data.get('id')
+        if file_project_id and file_project_id != project_id:
+            print(f"⚠️ Файл принадлежит другому проекту: {file_project_id} != {project_id}")
+            return {
+                'success': False,
+                'message': f'❌ Файл принадлежит другому проекту: {file_project_id}',
+                'count': 0,
+                'errors': 0
+            }
+    except Exception as e:
+        print(f"❌ Ошибка чтения файла: {e}")
+        return {
+            'success': False,
+            'message': f'❌ Ошибка чтения файла: {e}',
+            'count': 0,
+            'errors': 0
+        }
+
+    # ========== 4. ЗАГРУЖАЕМ ПРОМПТЫ ИЗ ФАЙЛА ==========
     prompts = []
 
-    # ✅ ПРЯМО БЕРЕМ ИЗ phase4.prompts
     with open(project_file, 'r', encoding='utf-8') as f:
         file_data = json.load(f)
         app_data = file_data.get('app_data', {})
@@ -2196,26 +2228,37 @@ def auto_generate_all_texts(app_state=None, context=None):
         if prompts:
             print(f"   ✅ Загружено {len(prompts)} готовых промптов из phase4.prompts")
 
-    # ❌ НЕ ПЫТАЙТЕСЬ ПЕРЕСЧИТЫВАТЬ ИХ КОЛИЧЕСТВО!
-    # Просто используйте то, что есть
-
     if not prompts:
-        return {'success': False, 'message': '❌ Нет готовых промптов в phase4.prompts', 'count': 0, 'errors': 0}
+        return {
+            'success': False,
+            'message': '❌ Нет готовых промптов в phase4.prompts',
+            'count': 0,
+            'errors': 0
+        }
 
-        print(f"📝 Итого загружено {len(prompts)} промптов")
-        print(f"{'='*60}\n")
+    print(f"📝 Итого загружено {len(prompts)} промптов")
+    print(f"{'='*60}\n")
 
-
-
-    # ========== 3. ЗАГРУЖАЕМ СУЩЕСТВУЮЩИЕ РЕЗУЛЬТАТЫ ==========
+    # ========== 5. ЗАГРУЖАЕМ СУЩЕСТВУЮЩИЕ РЕЗУЛЬТАТЫ ==========
+    # ✅ ПРОВЕРЯЕМ, ЧТО РЕЗУЛЬТАТЫ ТОЖЕ ИЗ ТЕКУЩЕГО ПРОЕКТА
     existing_results = {}
     try:
         with open(project_file, 'r', encoding='utf-8') as f:
             file_data = json.load(f)
+            # ✅ БЕРЕМ ТОЛЬКО ИЗ ТЕКУЩЕГО ФАЙЛА
             existing_results = file_data.get('app_data', {}).get('phase5', {}).get('results', {})
-            print(f"📂 Существующие результаты: {len(existing_results)}")
-    except:
-        pass
+            # ✅ ПРОВЕРЯЕМ, ЧТО РЕЗУЛЬТАТЫ ПРИНАДЛЕЖАТ ТЕКУЩЕМУ ПРОЕКТУ
+            if existing_results:
+                # Проверяем через project_id в файле
+                if file_data.get('project_id') == project_id:
+                    print(f"📂 Существующие результаты из файла: {len(existing_results)}")
+                else:
+                    print(f"⚠️ Результаты из другого проекта, игнорируем")
+                    existing_results = {}
+    except Exception as e:
+        print(f"⚠️ Ошибка загрузки результатов: {e}")
+
+    # ... дальше код без изменений ...
 
     # ========== 4. НАСТРОЙКИ AI ==========
     # ✅ Получаем user_id для APIKeyManager, НО НЕ ДЛЯ AIConfigManager
@@ -2266,12 +2309,7 @@ def auto_generate_all_texts(app_state=None, context=None):
     # Создаём очередь промптов
     pending_prompts = []
     for idx, prompt_data in enumerate(prompts):
-        if 'characteristic_id' in prompt_data:
-            prompt_id = f"char_{prompt_data['characteristic_id']}_{prompt_data.get('value', '')}_{prompt_data.get('prompt_num', idx)}"
-        elif 'block_id' in prompt_data:
-            prompt_id = f"block_{prompt_data['block_id']}_{prompt_data.get('prompt_num', idx)}"
-        else:
-            prompt_id = f"prompt_{idx}"
+        prompt_id = generate_phase5_id(prompt_data, fallback_index=idx)
 
         if prompt_id not in all_results or all_results[prompt_id].get('status') != 'success':
             pending_prompts.append((prompt_id, prompt_data, idx))
@@ -2414,7 +2452,15 @@ def auto_generate_all_texts(app_state=None, context=None):
     file_data['app_data']['phase5'] = phase5_data
     file_data['app_data']['phase5_completed'] = True
     file_data['app_data']['phase5_results'] = all_results
-    file_data['phase5_results'] = all_results  # ← на всякий случай
+    file_data['phase5_results'] = all_results
+    # ⬇️⬇️⬇️ ДОБАВИТЬ ЭТО ⬇️⬇️⬇️
+    file_data['app_data']['phase5']['results'] = all_results  # <-- явно
+    file_data['app_data']['phase5']['statistics'] = {
+        'total': len(prompts),
+        'success': success_count,
+        'error': error_count,
+        'completed': success_count + error_count
+    }
     file_data['updated_at'] = datetime.now().isoformat()
     file_data['current_phase'] = 5
 
@@ -2452,6 +2498,15 @@ def auto_generate_all_texts(app_state=None, context=None):
     print(f"   Ошибок: {error_count}")
     print(f"   Обработано в этом запуске: {processed_in_this_run}")
 
+    # ✅ ОБНОВЛЯЕМ session_state (для UI)
+    try:
+        # Загружаем актуальные данные из файла в session_state
+        # (чтобы UI показал правильную статистику)
+        force_load_phase5_from_file(context)
+        print("✅ session_state обновлён из файла после генерации")
+    except Exception as e:
+        print(f"⚠️ Ошибка обновления session_state: {e}")
+
     return {
         'success': success_count > 0,
         'message': f'Сгенерировано {success_count} текстов, ошибок: {error_count}',
@@ -2469,22 +2524,36 @@ def auto_generate_all_texts(app_state=None, context=None):
 def _save_phase5_results_to_file(project_file: Path, results: dict,
                                  success_count: int, error_count: int,
                                  total: int, final: bool = False) -> bool:
-    """Сохраняет результаты Phase5 в файл"""
+    """Сохраняет результаты Phase5 в файл - ТОЛЬКО ЕСЛИ ФАЙЛ ПРИНАДЛЕЖИТ ТЕКУЩЕМУ ПРОЕКТУ"""
     import json
     from datetime import datetime
 
     try:
+        # ✅ ПРОВЕРЯЕМ, ЧТО ФАЙЛ ПРИНАДЛЕЖИТ ТЕКУЩЕМУ ПРОЕКТУ
+        current_project_id = st.session_state.get('current_project_id')
+
         file_data = {}
         if project_file.exists():
             with open(project_file, 'r', encoding='utf-8') as f:
                 file_data = json.load(f)
 
+            # ✅ ПРОВЕРКА: файл принадлежит текущему проекту?
+            file_project_id = file_data.get('project_id') or file_data.get('id')
+            if file_project_id and file_project_id != current_project_id:
+                print(f"⚠️ Файл принадлежит другому проекту: {file_project_id} != {current_project_id}")
+                print(f"   СОХРАНЕНИЕ ОТМЕНЕНО!")
+                return False
+
         if 'app_data' not in file_data:
             file_data['app_data'] = {}
 
-        # ✅ СОХРАНЯЕМ ВО ВСЕ МЕСТА
+        # ✅ БЕРЁМ СУЩЕСТВУЮЩИЕ РЕЗУЛЬТАТЫ И ОБЪЕДИНЯЕМ
+        existing_results = file_data.get('app_data', {}).get('phase5', {}).get('results', {})
+        merged_results = existing_results.copy()
+        merged_results.update(results)
+
         phase5_data = {
-            'results': results,
+            'results': merged_results,
             'statistics': {
                 'total': total,
                 'success': success_count,
@@ -2495,16 +2564,11 @@ def _save_phase5_results_to_file(project_file: Path, results: dict,
             'completed_at': datetime.now().isoformat() if final else None
         }
 
-        # 1. Основное место
         file_data['app_data']['phase5'] = phase5_data
-
-        # 2. Дублирующее место в app_data
-        file_data['app_data']['phase5_results'] = results
+        file_data['app_data']['phase5_results'] = merged_results
         file_data['app_data']['phase5_completed'] = final
-
-        # 3. Корневой уровень (для совместимости)
-        file_data['phase5_results'] = results
-
+        file_data['phase5_results'] = merged_results
+        file_data['project_id'] = current_project_id  # ✅ СОХРАНЯЕМ ID
         file_data['updated_at'] = datetime.now().isoformat()
         if final:
             file_data['current_phase'] = 5
@@ -2512,7 +2576,7 @@ def _save_phase5_results_to_file(project_file: Path, results: dict,
         with open(project_file, 'w', encoding='utf-8') as f:
             json.dump(file_data, f, ensure_ascii=False, indent=2)
 
-        print(f"✅ Сохранено: app_data.phase5.results={len(results)}, phase5_results={len(results)}")
+        print(f"✅ Сохранено: app_data.phase5.results={len(merged_results)}, phase5_results={len(merged_results)}")
         return True
 
     except Exception as e:
@@ -2554,33 +2618,90 @@ def save_to_app_state(app_state=None):
 
 def main(app_state=None, settings_mode=False, context=None):
     try:
+        # ===== 1. ПРОВЕРКА ТЕКУЩЕГО ПРОЕКТА =====
+        current_project_id = st.session_state.get('current_project_id')
+        current_user_id = st.session_state.get('user_id')
+
+        if not current_project_id or not current_user_id:
+            st.warning("⚠️ Нет активного проекта. Выберите или создайте проект в фазе 1.")
+            return
+
+        print(f"\n📌 Phase5 main: проект {current_project_id}, пользователь {current_user_id}")
+
+        # ===== 2. ПОЛНАЯ ОЧИСТКА ЕСЛИ ПРОЕКТ ДРУГОЙ =====
+        if 'phase5' in st.session_state:
+            saved_project_id = st.session_state.phase5.get('project_id')
+            if saved_project_id and saved_project_id != current_project_id:
+                print(f"⚠️ Данные в session_state принадлежат другому проекту: {saved_project_id}")
+                clear_phase5_data(keep_prompts=False)
+                # ✅ ПРИНУДИТЕЛЬНО УБИРАЕМ ВСЕ ДАННЫЕ ИЗ APP_DATA
+                if 'app_data' in st.session_state:
+                    if 'phase5' in st.session_state.app_data:
+                        del st.session_state.app_data['phase5']
+                    if 'phase5_results' in st.session_state.app_data:
+                        del st.session_state.app_data['phase5_results']
+                    if 'phase5_completed' in st.session_state.app_data:
+                        del st.session_state.app_data['phase5_completed']
+
+        # ===== 3. ИНИЦИАЛИЗАЦИЯ =====
         init_phase5_structure()
 
-        # ✅ ДОБАВИТЬ СИНХРОНИЗАЦИЮ ДОМЕНА ИЗ ФАЙЛА
+        # ===== 4. СОХРАНЯЕМ ID ТЕКУЩЕГО ПРОЕКТА =====
+        if 'phase5' in st.session_state:
+            st.session_state.phase5['project_id'] = current_project_id
+
+        # ... остальной код ...
+
+        # ===== 5. СИНХРОНИЗАЦИЯ ДОМЕНА =====
         if 'domain_manager' not in st.session_state:
             from domain_manager import DomainManager
             st.session_state.domain_manager = DomainManager()
 
         dm = st.session_state.domain_manager
-        user_id = st.session_state.get('user_id')
-
-        if user_id:
-            settings = dm.load_user_settings(user_id)
+        if current_user_id:
+            settings = dm.load_user_settings(current_user_id)
             saved_domain = settings.get('selected_domain', 'default')
             saved_site = settings.get('selected_site', 'steelborg')
 
-            # Обновляем session_state
             st.session_state.current_domain = saved_domain
             st.session_state.selected_domain = saved_domain
             st.session_state.current_site = saved_site
             st.session_state.selected_site = saved_site
-            st.session_state[f'domain_system_{saved_site}'] = saved_domain
-
             print(f"✅ Phase5 загружен домен из файла: {saved_domain}")
 
-        # ========== ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА ИЗ ФАЙЛА ==========
-        # ✅ Загружаем данные из файла ПЕРЕД отображением
+        # ===== 6. СОЗДАЁМ МЕНЕДЖЕР =====
+        data_manager = Phase5DataManager()
+
+        # ===== 7. ЗАГРУЖАЕМ ДАННЫЕ ТОЛЬКО ИЗ ФАЙЛА ТЕКУЩЕГО ПРОЕКТА =====
+        # ❌ УБИРАЕМ загрузку из app_state - только из файла!
         force_load_phase5_from_file(context)
+
+        # ===== 8. ОСТАЛЬНОЙ КОД =====
+        # ... продолжение main ...
+
+        # ❌ УДАЛИТЬ этот блок полностью:
+        # if app_state:
+        #     if 'phase5' in st.session_state.app_data:
+        #         phase5_saved = st.session_state.app_data['phase5']
+        #         if phase5_saved:
+        #             st.session_state.phase5['results'].update(phase5_saved['results'])
+        #             st.session_state.phase5['statistics'].update(phase5_saved.get('statistics', {}))
+        #             st.session_state.phase5['generation_settings'].update(phase5_saved.get('generation_settings', {}))
+
+        # ===== 9. ВМЕСТО ЭТОГО - ПРОВЕРКА ЗАГРУЗКИ =====
+        print(f"📊 После загрузки: {len(st.session_state.phase5.get('results', {}))} результатов")
+        print(f"   project_id: {st.session_state.phase5.get('project_id')}")
+
+        # ===== 6. ОСТАЛЬНОЙ КОД =====
+        # ... остальной код main без изменений ...
+
+        # Обновляем статистику и СОХРАНЯЕМ ВСЕ 218 ЗАПИСЕЙ в файл и app_data
+        data_manager._update_statistics()
+        # <-- это важно!
+
+        # Теперь создаём остальные менеджеры
+        generation_manager = GenerationManager(data_manager)
+        ui = Phase5UIComponents()
 
         # === ОТОБРАЖЕНИЕ ТЕКУЩЕГО ДОМЕНА ===
         if 'domain_manager' not in st.session_state:
@@ -2817,9 +2938,7 @@ def main(app_state=None, settings_mode=False, context=None):
         st.markdown("---")
 
         # Инициализация менеджеров
-        data_manager = Phase5DataManager()
-        generation_manager = GenerationManager(data_manager)
-        ui = Phase5UIComponents()
+
 
         # Восстанавливаем данные из app_data если есть
         # Восстанавливаем данные из app_data если есть

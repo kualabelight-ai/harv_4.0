@@ -374,6 +374,13 @@ def logout():
 def profile_page():
     """Страница профиля - без sidebar, полноэкранный режим"""
 
+    # Проверяем, авторизован ли пользователь
+    if "username" not in st.session_state or "user_id" not in st.session_state:
+        st.error("Пожалуйста, войдите в систему")
+        st.session_state["show_login"] = True
+        st.rerun()
+        return
+
     # Заголовок и кнопка назад
     col_back, col_title = st.columns([1, 5])
     with col_back:
@@ -482,27 +489,41 @@ def profile_page():
     with tabs[2]:
         st.subheader("Действия с аккаунтом")
 
-        # Админ-панель (только для админов)
+        # Для всех пользователей - управление своими проектами
+        st.markdown("### 📁 Управление моими проектами")
+        if st.button("Перейти к управлению проектами", type="primary", use_container_width=True):
+            st.session_state["show_backup_manager"] = True
+            st.rerun()
+
+        if st.session_state.get("show_backup_manager", False):
+            st.markdown("---")
+            render_backup_manager()  # Теперь эта функция определяет права сама
+            st.markdown("---")
+            if st.button("← Закрыть управление проектами", use_container_width=True):
+                st.session_state["show_backup_manager"] = False
+                st.rerun()
+
+        st.markdown("---")
+
+        # В profile_page() - убедитесь, что админ-панель не вызывается дважды
         if is_admin(st.session_state["user_id"]):
             st.markdown("### 👑 Администрирование")
 
-            # Кнопка входа в админ-панель
             if st.button("Перейти в панель администратора", type="primary", use_container_width=True):
+                # Очищаем флаг, чтобы избежать двойного отображения
+                st.session_state["show_backup_manager"] = False
                 st.session_state["show_admin_panel"] = True
                 st.rerun()
 
-            # Отображение админ-панели
             if st.session_state.get("show_admin_panel", False):
                 st.markdown("---")
-                # ✅ ВЫЗЫВАЕМ admin_panel() ИЗ ЭТОГО ЖЕ ФАЙЛА
                 admin_panel()
-
                 st.markdown("---")
                 if st.button("← Закрыть админ-панель", use_container_width=True):
                     st.session_state["show_admin_panel"] = False
                     st.rerun()
 
-            st.markdown("---")
+                    st.markdown("---")
 
         # Выход
         st.markdown("### 🚪 Выход из системы")

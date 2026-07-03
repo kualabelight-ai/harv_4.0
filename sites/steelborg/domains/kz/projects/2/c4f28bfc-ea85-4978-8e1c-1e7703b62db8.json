@@ -1,0 +1,376 @@
+{
+  "project_id": "c4f28bfc-ea85-4978-8e1c-1e7703b62db8",
+  "project_name": "шина алюминиевая",
+  "category": "Шина алюминиевая",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Шина алюминиевая",
+      "project_name": "шина алюминиевая",
+      "characteristics": [
+        {
+          "char_id": "00001000",
+          "char_name": "Ширина",
+          "original_name": "Ширина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "30",
+              "count": 224,
+              "offers": 876
+            },
+            {
+              "value": "60",
+              "count": 200,
+              "offers": 848
+            },
+            {
+              "value": "80",
+              "count": 220,
+              "offers": 844
+            },
+            {
+              "value": "40",
+              "count": 200,
+              "offers": 784
+            },
+            {
+              "value": "50",
+              "count": 180,
+              "offers": 780
+            }
+          ]
+        },
+        {
+          "char_id": "00001001",
+          "char_name": "Толщина",
+          "original_name": "Толщина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "10",
+              "count": 291,
+              "offers": 1083
+            },
+            {
+              "value": "8",
+              "count": 250,
+              "offers": 960
+            },
+            {
+              "value": "6",
+              "count": 229,
+              "offers": 914
+            },
+            {
+              "value": "5",
+              "count": 206,
+              "offers": 863
+            },
+            {
+              "value": "4",
+              "count": 207,
+              "offers": 815
+            }
+          ]
+        },
+        {
+          "char_id": "00001002",
+          "char_name": "Марка материала",
+          "original_name": "Марка материала",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "АД31Т",
+              "count": 794,
+              "offers": 3495
+            },
+            {
+              "value": "АД0",
+              "count": 466,
+              "offers": 1665
+            },
+            {
+              "value": "АД31",
+              "count": 413,
+              "offers": 1346
+            },
+            {
+              "value": "Д16Т",
+              "count": 397,
+              "offers": 1191
+            },
+            {
+              "value": "АД31Т1",
+              "count": 16,
+              "offers": 16
+            }
+          ]
+        },
+        {
+          "char_id": "9112304 05",
+          "char_name": "ГОСТ",
+          "original_name": "ГОСТ",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "ГОСТ 15176-89",
+              "count": 1773,
+              "offers": 7312
+            },
+            {
+              "value": "ГОСТ 15175-89",
+              "count": 176,
+              "offers": 268
+            }
+          ]
+        },
+        {
+          "char_id": "9112304 02",
+          "char_name": "Состояние",
+          "original_name": "Состояние",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "твердая",
+              "count": 188,
+              "offers": 188
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Шина алюминиевая.json",
+        "original_category": "Шина алюминиевая",
+        "total_items": 2137,
+        "selected_characteristics_count": 5,
+        "export_timestamp": "2026-07-03T12:39:08.997409"
+      }
+    },
+    "phase2": {
+      "category": "Шина алюминиевая",
+      "original_category": "Шина алюминиевая",
+      "markers": [
+        "алюминиевая шина",
+        "шина алюминиевая",
+        "шина из алюминия",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Шина алюминиевая",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-07-03T12:39:28.240423"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00001000": {
+            "prompts_per_value": 3,
+            "char_name": "Ширина"
+          },
+          "00001001": {
+            "prompts_per_value": 3,
+            "char_name": "Толщина"
+          },
+          "00001002": {
+            "prompts_per_value": 3,
+            "char_name": "Марка материала"
+          },
+          "9112304 05": {
+            "prompts_per_value": 10,
+            "char_name": "ГОСТ"
+          },
+          "9112304 02": {
+            "prompts_per_value": 7,
+            "char_name": "Состояние"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Шина алюминиевая",
+    "project_name": "шина алюминиевая",
+    "created_at": "2026-07-03T12:38:33.207888",
+    "updated_at": "2026-07-03T12:39:48.444944",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00001000": {
+          "prompts_per_value": 3,
+          "char_name": "Ширина"
+        },
+        "00001001": {
+          "prompts_per_value": 3,
+          "char_name": "Толщина"
+        },
+        "00001002": {
+          "prompts_per_value": 3,
+          "char_name": "Марка материала"
+        },
+        "9112304 05": {
+          "prompts_per_value": 10,
+          "char_name": "ГОСТ"
+        },
+        "9112304 02": {
+          "prompts_per_value": 7,
+          "char_name": "Состояние"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-07-03T12:38:33.207888",
+  "updated_at": "2026-07-03T12:39:48.777945",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

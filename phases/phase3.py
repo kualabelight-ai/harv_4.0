@@ -197,29 +197,14 @@ def init_ai_managers(app_state=None, context=None):
 
     # ПРИОРИТЕТ 1: ИЗ КОНТЕКСТА
     if context is not None:
-        # Проверяем, является ли context объектом с атрибутами
         if hasattr(context, 'project_id'):
             project_id = context.project_id
             user_id = context.user_id
             site_name = context.site_name
             domain_name = context.domain_name
-        elif isinstance(context, dict):
-            project_id = context.get('project_id')
-            user_id = context.get('user_id')
-            site_name = context.get('site_name')
-            domain_name = context.get('domain_name')
-        print(f"🔍 init_ai_managers: project_id={project_id}, user_id={user_id} (из контекста)")
+        print(f"🔍 init_ai_managers: project_id={project_id} (из контекста)")
 
-    # ПРИОРИТЕТ 2: ИЗ APP_STATE
-    if project_id is None and app_state is not None:
-        if hasattr(app_state, 'current_project_id'):
-            project_id = app_state.current_project_id
-        elif hasattr(app_state, 'get_current_project_id'):
-            project_id = app_state.get_current_project_id()
-        if hasattr(app_state, 'user_id'):
-            user_id = app_state.user_id
-
-    # ПРИОРИТЕТ 3: ИЗ SESSION_STATE
+    # ПРИОРИТЕТ 2: ИЗ SESSION_STATE
     if project_id is None:
         project_id = st.session_state.get('current_project_id')
     if user_id is None:
@@ -229,55 +214,24 @@ def init_ai_managers(app_state=None, context=None):
     if domain_name is None:
         domain_name = st.session_state.get('current_domain', 'default')
 
-    print(
-        f"🔍 init_ai_managers: ИТОГО project_id={project_id}, user_id={user_id}, site={site_name}, domain={domain_name}")
+    print(f"🔍 init_ai_managers: ИТОГО project_id={project_id}, user_id={user_id}")
 
-    # ========== СОЗДАЕМ ИЛИ ОБНОВЛЯЕМ AIInstructionManager ==========
+    # ========== СОЗДАЁМ AIInstructionManager ==========
     if project_id and user_id:
-        # Создаём менеджер с явной передачей параметров
+        # ✅ ВСЕГДА СОЗДАЁМ ЗАНОВО С ПРАВИЛЬНЫМ PROJECT_ID
         st.session_state.ai_instruction_manager = AIInstructionManager(
             project_id=project_id,
             user_id=user_id,
             site_name=site_name,
             domain_name=domain_name,
-            context=context
+            context=context if hasattr(context, 'project_id') else None
         )
-
-        # ✅ Проверяем, что storage_dir создался
-        if hasattr(st.session_state.ai_instruction_manager, 'storage_dir'):
-            print(f"✅ AIInstructionManager создан для проекта {project_id}")
-            print(f"   Путь: {st.session_state.ai_instruction_manager.storage_dir}")
-        else:
-            print(f"⚠️ AIInstructionManager создан, но storage_dir не найден!")
-            # Принудительно создаём storage_dir
-            ai_mgr = st.session_state.ai_instruction_manager
-            ai_mgr.storage_dir = Path(
-                f"sites/{site_name}/domains/{domain_name}/projects/{user_id}/{project_id}/ai_instructions")
-            ai_mgr.storage_dir.mkdir(parents=True, exist_ok=True)
-            ai_mgr.storage_file = ai_mgr.storage_dir / "instructions.json"
-            ai_mgr.instructions = ai_mgr.load_instructions()
-            print(f"   Принудительно создан путь: {ai_mgr.storage_dir}")
+        print(f"✅ AIInstructionManager создан для проекта {project_id}")
+        print(f"   Путь: {st.session_state.ai_instruction_manager.storage_dir}")
     else:
         print(f"⚠️ Не хватает данных для создания AIInstructionManager: project_id={project_id}, user_id={user_id}")
 
-        # Fallback: пробуем создать с данными из session_state
-        try:
-            fallback_project_id = st.session_state.get('current_project_id')
-            fallback_user_id = st.session_state.get('user_id')
-            fallback_site = st.session_state.get('current_site', 'steelborg')
-            fallback_domain = st.session_state.get('current_domain', 'default')
 
-            if fallback_project_id and fallback_user_id:
-                st.session_state.ai_instruction_manager = AIInstructionManager(
-                    project_id=fallback_project_id,
-                    user_id=fallback_user_id,
-                    site_name=fallback_site,
-                    domain_name=fallback_domain,
-                    context=context
-                )
-                print(f"✅ AIInstructionManager создан через fallback")
-        except Exception as e:
-            print(f"⚠️ Не удалось создать AIInstructionManager через fallback: {e}")
 
 def show_ai_variable_generator(block_id, var_name, var_data):
     """Интерфейс для генерации AI-инструкций"""
@@ -1065,6 +1019,27 @@ def has_instructions_for_category(block_id, var_name, category, context=None):
 
     ai_mgr = st.session_state.ai_instruction_manager
 
+    # ✅ ПРОВЕРЯЕМ, ЧТО МЕНЕДЖЕР ПРИВЯЗАН К ПРАВИЛЬНОМУ ПРОЕКТУ
+    if context is not None and hasattr(context, 'project_id'):
+        project_id = context.project_id
+        if hasattr(ai_mgr, 'storage_dir'):
+            if project_id and str(project_id) not in str(ai_mgr.storage_dir):
+                print(f"⚠️ has_instructions: AIInstructionManager НЕ привязан к проекту {project_id}")
+                print(f"   Текущий путь: {ai_mgr.storage_dir}")
+                # Пытаемся пересоздать менеджер
+                from ai_settings.ai_module import AIInstructionManager
+                st.session_state.ai_instruction_manager = AIInstructionManager(
+                    project_id=project_id,
+                    user_id=context.user_id,
+                    site_name=context.site_name,
+                    domain_name=context.domain_name,
+                    context=context
+                )
+                ai_mgr = st.session_state.ai_instruction_manager
+                print(f"   ✅ Пересоздан: {ai_mgr.storage_dir}")
+
+    # ... остальной код проверки ...
+
     # Если есть контекст, можно добавить проверку
     if context is not None:
         # Проверяем, что AIInstructionManager привязан к правильному проекту
@@ -1448,41 +1423,59 @@ def show_all_ai_instructions_for_category():
 def main(app_state=None, settings_mode=False, context=None, show_instructions_only=False):
     load_css()
 
-    # ✅ ПРИНУДИТЕЛЬНАЯ СИНХРОНИЗАЦИЯ ДОМЕНА ИЗ ФАЙЛА
+    # ========== ПРОВЕРКА: ЕСТЬ ЛИ ТЕКУЩИЙ ПРОЕКТ ==========
+    current_project_id = st.session_state.get('current_project_id')
+    current_user_id = st.session_state.get('user_id')
+
+    if not current_project_id or not current_user_id:
+        st.warning("⚠️ Нет активного проекта. Выберите или создайте проект в фазе 1.")
+        return {'success': False, 'error': 'Нет активного проекта'}
+
+    # ========== СИНХРОНИЗАЦИЯ ДОМЕНА ==========
     if 'domain_manager' not in st.session_state:
         st.session_state.domain_manager = DomainManager()
 
     dm = st.session_state.domain_manager
     user_id = st.session_state.get('user_id')
 
-    # ✅ ЗАГРУЖАЕМ НАСТРОЙКИ ИЗ ФАЙЛА ПОЛЬЗОВАТЕЛЯ
     if user_id:
         settings = dm.load_user_settings(user_id)
         saved_domain = settings.get('selected_domain', 'default')
         saved_site = settings.get('selected_site', 'steelborg')
 
-        # ✅ ОБНОВЛЯЕМ session_state из файла
         st.session_state.current_domain = saved_domain
         st.session_state.selected_domain = saved_domain
         st.session_state.current_site = saved_site
         st.session_state.selected_site = saved_site
         st.session_state[f'domain_system_{saved_site}'] = saved_domain
 
-        # ✅ ОБНОВЛЯЕМ domain_manager
-        dm.site_name = saved_site
-        dm.current_domain = saved_domain
-        dm.selected_domain = saved_domain
-        dm.selected_site = saved_site
-
-        print(f"✅ Phase3 загружен домен из файла: {saved_domain}, сайт: {saved_site}")
+        print(f"✅ Phase3 загружен домен из файла: {saved_domain}")
     else:
         saved_domain = st.session_state.get('current_domain', 'default')
         saved_site = st.session_state.get('current_site', 'steelborg')
-        print(f"⚠️ Phase3: user_id не найден, использую домен по умолчанию: {saved_domain}")
 
-    # ========== ИСПОЛЬЗУЕМ ЗАГРУЖЕННЫЕ ЗНАЧЕНИЯ ==========
+    # ========== ИНИЦИАЛИЗАЦИЯ AI МЕНЕДЖЕРОВ С ПРОЕКТОМ ==========
+    # ✅ ЯВНО ПЕРЕДАЁМ project_id ИЗ ТЕКУЩЕГО ПРОЕКТА
+    init_ai_managers(app_state, context)
+
+    # ========== СОЗДАНИЕ BLOCK_MANAGER ==========
     current_domain = st.session_state.get('current_domain', 'default')
     current_site = st.session_state.get('current_site', 'steelborg')
+
+    if ('block_manager' not in st.session_state or
+            st.session_state.get('_bm_domain_key') != f"{current_site}_{current_domain}"):
+
+        st.session_state.block_manager = BlockManager(
+            domain_name=current_domain,
+            site_name=current_site
+        )
+        st.session_state._bm_domain_key = f"{current_site}_{current_domain}"
+        print(f"📦 Создан новый BlockManager для домена '{current_domain}'")
+    else:
+        st.session_state.block_manager.load_blocks()
+        print(f"📦 Перезагружены блоки для домена '{current_domain}'")
+
+    # ... остальной код ...
 
     # ✅ ОБНОВЛЯЕМ AIInstructionManager с правильным доменом
     from ai_settings.ai_module import AIInstructionManager
@@ -4626,7 +4619,7 @@ def batch_generate_for_characteristic_with_data(block_id, var_name, var_data, bl
         print("❌ Нет характеристик")
         return {"success": 0, "errors": 0, "error": "Нет характеристик"}
 
-    # ========== ПОЛУЧАЕМ PROJECT_ID И USER_ID ==========
+    # ========== ПОЛУЧАЕМ PROJECT_ID ==========
     project_id = None
     user_id = None
     site_name = None
@@ -4634,23 +4627,14 @@ def batch_generate_for_characteristic_with_data(block_id, var_name, var_data, bl
 
     # ПРИОРИТЕТ 1: ИЗ КОНТЕКСТА
     if context is not None:
-        project_id = getattr(context, 'project_id', None)
-        user_id = getattr(context, 'user_id', None)
-        site_name = getattr(context, 'site_name', None)
-        domain_name = getattr(context, 'domain_name', None)
+        if hasattr(context, 'project_id'):
+            project_id = context.project_id
+            user_id = context.user_id
+            site_name = context.site_name
+            domain_name = context.domain_name
         print(f"   project_id из контекста: {project_id}")
-        print(f"   user_id из контекста: {user_id}")
 
-    # ПРИОРИТЕТ 2: ИЗ APP_STATE
-    if project_id is None and app_state is not None:
-        if hasattr(app_state, 'current_project_id'):
-            project_id = app_state.current_project_id
-        elif hasattr(app_state, 'get_current_project_id'):
-            project_id = app_state.get_current_project_id()
-        if hasattr(app_state, 'user_id'):
-            user_id = app_state.user_id
-
-    # ПРИОРИТЕТ 3: ИЗ SESSION_STATE
+    # ПРИОРИТЕТ 2: ИЗ SESSION_STATE
     if project_id is None:
         project_id = st.session_state.get('current_project_id')
     if user_id is None:
@@ -4660,22 +4644,46 @@ def batch_generate_for_characteristic_with_data(block_id, var_name, var_data, bl
     if domain_name is None:
         domain_name = st.session_state.get('current_domain', 'default')
 
-    print(f"   ИТОГО: project_id={project_id}, user_id={user_id}, site={site_name}, domain={domain_name}")
+    print(f"   ИТОГО: project_id={project_id}, user_id={user_id}")
+
+    # ========== ПРОВЕРКА: ЕСТЬ ЛИ ПРОЕКТ ==========
+    if not project_id or not user_id:
+        print("❌ Нет project_id или user_id")
+        return {"success": 0, "errors": 0, "error": "Нет данных проекта"}
 
     # ========== ИНИЦИАЛИЗИРУЕМ AI МЕНЕДЖЕРЫ С ПРОЕКТОМ ==========
-    # ✅ СОЗДАЕМ AIInstructionManager С ПРАВИЛЬНЫМИ ПАРАМЕТРАМИ
-    if 'ai_instruction_manager' not in st.session_state:
-        from ai_settings.ai_module import AIInstructionManager
+    # ✅ ПРИНУДИТЕЛЬНО СОЗДАЁМ С ПРОЕКТОМ
+    from ai_settings.ai_module import AIInstructionManager
+
+    # Проверяем, что менеджер привязан к правильному проекту
+    if 'ai_instruction_manager' in st.session_state:
+        current_mgr = st.session_state.ai_instruction_manager
+        # Проверяем путь менеджера
+        if hasattr(current_mgr, 'storage_dir'):
+            expected_path = f"sites/{site_name}/domains/{domain_name}/projects/{user_id}/{project_id}/ai_instructions"
+            if expected_path not in str(current_mgr.storage_dir):
+                print(f"   ⚠️ Менеджер привязан к другому проекту, пересоздаём...")
+                st.session_state.ai_instruction_manager = AIInstructionManager(
+                    project_id=project_id,
+                    user_id=user_id,
+                    site_name=site_name,
+                    domain_name=domain_name,
+                    context=context if hasattr(context, 'project_id') else None
+                )
+    else:
         st.session_state.ai_instruction_manager = AIInstructionManager(
             project_id=project_id,
             user_id=user_id,
             site_name=site_name,
             domain_name=domain_name,
-            context=context
+            context=context if hasattr(context, 'project_id') else None
         )
-        print(f"   ✅ AIInstructionManager создан с project_id={project_id}")
 
     ai_mgr = st.session_state.ai_instruction_manager
+    print(f"   ✅ AIInstructionManager привязан к: {ai_mgr.storage_dir}")
+
+    # ========== ОСТАЛЬНОЙ КОД БЕЗ ИЗМЕНЕНИЙ ==========
+    # ... генерация и сохранение инструкций ...
 
     # ✅ ПРОВЕРЯЕМ, ЧТО МЕНЕДЖЕР ПРИВЯЗАН К ПРАВИЛЬНОМУ ПРОЕКТУ
     if project_id and str(project_id) not in str(ai_mgr.storage_dir):

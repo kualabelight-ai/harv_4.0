@@ -1,0 +1,359 @@
+{
+  "project_id": "230d810d-858c-4005-928d-1ab5b1ae8fac",
+  "project_name": "медная полоса",
+  "category": "Полоса медная",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Полоса медная",
+      "project_name": "медная полоса",
+      "characteristics": [
+        {
+          "char_id": "00001128",
+          "char_name": "Ширина",
+          "original_name": "Ширина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "30",
+              "count": 254,
+              "offers": 2098
+            },
+            {
+              "value": "40",
+              "count": 275,
+              "offers": 2033
+            },
+            {
+              "value": "50",
+              "count": 249,
+              "offers": 1924
+            },
+            {
+              "value": "60",
+              "count": 259,
+              "offers": 1678
+            },
+            {
+              "value": "80",
+              "count": 250,
+              "offers": 1618
+            }
+          ]
+        },
+        {
+          "char_id": "00001129",
+          "char_name": "Толщина",
+          "original_name": "Толщина",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "10",
+              "count": 313,
+              "offers": 2756
+            },
+            {
+              "value": "5",
+              "count": 293,
+              "offers": 2360
+            },
+            {
+              "value": "6",
+              "count": 264,
+              "offers": 2122
+            },
+            {
+              "value": "8",
+              "count": 270,
+              "offers": 1980
+            },
+            {
+              "value": "4",
+              "count": 240,
+              "offers": 1930
+            }
+          ]
+        },
+        {
+          "char_id": "00001130",
+          "char_name": "Марка материала",
+          "original_name": "Марка материала",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "М1т",
+              "count": 497,
+              "offers": 5427
+            },
+            {
+              "value": "М1",
+              "count": 347,
+              "offers": 3543
+            },
+            {
+              "value": "М0б",
+              "count": 1261,
+              "offers": 3218
+            },
+            {
+              "value": "М1м",
+              "count": 354,
+              "offers": 2062
+            },
+            {
+              "value": "Cu-ETP",
+              "count": 203,
+              "offers": 457
+            }
+          ]
+        },
+        {
+          "char_id": "9111999 02",
+          "char_name": "Состояние",
+          "original_name": "Состояние",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "твердая",
+              "count": 512,
+              "offers": 5446
+            },
+            {
+              "value": "бескислородная",
+              "count": 1261,
+              "offers": 3218
+            },
+            {
+              "value": "мягкая",
+              "count": 357,
+              "offers": 2071
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Полоса медная.json",
+        "original_category": "Полоса медная",
+        "total_items": 3203,
+        "selected_characteristics_count": 4,
+        "export_timestamp": "2026-07-03T12:22:09.761893"
+      }
+    },
+    "phase2": {
+      "category": "Медная полоса",
+      "original_category": "Полоса медная",
+      "markers": [
+        "полоса медная",
+        "медные полосы",
+        "полоса из меди",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Полоса медная",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-07-03T12:22:28.925837"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00001128": {
+            "prompts_per_value": 5,
+            "char_name": "Ширина"
+          },
+          "00001129": {
+            "prompts_per_value": 5,
+            "char_name": "Толщина"
+          },
+          "00001130": {
+            "prompts_per_value": 5,
+            "char_name": "Марка материала"
+          },
+          "9111999 02": {
+            "prompts_per_value": 5,
+            "char_name": "Состояние"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 5,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Полоса медная",
+    "project_name": "медная полоса",
+    "created_at": "2026-07-03T12:21:26.509061",
+    "updated_at": "2026-07-03T12:22:44.615749",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00001128": {
+          "prompts_per_value": 5,
+          "char_name": "Ширина"
+        },
+        "00001129": {
+          "prompts_per_value": 5,
+          "char_name": "Толщина"
+        },
+        "00001130": {
+          "prompts_per_value": 5,
+          "char_name": "Марка материала"
+        },
+        "9111999 02": {
+          "prompts_per_value": 5,
+          "char_name": "Состояние"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 5,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-07-03T12:21:26.509061",
+  "updated_at": "2026-07-03T12:22:44.882760",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

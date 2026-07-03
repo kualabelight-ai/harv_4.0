@@ -15,6 +15,7 @@ def render_users_manager():
     tab_users, tab_permissions = st.tabs(["👤 Пользователи", "🔐 Права на домены"])
 
     with tab_users:
+        # Читаем список пользователей
         with get_db() as conn:
             users = conn.execute("""
                 SELECT id, username, email, status, is_admin, totp_enabled, banned, 
@@ -41,88 +42,97 @@ def render_users_manager():
                     st.write(f"**Зарегистрирован:** {user['created_at']}")
 
                 with col2:
-                    # Действия
+                    # Разблокировка
                     if user["banned"]:
                         if st.button("🔓 Разблокировать", key=f"unban_{user['id']}"):
-                            conn.execute("UPDATE users SET banned = 0 WHERE id = ?", (user['id'],))
-                            conn.commit()
-                            log_admin_action(
-                                st.session_state.user_id, "unban_user", "user",
-                                str(user['id']), f"Разблокирован пользователь {user['username']}"
-                            )
-                            st.success(f"✅ Пользователь {user['username']} разблокирован")
-                            st.rerun()
+                            with get_db() as conn:
+                                conn.execute("UPDATE users SET banned = 0 WHERE id = ?", (user['id'],))
+                                conn.commit()
+                                log_admin_action(
+                                    st.session_state.user_id, "unban_user", "user",
+                                    str(user['id']), f"Разблокирован пользователь {user['username']}"
+                                )
+                                st.success(f"✅ Пользователь {user['username']} разблокирован")
+                                st.rerun()
                     else:
+                        # Блокировка
                         if st.button("🔒 Заблокировать", key=f"ban_{user['id']}"):
                             if user['id'] == st.session_state.user_id:
                                 st.error("Нельзя заблокировать самого себя")
                             else:
-                                conn.execute("UPDATE users SET banned = 1 WHERE id = ?", (user['id'],))
-                                conn.commit()
-                                log_admin_action(
-                                    st.session_state.user_id, "ban_user", "user",
-                                    str(user['id']), f"Заблокирован пользователь {user['username']}"
-                                )
-                                st.success(f"✅ Пользователь {user['username']} заблокирован")
-                                st.rerun()
+                                with get_db() as conn:
+                                    conn.execute("UPDATE users SET banned = 1 WHERE id = ?", (user['id'],))
+                                    conn.commit()
+                                    log_admin_action(
+                                        st.session_state.user_id, "ban_user", "user",
+                                        str(user['id']), f"Заблокирован пользователь {user['username']}"
+                                    )
+                                    st.success(f"✅ Пользователь {user['username']} заблокирован")
+                                    st.rerun()
 
+                    # Снять права админа
                     if user["is_admin"]:
                         if st.button("👤 Снять права админа", key=f"deadmin_{user['id']}"):
                             if user['id'] == st.session_state.user_id:
                                 st.error("Нельзя снять админа с самого себя")
                             else:
-                                conn.execute("UPDATE users SET is_admin = 0 WHERE id = ?", (user['id'],))
+                                with get_db() as conn:
+                                    conn.execute("UPDATE users SET is_admin = 0 WHERE id = ?", (user['id'],))
+                                    conn.commit()
+                                    log_admin_action(
+                                        st.session_state.user_id, "remove_admin", "user",
+                                        str(user['id']), f"Сняты права админа с {user['username']}"
+                                    )
+                                    st.success(f"✅ Пользователь {user['username']} больше не админ")
+                                    st.rerun()
+                    else:
+                        # Назначить админом
+                        if st.button("👑 Назначить админом", key=f"make_admin_{user['id']}"):
+                            with get_db() as conn:
+                                conn.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (user['id'],))
                                 conn.commit()
                                 log_admin_action(
-                                    st.session_state.user_id, "remove_admin", "user",
-                                    str(user['id']), f"Сняты права админа с {user['username']}"
+                                    st.session_state.user_id, "make_admin", "user",
+                                    str(user['id']), f"Назначен админом {user['username']}"
                                 )
-                                st.success(f"✅ Пользователь {user['username']} больше не админ")
+                                st.success(f"✅ Пользователь {user['username']} теперь администратор")
                                 st.rerun()
-                    else:
-                        if st.button("👑 Назначить админом", key=f"make_admin_{user['id']}"):
-                            conn.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (user['id'],))
-                            conn.commit()
-                            log_admin_action(
-                                st.session_state.user_id, "make_admin", "user",
-                                str(user['id']), f"Назначен админом {user['username']}"
-                            )
-                            st.success(f"✅ Пользователь {user['username']} теперь администратор")
-                            st.rerun()
 
+                    # Удалить пользователя
                     if st.button("❌ Удалить пользователя", key=f"delete_user_{user['id']}"):
                         if user['id'] == st.session_state.user_id:
                             st.error("Нельзя удалить самого себя")
                         else:
-                            # Удаляем все связанные данные
-                            conn.execute("DELETE FROM user_sessions WHERE user_id = ?", (user['id'],))
-                            conn.execute("DELETE FROM password_resets WHERE user_id = ?", (user['id'],))
-                            conn.execute("DELETE FROM user_domain_permissions WHERE user_id = ?", (user['id'],))
-                            conn.execute("DELETE FROM api_usage_logs WHERE user_id = ?", (user['id'],))
-                            conn.execute("DELETE FROM users WHERE id = ?", (user['id'],))
-                            conn.commit()
+                            with get_db() as conn:
+                                # Удаляем все связанные данные
+                                conn.execute("DELETE FROM user_sessions WHERE user_id = ?", (user['id'],))
+                                conn.execute("DELETE FROM password_resets WHERE user_id = ?", (user['id'],))
+                                conn.execute("DELETE FROM user_domain_permissions WHERE user_id = ?", (user['id'],))
+                                conn.execute("DELETE FROM api_usage_logs WHERE user_id = ?", (user['id'],))
+                                conn.execute("DELETE FROM users WHERE id = ?", (user['id'],))
+                                conn.commit()
 
-                            # Удаляем проекты пользователя из файловой системы
-                            from pathlib import Path
-                            sites_dir = Path("sites")
-                            if sites_dir.exists():
-                                for site_dir in sites_dir.iterdir():
-                                    if site_dir.is_dir():
-                                        domains_dir = site_dir / "domains"
-                                        if domains_dir.exists():
-                                            for domain_dir in domains_dir.iterdir():
-                                                if domain_dir.is_dir():
-                                                    projects_dir = domain_dir / "projects" / str(user['id'])
-                                                    if projects_dir.exists():
-                                                        import shutil
-                                                        shutil.rmtree(projects_dir)
+                                # Удаляем проекты пользователя из файловой системы
+                                from pathlib import Path
+                                import shutil
+                                sites_dir = Path("sites")
+                                if sites_dir.exists():
+                                    for site_dir in sites_dir.iterdir():
+                                        if site_dir.is_dir():
+                                            domains_dir = site_dir / "domains"
+                                            if domains_dir.exists():
+                                                for domain_dir in domains_dir.iterdir():
+                                                    if domain_dir.is_dir():
+                                                        projects_dir = domain_dir / "projects" / str(user['id'])
+                                                        if projects_dir.exists():
+                                                            shutil.rmtree(projects_dir)
 
-                            log_admin_action(
-                                st.session_state.user_id, "delete_user", "user",
-                                str(user['id']), f"Удален пользователь {user['username']}"
-                            )
-                            st.success(f"✅ Пользователь {user['username']} удален")
-                            st.rerun()
+                                log_admin_action(
+                                    st.session_state.user_id, "delete_user", "user",
+                                    str(user['id']), f"Удален пользователь {user['username']}"
+                                )
+                                st.success(f"✅ Пользователь {user['username']} удален")
+                                st.rerun()
 
     with tab_permissions:
         st.subheader("🔐 Выдача прав на домены")

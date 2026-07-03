@@ -1,0 +1,406 @@
+{
+  "project_id": "b35542cb-3159-4aec-80e9-2bd4ac0b4210",
+  "project_name": "круг бронзовый",
+  "category": "Круг-пруток бронзовый",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Круг-пруток бронзовый",
+      "project_name": "круг бронзовый",
+      "characteristics": [
+        {
+          "char_id": "00001052",
+          "char_name": "Диаметр",
+          "original_name": "Диаметр",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "40",
+              "count": 702,
+              "offers": 2453
+            },
+            {
+              "value": "30",
+              "count": 645,
+              "offers": 2443
+            },
+            {
+              "value": "50",
+              "count": 635,
+              "offers": 2359
+            },
+            {
+              "value": "80",
+              "count": 668,
+              "offers": 2241
+            },
+            {
+              "value": "100",
+              "count": 620,
+              "offers": 2147
+            }
+          ]
+        },
+        {
+          "char_id": "00001053",
+          "char_name": "Марка материала",
+          "original_name": "Марка материала",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "БрАЖ9-4",
+              "count": 2370,
+              "offers": 12212
+            },
+            {
+              "value": "БрОЦС5-5-5",
+              "count": 1909,
+              "offers": 7351
+            },
+            {
+              "value": "БрАЖМц10-3-1.5",
+              "count": 1836,
+              "offers": 5308
+            },
+            {
+              "value": "БрБ2",
+              "count": 2009,
+              "offers": 4925
+            },
+            {
+              "value": "БрАМц9-2",
+              "count": 2081,
+              "offers": 4649
+            }
+          ]
+        },
+        {
+          "char_id": "00007194",
+          "char_name": "Состояние",
+          "original_name": "Состояние",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "твердый",
+              "count": 219,
+              "offers": 283
+            },
+            {
+              "value": "полутвердый",
+              "count": 59,
+              "offers": 108
+            },
+            {
+              "value": "мягкий",
+              "count": 4,
+              "offers": 4
+            }
+          ]
+        },
+        {
+          "char_id": "00004158",
+          "char_name": "Способ производства",
+          "original_name": "Способ производства",
+          "is_unique": true,
+          "unit": "",
+          "values": [
+            {
+              "value": "прессованный",
+              "count": 1719,
+              "offers": 6695
+            },
+            {
+              "value": "горячекатаный",
+              "count": 1714,
+              "offers": 2199
+            },
+            {
+              "value": "литой",
+              "count": 853,
+              "offers": 1684
+            },
+            {
+              "value": "тянутый",
+              "count": 181,
+              "offers": 185
+            },
+            {
+              "value": "кованый",
+              "count": 8,
+              "offers": 8
+            },
+            {
+              "value": "холоднокатаный",
+              "count": 3,
+              "offers": 3
+            }
+          ]
+        },
+        {
+          "char_id": "9112436 02",
+          "char_name": "ГОСТ",
+          "original_name": "ГОСТ",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "ГОСТ 1628-78",
+              "count": 3884,
+              "offers": 5836
+            },
+            {
+              "value": "ГОСТ 15835-70",
+              "count": 2914,
+              "offers": 3601
+            },
+            {
+              "value": "ГОСТ 24301-93",
+              "count": 3091,
+              "offers": 3239
+            },
+            {
+              "value": "ТУ 48-21-249-72",
+              "count": 2812,
+              "offers": 2856
+            },
+            {
+              "value": "ГОСТ 613-79",
+              "count": 2702,
+              "offers": 2835
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Круг-пруток бронзовый.json",
+        "original_category": "Круг-пруток бронзовый",
+        "total_items": 27524,
+        "selected_characteristics_count": 5,
+        "export_timestamp": "2026-07-03T12:41:38.333576"
+      }
+    },
+    "phase2": {
+      "category": "Круг бронзовый",
+      "original_category": "Круг-пруток бронзовый",
+      "markers": [
+        "бронзовый круг",
+        "бронзовый кругляк",
+        "бронзовые круги",
+        "изделие",
+        "продукция"
+      ],
+      "source_category": "Круг-пруток бронзовый",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-07-03T12:41:59.691241"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00001052": {
+            "prompts_per_value": 3,
+            "char_name": "Диаметр"
+          },
+          "00001053": {
+            "prompts_per_value": 3,
+            "char_name": "Марка материала"
+          },
+          "00007194": {
+            "prompts_per_value": 5,
+            "char_name": "Состояние"
+          },
+          "00004158": {
+            "prompts_per_value": 3,
+            "char_name": "Способ производства"
+          },
+          "9112436 02": {
+            "prompts_per_value": 3,
+            "char_name": "ГОСТ"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 20
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 20
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 3,
+        "global_other_prompts": 20
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Круг-пруток бронзовый",
+    "project_name": "круг бронзовый",
+    "created_at": "2026-07-03T12:41:06.193669",
+    "updated_at": "2026-07-03T12:42:29.291184",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00001052": {
+          "prompts_per_value": 3,
+          "char_name": "Диаметр"
+        },
+        "00001053": {
+          "prompts_per_value": 3,
+          "char_name": "Марка материала"
+        },
+        "00007194": {
+          "prompts_per_value": 5,
+          "char_name": "Состояние"
+        },
+        "00004158": {
+          "prompts_per_value": 3,
+          "char_name": "Способ производства"
+        },
+        "9112436 02": {
+          "prompts_per_value": 3,
+          "char_name": "ГОСТ"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 20
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 20
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 20
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-07-03T12:41:06.193669",
+  "updated_at": "2026-07-03T12:42:29.596237",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

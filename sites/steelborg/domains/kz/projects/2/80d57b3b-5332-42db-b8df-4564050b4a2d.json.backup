@@ -1,0 +1,31 @@
+{
+  "project_id": "80d57b3b-5332-42db-b8df-4564050b4a2d",
+  "project_name": "компенсатор для труб",
+  "category": "компенсатор для труб",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "компенсатор для труб"
+    },
+    "phase2": {},
+    "phase3": {},
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "компенсатор для труб",
+    "project_name": "компенсатор для труб",
+    "created_at": "2026-07-03T12:18:23.383681",
+    "updated_at": "2026-07-03T12:18:23.383681",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz"
+  },
+  "created_at": "2026-07-03T12:18:23.383681",
+  "updated_at": "2026-07-03T12:18:30.702493",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}
