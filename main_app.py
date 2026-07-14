@@ -3481,7 +3481,14 @@ def _render_project_card(project, status_info, app_state, pm, current_site, curr
         # Показываем ошибку если есть
         if status == 'failed' and status_info.get('error'):
             with st.expander("❌ Детали ошибки", expanded=False):
-                st.error(status_info['error'][:500])
+                error_text = status_info.get('error', '')
+
+                # Если это наша диагностика - показываем полностью
+                if 'ДИАГНОСТИКА ОШИБКИ' in error_text or '🔍 ДИАГНОСТИКА' in error_text:
+                    st.code(error_text, language="text")
+                else:
+                    # Если это просто текст ошибки - показываем в виде текста
+                    st.text(error_text)
 
         # ✅ УДАЛЯЕМ ПРОЕКТ ИЗ МНОЖЕСТВА ПОСЛЕ РЕНДЕРИНГА
         if pid in st.session_state.get('_rendering_projects', set()):

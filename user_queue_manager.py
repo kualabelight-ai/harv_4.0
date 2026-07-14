@@ -356,6 +356,57 @@ class UserQueueManager:
             import traceback
             traceback.print_exc()
             return False
+    def collect_error_details(project_id: str, user_id: int, site: str, domain: str, error: Exception) -> str:
+        """Собирает детальную информацию об ошибке для отображения в экспандере"""
+        import traceback
+        from pathlib import Path
+        import json
+
+        lines = []
+        lines.append(f"❌ Ошибка: {str(error)}")
+        lines.append("")
+        lines.append("📋 Детали:")
+        lines.append(f"   Проект: {project_id[:8]}...")
+        lines.append(f"   Пользователь: {user_id}")
+        lines.append(f"   Сайт: {site}")
+        lines.append(f"   Домен: {domain}")
+
+        # Проверяем файл
+        project_file = Path(f"sites/{site}/domains/{domain}/projects/{user_id}/{project_id}.json")
+        if project_file.exists():
+            try:
+                with open(project_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+
+                app_data = data.get('app_data', {})
+                lines.append("")
+                lines.append("📊 Данные проекта:")
+                lines.append(f"   Название: {data.get('project_name', 'N/A')}")
+                lines.append(f"   Текущая фаза: {data.get('current_phase', 0)}/7")
+                lines.append(f"   Статус: {data.get('status', 'unknown')}")
+                lines.append(f"   Фаза 1: {'✅' if app_data.get('phase1', {}).get('characteristics') else '❌'}")
+                lines.append(f"   Фаза 3: {'✅' if app_data.get('phase3', {}).get('blocks') else '❌'}")
+                lines.append(f"   Фаза 4: {'✅' if app_data.get('phase4', {}).get('prompts') else '❌'}")
+                lines.append(f"   Фаза 5: {'✅' if app_data.get('phase5', {}).get('results') else '❌'}")
+
+                # Если есть ошибка в файле
+                file_error = data.get('error')
+                if file_error and 'не удалось' not in file_error:
+                    lines.append("")
+                    lines.append(f"📝 Ошибка в файле:")
+                    lines.append(f"   {file_error[:500]}")
+
+            except Exception as e:
+                lines.append(f"⚠️ Ошибка чтения файла: {e}")
+        else:
+            lines.append(f"❌ Файл проекта НЕ СУЩЕСТВУЕТ")
+
+        # Добавляем трассировку
+        lines.append("")
+        lines.append("🔬 Трассировка:")
+        lines.append(traceback.format_exc())
+
+        return "\n".join(lines)
     def _run_project(self, project_id: str, site_name: str = None, domain_name: str = None):
         """Запускает проект - С ПРИНУДИТЕЛЬНЫМ СОХРАНЕНИЕМ"""
 
@@ -606,6 +657,13 @@ class UserQueueManager:
 
             task.status = ProjectStatus.FAILED
             task.error = str(e)
+            task.error = collect_error_details(
+                project_id=task.project_id,
+                user_id=task.user_id,
+                site=task.site_name,
+                domain=task.domain_name,
+                error=e
+            )
             task.message = f"Ошибка: {str(e)[:80]}"
             self._save_queue()
         finally:
