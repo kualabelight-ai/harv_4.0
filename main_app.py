@@ -1551,14 +1551,8 @@ class AppState:
                 # Очищаем инструкции
                 st.session_state.ai_instruction_manager.instructions = {}
 
-            # ========== ОЧИЩАЕМ ОЧЕРЕДЬ ==========
-            from user_queue_manager import get_user_queue
-            queue = get_user_queue()
-            if queue:
-                # Удаляем все проекты из очереди
-                for pid in list(queue.projects.keys()):
-                    queue.remove_project(pid)
-                queue._save_queue()
+
+
 
             st.success(f"✅ Создан **чистый** проект: **{category}**")
             print(f"✅ Проект {category} успешно создан")

@@ -1,0 +1,120 @@
+{
+  "project_id": "9e269613-e9fd-45f6-b24e-3e304bb64d18",
+  "project_name": "[ph",
+  "category": "Штуцер медный",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Штуцер медный",
+      "project_name": "[ph",
+      "characteristics": [
+        {
+          "char_id": "9118817 03",
+          "char_name": "Диаметр",
+          "original_name": "Диаметр",
+          "unit": "мм",
+          "is_unique": false,
+          "values": [],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "00005966",
+          "char_name": "Марка материала",
+          "original_name": "Марка материала",
+          "unit": "",
+          "is_unique": false,
+          "values": [],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "9118817 05",
+          "char_name": "Тип",
+          "original_name": "Тип",
+          "unit": "",
+          "is_unique": false,
+          "values": [],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "00005969",
+          "char_name": "Способ присоединения",
+          "original_name": "Способ присоединения",
+          "unit": "",
+          "is_unique": false,
+          "values": [],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "9118817 01",
+          "char_name": "Материал",
+          "original_name": "Материал",
+          "unit": "",
+          "is_unique": false,
+          "values": [],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "9118817 02",
+          "char_name": "Диаметр в дюймах",
+          "original_name": "Диаметр в дюймах",
+          "unit": "\"",
+          "is_unique": false,
+          "values": [],
+          "is_duplicate": false
+        },
+        {
+          "char_id": "9118817 04",
+          "char_name": "Форма",
+          "original_name": "Форма",
+          "unit": "",
+          "is_unique": false,
+          "values": [],
+          "is_duplicate": false
+        }
+      ],
+      "metadata": {
+        "source_file": "Штуцер медный.json",
+        "original_category": "Штуцер медный",
+        "total_items": 0,
+        "selected_characteristics_count": 7,
+        "export_timestamp": "2026-08-03T18:08:34.293870"
+      }
+    },
+    "phase2": {
+      "category": "Штуцер латунный",
+      "original_category": "Штуцер медный",
+      "markers": [
+        "латунный штуцер",
+        "Штуцеры латунные",
+        "штуцер латунный",
+        "продукция"
+      ],
+      "source_category": "Штуцер медный",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-08-03T18:08:58.673375"
+    },
+    "phase4": {},
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Штуцер медный",
+    "project_name": "[ph",
+    "created_at": "2026-08-03T18:07:14.386104",
+    "updated_at": "2026-08-03T18:08:58.673375",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz"
+  },
+  "created_at": "2026-08-03T18:07:14.386104",
+  "updated_at": "2026-08-03T18:08:58.907765",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

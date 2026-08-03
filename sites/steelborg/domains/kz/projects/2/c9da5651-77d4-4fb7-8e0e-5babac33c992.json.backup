@@ -1,0 +1,249 @@
+{
+  "project_id": "c9da5651-77d4-4fb7-8e0e-5babac33c992",
+  "project_name": "ккк",
+  "category": "Торф",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "category": "Торф",
+      "project_name": "ккк",
+      "characteristics": [
+        {
+          "char_id": "00003367",
+          "char_name": "Вид",
+          "original_name": "Вид",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "кислый",
+              "count": 1,
+              "offers": 1
+            },
+            {
+              "value": "нейтрализованный",
+              "count": 1,
+              "offers": 1
+            }
+          ]
+        },
+        {
+          "char_id": "9109606 01",
+          "char_name": "Обработка",
+          "original_name": "Обработка",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "сепарированный",
+              "count": 2,
+              "offers": 2
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "source_file": "Торф.json",
+        "original_category": "Торф",
+        "total_items": 2,
+        "selected_characteristics_count": 2,
+        "export_timestamp": "2026-08-03T15:46:09.170461"
+      }
+    },
+    "phase2": {
+      "category": "Затвор",
+      "original_category": "Торф",
+      "markers": [
+        "затворы",
+        "затвор трубопроводный",
+        "затвор запорный",
+        "продукция"
+      ],
+      "source_category": "Торф",
+      "custom_category_mode": false
+    },
+    "phase3": {
+      "selected_blocks": {},
+      "blocks_count": 17,
+      "settings_saved": true,
+      "saved_at": "2026-08-03T15:46:49.689939"
+    },
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00003367": {
+            "prompts_per_value": 1,
+            "char_name": "Вид"
+          },
+          "9109606 01": {
+            "prompts_per_value": 1,
+            "char_name": "Обработка"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 1
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 1,
+        "global_other_prompts": 1
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Торф",
+    "project_name": "ккк",
+    "created_at": "2026-08-03T15:45:27.957399",
+    "updated_at": "2026-08-03T15:47:27.421802",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "00003367": {
+          "prompts_per_value": 1,
+          "char_name": "Вид"
+        },
+        "9109606 01": {
+          "prompts_per_value": 1,
+          "char_name": "Обработка"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 1
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 1,
+      "global_other_prompts": 1
+    },
+    "phase4_configured": true
+  },
+  "created_at": "2026-08-03T15:45:27.957399",
+  "updated_at": "2026-08-03T15:47:27.777832",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}

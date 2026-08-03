@@ -462,6 +462,17 @@ class EnhancedTextProcessor:
             "instruction:", "prompt:", "write:", "create:", "generate:",
             "опишите:", "сформулируйте:", "составьте:", "подготовьте:"
         ]
+    def _remove_duplicate_closing_tags(self, html: str) -> str:
+        """
+        Удаляет дублирующиеся закрывающие теги, идущие подряд
+        """
+        # Удаляем дублирующиеся </ul>
+        html = re.sub(r'(</ul>)\s*(</ul>)', r'\1', html)
+        # Удаляем дублирующиеся </ol>
+        html = re.sub(r'(</ol>)\s*(</ol>)', r'\1', html)
+        # Удаляем дублирующиеся </li>
+        html = re.sub(r'(</li>)\s*(</li>)', r'\1', html)
+        return html
     def process_product_with_category(self, text: str) -> Tuple[str, List[Dict]]:
         """
         Обрабатывает переменную товара, добавляя перед ней системную переменную категории
@@ -634,7 +645,9 @@ class EnhancedTextProcessor:
 
             if block_type == 'regular':
                 # Для regular блока заменяем на {prop ...}
-                replacement = f"{{prop {char_name if char_name else var_name}}}"
+                # Сохраняем название характеристики как есть, без изменений
+                prop_name = char_name if char_name else var_name
+                replacement = f"{{prop {prop_name}}}"
             else:
                 # Для non-regular пытаемся найти системную переменную
                 var_lower = var_name.lower()
@@ -710,20 +723,36 @@ class EnhancedTextProcessor:
     def remove_units(self, text: str, units_list: List[str]) -> Tuple[str, List[str]]:
         removed = []
         cleaned = text
+
+        # Сначала находим все позиции внутри {...} - их НЕ трогаем
+        protected_ranges = []
+        for match in re.finditer(r'\{[^}]*\}', cleaned):
+            protected_ranges.append((match.start(), match.end()))
+
+        def is_protected(pos: int) -> bool:
+            for start, end in protected_ranges:
+                if start <= pos < end:
+                    return True
+            return False
+
         for unit in units_list:
-            # Если единица короткая (<=2 символов) или содержит не только буквы, ищем точно
             if len(unit) <= 2 or not re.match(r'^[а-яё]+$', unit, re.IGNORECASE):
                 pattern = r'\b' + re.escape(unit.lower()) + r'\b'
             else:
-                # Строим регулярку: основа + возможные окончания
                 endings = ['', 'а', 'у', 'ом', 'е', 'ы', 'ов', 'ам', 'ами', 'ах']
                 base = re.escape(unit.lower())
                 endings_pattern = '(?:' + '|'.join(re.escape(e) for e in endings) + ')'
                 pattern = r'\b' + base + endings_pattern + r'\b'
-            # Ищем все вхождения и удаляем
-            for m in reversed(list(re.finditer(pattern, cleaned, re.IGNORECASE))):
+
+            # Находим все вхождения, но проверяем, не внутри ли {...}
+            matches = list(re.finditer(pattern, cleaned, re.IGNORECASE))
+            for m in reversed(matches):
+                # Проверяем, не защищена ли эта позиция
+                if is_protected(m.start()):
+                    continue
                 cleaned = cleaned[:m.start()] + cleaned[m.end():]
                 removed.append(unit)
+
         cleaned = re.sub(r'\s+', ' ', cleaned).strip()
         return cleaned, removed
 
@@ -762,84 +791,47 @@ class EnhancedTextProcessor:
     def _is_valid_list_line(self, line: str) -> bool:
         """
         Проверяет, является ли строка валидным списком.
-        Требует минимум 2 элемента для списка.
+        Теперь проверяет ТОЛЬКО маркеры в НАЧАЛЕ строки.
         """
-        marker_count = 0
-
-        # Проверяем маркеры UL (*, -, +)
+        # Проверяем маркеры UL в начале строки (*, -, +)
         ul_markers = ['* ', '- ', '+ ']
         for marker in ul_markers:
-            marker_count += line.count(marker)
+            if line.lstrip().startswith(marker):
+                return True
 
-        # Проверяем маркеры OL (1., 2., 3. и т.д.)
-        ol_pattern = r'\b\d+\.\s+'
-        ol_matches = re.findall(ol_pattern, line)
-        marker_count += len(ol_matches)
+        # Проверяем маркеры OL в начале строки (1., 2., 3. и т.д.)
+        ol_pattern = r'^\s*\d+\.\s+'
+        if re.search(ol_pattern, line):
+            return True
 
-        # ТОЛЬКО ЕСЛИ 2+ МАРКЕРА - ЭТО СПИСОК
-        return marker_count >= 2
+        return False
 
     def _extract_list_items(self, line: str) -> Tuple[List[str], Optional[str]]:
-        """
-        Извлекает элементы списка из строки.
-        Возвращает: (список_элементов, вводный_текст)
-        """
         items = []
         intro_text = None
 
-        # Проверяем OL (1., 2., 3.)
-        ol_pattern = r'\d+\.\s+'
-        parts = re.split(ol_pattern, line)
-        if len(parts) > 1:
-            first_part = parts[0].strip()
-            if first_part:
-                if self._is_intro_text(first_part, len(parts) - 1):
-                    intro_text = first_part
-                    parts = parts[1:]
-                else:
-                    if first_part:
-                        items.append(first_part)
-                    parts = parts[1:]
+        if not self._is_valid_list_line(line):
+            return items, intro_text
 
-            for part in parts:
-                if part.strip():
-                    items.append(part.strip())
-            if items:
-                # ✅ ДОБАВЛЯЕМ: разделяем последний элемент
-                items, extra_text = self._split_last_list_item(items)
-                if extra_text:
-                    # Если есть extra_text, добавляем его как отдельный элемент
-                    # который потом станет отдельным абзацем
-                    pass
-                return items, intro_text
+        # Проверяем OL (1., 2., 3.) - один маркер в строке
+        ol_pattern = r'^\s*\d+\.\s+'
+        ol_match = re.search(ol_pattern, line)
+        if ol_match:
+            # Убираем маркер из начала строки
+            cleaned_line = re.sub(r'^\s*\d+\.\s+', '', line)
+            if cleaned_line.strip():
+                items.append(cleaned_line.strip())
+            return items, intro_text
 
-        # Проверяем UL маркеры
+        # Проверяем UL маркеры в начале строки
         ul_markers = ['* ', '- ', '+ ']
         for marker in ul_markers:
-            if marker in line:
-                parts = line.split(marker)
-                if len(parts) > 1:
-                    first_part = parts[0].strip()
-
-                    if first_part and self._is_intro_text(first_part, len(parts) - 1):
-                        intro_text = first_part
-                        parts = parts[1:]
-                    else:
-                        if first_part:
-                            items.append(first_part)
-                        parts = parts[1:]
-
-                    for part in parts:
-                        if part.strip():
-                            items.append(part.strip())
-                    if items:
-                        # ✅ ДОБАВЛЯЕМ: разделяем последний элемент
-                        items, extra_text = self._split_last_list_item(items)
-                        if extra_text:
-                            # Если есть extra_text, добавляем его как отдельный элемент
-                            # который потом станет отдельным абзацем
-                            pass
-                        return items, intro_text
+            if line.lstrip().startswith(marker):
+                # Убираем маркер из начала строки
+                cleaned_line = re.sub(r'^\s*' + re.escape(marker), '', line)
+                if cleaned_line.strip():
+                    items.append(cleaned_line.strip())
+                return items, intro_text
 
         return items, intro_text
 
@@ -891,11 +883,9 @@ class EnhancedTextProcessor:
         """
         Определяет тип списка: 'ul' или 'ol'
         """
-        ol_pattern = r'\b\d+\.\s+'
+        ol_pattern = r'^\s*\d+\.\s+'  # ← добавил ^ для проверки начала строки
         if re.search(ol_pattern, line):
-            matches = re.findall(ol_pattern, line)
-            if len(matches) >= 2:
-                return 'ol'
+            return 'ol'  # ← убрал проверку len(matches) >= 2
         return 'ul'
 
     def _split_last_list_item(self, items: List[str]) -> Tuple[List[str], Optional[str]]:
@@ -1020,151 +1010,86 @@ class EnhancedTextProcessor:
 
         return text, None, []
     def convert_to_html(self, text: str, block_id: str = None) -> Tuple[str, List[Dict]]:
-        """
-        Конвертирует текст в HTML.
-        Возвращает: (html_текст, список_ошибок)
-        """
         if not text:
             return "", []
 
         errors = []
         lines = text.split('\n')
         html_lines = []
-        in_list = False
-        list_type = None
 
-        for line_num, line in enumerate(lines):
-            line = line.rstrip()
+        def is_marker_line(line: str) -> bool:
+            return self._is_valid_list_line(line)
 
+        i = 0
+        while i < len(lines):
+            line = lines[i].rstrip()
+
+            # Пустая строка
             if not line:
-                if in_list:
-                    html_lines.append(f'</{list_type}>')
-                    in_list = False
-                    list_type = None
+                html_lines.append('')
+                i += 1
                 continue
 
-            # Проверка на запрещённое форматирование
-            if re.search(r'(?<!^)\*\*', line) or re.search(r'(?<!^)\*[^*]', line):
-                if not re.match(r'^\s*\*\s+', line):
-                    errors.append({
-                        'type': ErrorType.FORBIDDEN_MARKDOWN.value,
-                        'message': f"Найдено запрещённое форматирование '*': строка {line_num + 1}",
-                        'line': line_num + 1,
-                        'text': line[:50] + '...' if len(line) > 50 else line
-                    })
+            # Проверяем, начинается ли строка с маркера
+            if is_marker_line(line):
+                # Собираем все подряд идущие строки с маркерами
+                marker_lines = []
+                j = i
+                while j < len(lines) and is_marker_line(lines[j]):
+                    marker_lines.append(lines[j].rstrip())
+                    j += 1
 
-            # --- ОБРАБОТКА h2 с последующим текстом ---
-            h2_match = re.match(r'^(<h2>.*?</h2>)(.*)$', line, re.IGNORECASE | re.DOTALL)
-            if h2_match:
-                if in_list:
-                    html_lines.append(f'</{list_type}>')
-                    in_list = False
-                    list_type = None
+                # Если 2+ маркера подряд - это список
+                if len(marker_lines) >= 2:
+                    # Определяем тип списка
+                    lt = 'ol' if re.search(r'^\s*\d+\.\s+', marker_lines[0]) else 'ul'
 
-                h2_part = h2_match.group(1).strip()
-                html_lines.append(h2_part)
+                    # Извлекаем элементы
+                    items = []
+                    for marker_line in marker_lines:
+                        # Прямо извлекаем текст без маркера
+                        cleaned = marker_line.lstrip()
+                        for marker in ['* ', '- ', '+ ']:
+                            if cleaned.startswith(marker):
+                                cleaned = cleaned[len(marker):]
+                                break
+                        # Проверяем OL
+                        ol_match = re.match(r'^\d+\.\s+', cleaned)
+                        if ol_match:
+                            cleaned = cleaned[ol_match.end():]
 
-                rest_part = h2_match.group(2).strip()
-                if rest_part:
-                    before, list_type_found, items = self._extract_inline_list(rest_part)
-                    if items and len(items) >= 2:
-                        # ✅ ДОБАВЛЯЕМ ЭТУ СТРОКУ:
-                        items, extra_text = self._split_last_list_item(items)
+                        if cleaned.strip():
+                            items.append(cleaned.strip())
 
-                        if before:
-                            html_lines.append(f'<p>{before}</p>')
-                        html_lines.append(f'<{list_type_found}>')
-                        for item in items:
-                            html_lines.append(f'<li>{item}</li>')
-                        html_lines.append(f'</{list_type_found}>')
-                        # ✅ ДОБАВЛЯЕМ ЭТУ СТРОКУ:
-                        if extra_text:
-                            html_lines.append(f'<p>{extra_text}</p>')
-                    else:
-                        html_lines.append(f'<p>{rest_part}</p>')
-                    continue
-
-            # Если строка уже содержит HTML-тег - пропускаем
-            if re.match(r'^\s*<[a-z][a-z0-9]*[^>]*>.*</[a-z][a-z0-9]*>\s*$', line, re.IGNORECASE):
-                if not line.strip().startswith('<h2>'):
-                    html_lines.append(line)
-                continue
-
-            # --- ПРОВЕРЯЕМ НА INLINE-СПИСОК ---
-            before, list_type_found, items = self._extract_inline_list(line)
-            if items and len(items) >= 2:
-                # ✅ ДОБАВЛЯЕМ: разделяем последний элемент
-                items, extra_text = self._split_last_list_item(items)
-
-                if in_list:
-                    html_lines.append(f'</{list_type}>')
-                    in_list = False
-                    list_type = None
-
-                if before:
-                    html_lines.append(f'<p>{before}</p>')
-
-                html_lines.append(f'<{list_type_found}>')
-                for item in items:
-                    html_lines.append(f'<li>{item}</li>')
-                html_lines.append(f'</{list_type_found}>')
-
-                # ✅ ДОБАВЛЯЕМ: если есть extra_text - добавляем как отдельный абзац
-                if extra_text:
-                    html_lines.append(f'<p>{extra_text}</p>')
-                continue
-
-            # --- ОБЫЧНЫЕ СПИСКИ (с маркерами в начале строки) ---
-            if self._is_valid_list_line(line):
-                items, intro_text = self._extract_list_items(line)
-
-                if len(items) >= 2:
-                    if intro_text:
-                        if in_list:
-                            html_lines.append(f'</{list_type}>')
-                            in_list = False
-                            list_type = None
-                        html_lines.append(f'<p>{intro_text}</p>')
-
-                    items, extra_text = self._split_last_list_item(items)
-                    lt = self._detect_list_type(line)
-
-                    if in_list:
-                        for item in items:
-                            if item.strip():
-                                clean_item = item.strip().rstrip('.')
-                                html_lines.append(f'<li>{clean_item}</li>')
-                        html_lines.append(f'</{lt}>')
-                        in_list = False
-                        list_type = None
-                        if extra_text:
-                            html_lines.append(f'<p>{extra_text}</p>')
-                    else:
+                    # Создаем список только если есть элементы
+                    if items:
                         html_lines.append(f'<{lt}>')
                         for item in items:
-                            if item.strip():
-                                clean_item = item.strip().rstrip('.')
-                                html_lines.append(f'<li>{clean_item}</li>')
+                            html_lines.append(f'<li>{item.rstrip(".")}</li>')
                         html_lines.append(f'</{lt}>')
-                        in_list = True
-                        if extra_text:
-                            html_lines.append(f'<p>{extra_text}</p>')
-                        list_type = lt
+                    else:
+                        # Если элементов нет - просто текст
+                        for marker_line in marker_lines:
+                            cleaned = re.sub(r'^\s*[-*+]\s+', '', marker_line)
+                            cleaned = re.sub(r'^\s*\d+\.\s+', '', cleaned)
+                            html_lines.append(f'<p>{cleaned}</p>')
+
+                    i = j
+                    continue
+                else:
+                    # Один маркер - не список, просто текст
+                    cleaned = re.sub(r'^\s*[-*+]\s+', '', line)
+                    cleaned = re.sub(r'^\s*\d+\.\s+', '', cleaned)
+                    html_lines.append(f'<p>{cleaned}</p>')
+                    i += 1
                     continue
 
             # Обычный текст
             else:
-                if in_list:
-                    html_lines.append(f'</{list_type}>')
-                    in_list = False
-                    list_type = None
-
                 html_lines.append(f'<p>{line}</p>')
+                i += 1
 
-        if in_list:
-            html_lines.append(f'</{list_type}>')
-
-        if html_lines:
+        if html_lines and html_lines[-1] != '':
             html_lines.append('<br>')
 
         return '\n'.join(html_lines), errors
@@ -3242,8 +3167,9 @@ class Phase7Interface:
             for repl in custom_replacements:
                 new_text = new_text.replace(repl["from"], repl["to"])
 
+            # Удаляем единицы ТОЛЬКО из блоков характеристик (regular и unique)
             units = st.session_state.ui_state.get('selected_units_global', [])
-            if units:
+            if units and block.block_type in ['regular', 'unique']:
                 new_text, removed = self.text_processor.remove_units(new_text, units)
                 if removed:
                     block.units_removed = list(set(block.units_removed + removed))
@@ -3340,9 +3266,13 @@ class Phase7Interface:
         # prefix = "syn_" if result.get('is_synonymized') else ""
 
         if bt == 'regular' and cn:
-            cn_clean = re.sub(r'[^\w\s-]', '', cn).strip()
-            cn_clean = re.sub(r'[\s-]+', '_', cn_clean)
-            return f"{cat_clean}_{cn_clean}"  # ← без prefix
+            # Для regular блоков используем ОРИГИНАЛЬНОЕ название
+            # Только заменяем пробелы на подчеркивания для имени фрагмента
+            cn_clean = cn.strip()
+            cn_clean = re.sub(r'[\s]+', '_', cn_clean)
+            # Удаляем только совсем опасные символы для имени файла
+            cn_clean = re.sub(r'[^\w\-_]', '', cn_clean)
+            return f"{cat_clean}_{cn_clean}"
 
         elif bt == 'unique' and cn and cv:
             cn_clean = re.sub(r'[^\w\s-]', '', cn).strip()
@@ -3479,10 +3409,13 @@ class Phase7Interface:
                 progress_bar.progress(progress)
                 status_text.text(f"Обработка {idx + 1} из {len(blocks)}: {block.fragment_name}")
 
+                # Для regular блоков передаем ПОЛНОЕ название характеристики
+                char_name_for_prop = block.characteristic_name if block.block_type == 'regular' else None
+
                 result = self.text_processor.replace_variables(
                     text=block.processed_text,
                     block_type=block.block_type,
-                    char_name=block.characteristic_name,
+                    char_name=char_name_for_prop,
                     char_value=block.characteristic_value
                 )
 
@@ -3775,7 +3708,7 @@ class Phase7Interface:
 
             # ✅ ИСПРАВЛЯЕМ h2 внутри p
             html = self.text_processor._fix_h2_in_paragraph(html)
-
+            html = self.text_processor._remove_duplicate_closing_tags(html)
             html_errors = self.text_processor.validate_html_structure(html, block.fragment_name)
             errors.extend(html_errors)
 
