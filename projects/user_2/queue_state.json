@@ -1,20 +1,5 @@
 [
   {
-    "project_id": "6a3bf4bb-c764-4762-b0b5-345072b9a1e0",
-    "user_id": 2,
-    "project_name": "пук",
-    "category": "Известковый раствор",
-    "status": "completed",
-    "current_phase": 7,
-    "message": "Завершён успешно",
-    "progress": 100,
-    "started_at": "2026-07-13T14:47:44.548748",
-    "completed_at": "2026-07-13T14:49:48.152652",
-    "error": null,
-    "site_name": "steelborg",
-    "domain_name": "kz"
-  },
-  {
     "project_id": "24242afb-eed2-4c37-b3c9-e8cdd1c40de0",
     "user_id": 2,
     "project_name": "алюминиевые радиаторы",
@@ -40,6 +25,21 @@
     "progress": 100,
     "started_at": "2026-07-13T15:28:27.800124",
     "completed_at": "2026-07-13T15:56:26.426045",
+    "error": null,
+    "site_name": "steelborg",
+    "domain_name": "kz"
+  },
+  {
+    "project_id": "6a3bf4bb-c764-4762-b0b5-345072b9a1e0",
+    "user_id": 2,
+    "project_name": "пук",
+    "category": "Известковый раствор",
+    "status": "completed",
+    "current_phase": 7,
+    "message": "Завершён успешно",
+    "progress": 100,
+    "started_at": "2026-07-14T12:41:01.118542",
+    "completed_at": "2026-07-14T12:43:25.166434",
     "error": null,
     "site_name": "steelborg",
     "domain_name": "kz"
