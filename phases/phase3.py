@@ -1,4 +1,5 @@
 
+
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -597,80 +598,133 @@ class DynamicVariableProcessor:
 # --- Классы для работы с данными ---
 class BlockManager:
     def __init__(self, domain_name: str = None, site_name: str = None):
-        print(f"🛠 BlockManager.__init__ вызван с domain_name={domain_name}, site_name={site_name}")
+        print(f"🛠 ===== BlockManager.__init__ =====")
+        print(f"   domain_name: {domain_name}")
+        print(f"   site_name: {site_name}")
 
-        # Приоритет: переданные параметры > session_state
         if domain_name is None:
             domain_name = st.session_state.get('current_domain', 'default')
         if site_name is None:
             site_name = st.session_state.get('current_site', 'steelborg')
 
+        self.domain_name = domain_name
+        self.site_name = site_name
         self.blocks_dir = Path(f"sites/{site_name}/domains/{domain_name}/blocks")
-        print(f"   → blocks_dir = {self.blocks_dir}")
+        print(f"   blocks_dir: {self.blocks_dir}")
+        print(f"   blocks_dir exists: {self.blocks_dir.exists()}")
 
         self.blocks_dir.mkdir(parents=True, exist_ok=True)
         self.blocks = {}
         self.load_blocks()
 
         print(f"📁 BlockManager инициализирован: domain={domain_name}, блоков={len(self.blocks)}")
-
-        print(f"📁 BlockManager: сайт={site_name}, домен={domain_name}, путь={self.blocks_dir}")
-        print(f"   Загружено блоков: {len(self.blocks)}")
-
-        print(f"📁 BlockManager: сайт={site_name}, домен={domain_name}, путь={self.blocks_dir}")
-
+        print(f"   ID блоков: {list(self.blocks.keys())}")
+        print(f"====================================")
+    def get_blocks_by_type(self, block_type):
+        """Возвращает блоки определенного типа"""
+        print(f"📋 get_blocks_by_type({block_type}) вызван")
+        result = {}
+        for block_id, block in self.blocks.items():
+            if block.get("block_type") == block_type:
+                result[block_id] = block
+        print(f"   Найдено блоков типа '{block_type}': {len(result)}")
+        return result
     def load_blocks(self):
-        """Загружает все блоки из папки ДОМЕНА"""
+        """Загружает все блоки из папки ДОМЕНА с ДЕТАЛЬНЫМ логированием"""
+        print(f"🔍 ===== load_blocks() START =====")
+        print(f"   Текущий blocks_dir: {self.blocks_dir}")
+        print(f"   blocks_dir.exists(): {self.blocks_dir.exists()}")
+
+        # ✅ ОЧИЩАЕМ КЭШ
+        old_blocks_count = len(self.blocks)
         self.blocks = {}
+        print(f"   🧹 Очищен кэш (было {old_blocks_count} блоков)")
 
         if not self.blocks_dir.exists():
+            print(f"   ⚠️ Папка НЕ СУЩЕСТВУЕТ: {self.blocks_dir}")
+            print(f"🔍 ===== load_blocks() END (папка не существует) =====")
             return
 
-        for block_dir in self.blocks_dir.iterdir():
-            if not block_dir.is_dir():
-                continue
+        # Сканируем папки
+        block_dirs = [d for d in self.blocks_dir.iterdir() if d.is_dir()]
+        print(f"   📂 Найдено папок: {len(block_dirs)}")
+        for d in block_dirs:
+            print(f"      - {d.name}")
 
+        loaded_count = 0
+        for block_dir in block_dirs:
             block_file = block_dir / "block.json"
             variables_file = block_dir / "variables.json"
 
+            print(f"   📄 Проверяем блок: {block_dir.name}")
+            print(f"      block.json exists: {block_file.exists()}")
+            print(f"      variables.json exists: {variables_file.exists()}")
+
             if block_file.exists():
                 try:
+                    # Читаем block.json
                     with open(block_file, 'r', encoding='utf-8') as f:
                         block_data = json.load(f)
+                    print(f"      ✅ block.json прочитан, имя: {block_data.get('name', 'N/A')}")
 
+                    # Устанавливаем тип блока
                     if "block_type" not in block_data:
                         if "характеристика" in block_data.get("name", "").lower():
                             block_data["block_type"] = "characteristic"
                         else:
                             block_data["block_type"] = "other"
 
+                    # Загружаем переменные
                     if variables_file.exists():
                         with open(variables_file, 'r', encoding='utf-8') as f:
                             block_data["variables_data"] = json.load(f)
+                        print(f"      ✅ variables.json прочитан, переменных: {len(block_data['variables_data'])}")
+                        print(f"         Имена переменных: {list(block_data['variables_data'].keys())}")
                     else:
                         block_data["variables_data"] = {}
+                        print(f"      ⚠️ Нет variables.json, создан пустой словарь")
 
+                    # Сохраняем в кэш
                     self.blocks[block_data["block_id"]] = block_data
+                    loaded_count += 1
+                    print(f"      ✅ Блок загружен в кэш: {block_data['block_id']}")
 
                 except Exception as e:
-                    st.error(f"Ошибка загрузки блока {block_dir.name}: {e}")
+                    print(f"      ❌ ОШИБКА загрузки блока {block_dir.name}: {e}")
+                    import traceback
+                    traceback.print_exc()
+            else:
+                print(f"      ⚠️ Нет block.json в папке {block_dir.name}")
+
+        print(f"   📊 ИТОГО загружено блоков: {loaded_count}")
+        print(f"   🆔 ID загруженных блоков: {list(self.blocks.keys())}")
+        print(f"🔍 ===== load_blocks() END =====")
 
     def save_block(self, block_data, variables_data=None):
-        """Сохраняет блок в папку ДОМЕНА"""
+        """Сохраняет блок с ДЕТАЛЬНЫМ логированием"""
         import traceback
+        import json
+
+        print(f"🔵 ===== SAVE_BLOCK START =====")
+        print(f"   block_id: {block_data.get('block_id', 'UNKNOWN')}")
+        print(f"   block_name: {block_data.get('name', 'UNKNOWN')}")
+        print(f"   variables_data type: {type(variables_data)}")
+        print(f"   variables_data is None: {variables_data is None}")
+        if variables_data is not None:
+            print(f"   variables_data keys: {list(variables_data.keys()) if isinstance(variables_data, dict) else 'NOT A DICT'}")
+            print(f"   variables_data count: {len(variables_data) if isinstance(variables_data, dict) else 'N/A'}")
 
         block_id = block_data["block_id"]
         block_dir = self.blocks_dir / block_id
 
-        print(f"🔵 SAVE_BLOCK START: {block_id}")
         print(f"   blocks_dir: {self.blocks_dir}")
         print(f"   block_dir: {block_dir}")
-        print(f"   block_dir exists: {block_dir.exists()}")
+        print(f"   block_dir exists before: {block_dir.exists()}")
 
         try:
-            # Создаём папку блока
+            # Создаём папку
             block_dir.mkdir(parents=True, exist_ok=True)
-            print(f"   ✅ Папка создана: {block_dir}")
+            print(f"   ✅ Папка создана/существует: {block_dir}")
 
             block_file = block_dir / "block.json"
             variables_file = block_dir / "variables.json"
@@ -678,56 +732,99 @@ class BlockManager:
             print(f"   block_file: {block_file}")
             print(f"   variables_file: {variables_file}")
 
-            # Сохраняем block.json
+            # ✅ 1. СОХРАНЯЕМ block.json
+            print(f"   📝 Записываем block.json...")
             with open(block_file, 'w', encoding='utf-8') as f:
                 json.dump(block_data, f, ensure_ascii=False, indent=2)
-            print(f"   ✅ block.json сохранён, размер: {block_file.stat().st_size if block_file.exists() else 0}")
+            print(f"   ✅ block.json записан")
+            print(f"      Размер: {block_file.stat().st_size if block_file.exists() else 0} байт")
 
-            # Сохраняем variables.json
-            if variables_data:
+            # ✅ 2. СОХРАНЯЕМ variables.json
+            if variables_data is not None:
+                print(f"   📝 Записываем variables.json (передан явно)...")
                 with open(variables_file, 'w', encoding='utf-8') as f:
                     json.dump(variables_data, f, ensure_ascii=False, indent=2)
-                print(f"   ✅ variables.json сохранён")
+                print(f"   ✅ variables.json записан (явно)")
+                print(f"      Размер: {variables_file.stat().st_size if variables_file.exists() else 0} байт")
             else:
-                print(f"   ⚠️ Нет variables_data")
+                # Если variables_data не передан, но есть в block_data
+                if "variables_data" in block_data and block_data["variables_data"]:
+                    print(f"   📝 Записываем variables.json (из block_data)...")
+                    with open(variables_file, 'w', encoding='utf-8') as f:
+                        json.dump(block_data["variables_data"], f, ensure_ascii=False, indent=2)
+                    print(f"   ✅ variables.json записан (из block_data)")
+                else:
+                    print(f"   ⚠️ Нет variables_data для сохранения")
 
-            # Проверяем, что файлы реально создались
-            if block_file.exists():
-                print(f"   ✅ Файл существует! Читаем обратно для проверки...")
-                with open(block_file, 'r', encoding='utf-8') as f:
-                    test_data = json.load(f)
-                    print(f"   ✅ Прочитано имя: {test_data.get('name', 'N/A')}")
-            else:
-                print(f"   ❌ Файл НЕ существует после записи!")
+            # ✅ 3. ПРОВЕРЯЕМ, ЧТО ФАЙЛЫ СОЗДАЛИСЬ
+            print(f"   🔍 Проверяем создание файлов...")
+            block_exists = block_file.exists()
+            vars_exists = variables_file.exists()
+
+            print(f"      block.json exists: {block_exists}")
+            print(f"      variables.json exists: {vars_exists}")
+
+            if not block_exists:
+                print(f"   ❌ block.json НЕ СОЗДАЛСЯ!")
                 return False
 
-            if "variables_data" not in block_data and variables_data:
+            # ✅ 4. ПРОВЕРЯЕМ СОДЕРЖИМОЕ
+            print(f"   🔍 Проверяем содержимое block.json...")
+            with open(block_file, 'r', encoding='utf-8') as f:
+                test_data = json.load(f)
+                print(f"      Имя в файле: {test_data.get('name', 'N/A')}")
+                print(f"      variables в файле: {test_data.get('variables', [])}")
+                if "variables_data" in test_data:
+                    print(f"      variables_data в файле: {len(test_data['variables_data'])} переменных")
+                    print(f"         Имена: {list(test_data['variables_data'].keys())}")
+
+            if vars_exists:
+                print(f"   🔍 Проверяем содержимое variables.json...")
+                with open(variables_file, 'r', encoding='utf-8') as f:
+                    vars_data = json.load(f)
+                    print(f"      Переменных в файле: {len(vars_data)}")
+                    print(f"      Имена: {list(vars_data.keys())}")
+
+            # ✅ 5. ОБНОВЛЯЕМ КЭШ
+            print(f"   🔄 Обновляем кэш self.blocks...")
+            if "variables_data" not in block_data and variables_data is not None:
                 block_data["variables_data"] = variables_data
             self.blocks[block_id] = block_data
+            print(f"   ✅ Кэш обновлен")
 
-            print(f"🔵 SAVE_BLOCK SUCCESS: {block_id}")
+            print(f"🔵 ===== SAVE_BLOCK SUCCESS =====")
             return True
 
         except Exception as e:
-            print(f"🔴 SAVE_BLOCK ERROR: {e}")
+            print(f"🔴 ===== SAVE_BLOCK ERROR =====")
+            print(f"   Ошибка: {e}")
             traceback.print_exc()
             st.error(f"Ошибка сохранения блока {block_id}: {e}")
             return False
 
-    def delete_block(self, block_id):
-        """Удаляет блок из папки ДОМЕНА"""
-        if block_id in self.blocks:
-            block_dir = self.blocks_dir / block_id
-            if block_dir.exists():
-                shutil.rmtree(block_dir)
-            del self.blocks[block_id]
-            return True
-        return False
+    def get_all_blocks(self):
+        """Возвращает все блоки с логированием"""
+        print(f"📋 get_all_blocks() вызван, блоков в кэше: {len(self.blocks)}")
+        print(f"   ID блоков: {list(self.blocks.keys())}")
+        return self.blocks
 
-    # === ЗАМЕНИТЬ полностью функцию create_new_block ===
+    def get_block(self, block_id):
+        """Получает блок по ID с логированием"""
+        print(f"📋 get_block({block_id}) вызван")
+        result = self.blocks.get(block_id)
+        if result:
+            print(f"   ✅ Блок найден: {result.get('name', 'N/A')}")
+            if "variables_data" in result:
+                print(f"   variables_data: {len(result['variables_data'])} переменных")
+        else:
+            print(f"   ❌ Блок НЕ НАЙДЕН")
+        return result
+
     def create_new_block(self, base_block_id=None):
-        """Создает новый блок — ТОЛЬКО по явному запросу"""
-        print(f"🔧 create_new_block вызван | base_block_id={base_block_id} | существующих блоков: {len(self.blocks)}")
+        """Создает новый блок с логированием"""
+        print(f"🔧 ===== create_new_block START =====")
+        print(f"   base_block_id: {base_block_id}")
+        print(f"   Существующих блоков: {len(self.blocks)}")
 
         if base_block_id and base_block_id in self.blocks:
             print(f"   → Копируем существующий блок {base_block_id}")
@@ -739,6 +836,7 @@ class BlockManager:
             new_block["name"] = f"{base_block.get('name', 'Блок')} (копия)"
 
             variables_data = base_block.get("variables_data", {}).copy()
+            print(f"   ✅ Создана копия: {new_block_id}")
             return new_block_id, new_block, variables_data
 
         # Пустой минимальный блок
@@ -751,31 +849,36 @@ class BlockManager:
             "template": "Вставьте шаблон здесь...\n{переменная1}",
             "variables": ["переменная1"],
             "settings": {},
-            "block_type": "other"
-        }
-
-        variables_data = {
-            "переменная1": {
-                "name": "переменная1",
-                "description": "Описание",
-                "values": ["Значение 1"],
-                "type": "static"
+            "block_type": "other",
+            "variables_data": {
+                "переменная1": {
+                    "name": "переменная1",
+                    "description": "Описание",
+                    "values": ["Значение 1"],
+                    "type": "static"
+                }
             }
         }
 
+        variables_data = new_block["variables_data"]
+        print(f"   ✅ Создан пустой блок: {new_block_id}")
+        print(f"   🔍 ===== create_new_block END =====")
         return new_block_id, new_block, variables_data
 
-    def get_block(self, block_id):
-        """Получает блок по ID"""
-        return self.blocks.get(block_id)
-
-    def get_all_blocks(self):
-        """Возвращает все блоки"""
-        return self.blocks
-
-    def get_blocks_by_type(self, block_type):
-        """Возвращает блоки определенного типа"""
-        return {block_id: block for block_id, block in self.blocks.items() if block.get("block_type") == block_type}
+    def delete_block(self, block_id):
+        """Удаляет блок с логированием"""
+        print(f"🗑️ delete_block({block_id}) вызван")
+        if block_id in self.blocks:
+            block_dir = self.blocks_dir / block_id
+            if block_dir.exists():
+                import shutil
+                shutil.rmtree(block_dir)
+                print(f"   ✅ Папка удалена: {block_dir}")
+            del self.blocks[block_id]
+            print(f"   ✅ Блок удален из кэша")
+            return True
+        print(f"   ❌ Блок не найден")
+        return False
 
 
 class DynamicVariableManager:
@@ -984,30 +1087,57 @@ class VariableManager:
         return self.block_manager.get_block(block_id)
 
 def force_save_phase3_blocks(app_state=None):
+    """Сохраняет информацию о блоках в проект с ДЕТАЛЬНЫМ логированием"""
+    print(f"💾 ===== force_save_phase3_blocks() START =====")
+
     if 'block_manager' not in st.session_state:
         print("❌ force_save_phase3_blocks: block_manager не в session_state")
         return False
 
-    selected_blocks = st.session_state.get('selected_blocks', {})
+    print(f"   🔄 Загружаем свежие блоки...")
+    st.session_state.block_manager.load_blocks()
+
+    blocks = st.session_state.block_manager.get_all_blocks()
+    print(f"   📊 Блоков в домене: {len(blocks)}")
+
+    # ✅ Сохраняем ВСЕ блоки (не только выбранные)
+    blocks_data = {}
+    for block_id, block in blocks.items():
+        blocks_data[block_id] = {
+            'block_id': block_id,
+            'name': block.get('name', ''),
+            'block_type': block.get('block_type', 'other'),
+            'description': block.get('description', ''),
+            'template': block.get('template', ''),
+            'variables': block.get('variables', []),
+            'settings': block.get('settings', {}),
+            'variables_data': block.get('variables_data', {})
+        }
+        print(f"      {block_id}: {block.get('name', 'N/A')} - {len(block.get('variables_data', {}))} переменных")
 
     phase3_data = {
-        'selected_blocks': selected_blocks,
-        'blocks_count': len(st.session_state.block_manager.get_all_blocks()),
+        'blocks': blocks_data,
+        'blocks_count': len(blocks),
+        'characteristic_blocks': len([b for b in blocks.values() if b.get('block_type') == 'characteristic']),
+        'other_blocks': len([b for b in blocks.values() if b.get('block_type') == 'other']),
         'settings_saved': True,
         'saved_at': datetime.now().isoformat(),
-        'phase3_generated': True,  # ← ДОБАВИТЬ ЭТУ СТРОКУ!
+        'phase3_generated': True,
         'ai_instructions': st.session_state.ai_instruction_manager.instructions if 'ai_instruction_manager' in st.session_state else {}
     }
 
     if 'app_data' in st.session_state:
         st.session_state.app_data['phase3'] = phase3_data
-        st.session_state.app_data['phase3_generated'] = True  # ← И ЭТУ!
+        st.session_state.app_data['phase3_generated'] = True
+        print(f"   ✅ Сохранено в session_state.app_data['phase3']")
 
     if app_state:
         app_state.set_phase_data(3, phase3_data)
         app_state.save_project()
+        print(f"   ✅ Сохранено в app_state")
 
-    print(f"✅ Phase3 settings saved to project (blocks are already in domain)")
+    print(f"✅ Phase3 settings saved to project: {len(blocks)} blocks")
+    print(f"💾 ===== force_save_phase3_blocks() END =====")
     return True
 
 def has_instructions_for_category(block_id, var_name, category, context=None):
@@ -1331,6 +1461,7 @@ def run_mass_generation_auto(app_state=None, context=None):
             })
             print(f"   ❌ Exception: {e}")
 
+    # ========== СОХРАНЯЕМ И ПОКАЗЫВАЕМ РЕЗУЛЬТАТ ==========
     force_save_phase3_blocks(app_state)
 
     # ========== УСТАНОВКА ФЛАГА ==========
@@ -1346,15 +1477,31 @@ def run_mass_generation_auto(app_state=None, context=None):
         })
         context.save()
         print(f"   ✅ Установлен phase3_generated = True в контексте")
+
     # Перезагружаем инструкции
     if 'ai_instruction_manager' in st.session_state:
         st.session_state.ai_instruction_manager.reload()
 
     print(f"\n✅ run_mass_generation_auto END: success={success_count}, errors={error_count}")
 
+    # ========== ПОКАЗЫВАЕМ РЕЗУЛЬТАТ ПОЛЬЗОВАТЕЛЮ ==========
+    message = f"Сгенерировано: {success_count}, Ошибок: {error_count}"
+    if success_count > 0:
+        message += f" ✅ Данные сохранены в проект!"
+    else:
+        message += " ⚠️ Не удалось сгенерировать данные"
+
+    # Добавляем в session_state для отображения в UI
+    st.session_state._phase3_auto_result = {
+        'message': message,
+        'success_count': success_count,
+        'error_count': error_count,
+        'timestamp': datetime.now().isoformat()
+    }
+
     return {
         "success": True,
-        "message": f"Сгенерировано: {success_count}, Ошибок: {error_count}",
+        "message": message,
         "count": success_count,
         "errors": error_count,
         "errors_list": errors_list,
@@ -1421,11 +1568,20 @@ def show_all_ai_instructions_for_category():
     if not found:
         st.info(f"📭 Нет сгенерированных инструкций для категории «{category}».")
 def main(app_state=None, settings_mode=False, context=None, show_instructions_only=False):
+    print(f"🚀 ===== PHASE3 MAIN START =====")
+    print(f"   settings_mode: {settings_mode}")
+    print(f"   show_instructions_only: {show_instructions_only}")
+    print(f"   context: {context is not None}")
+    print(f"   app_state: {app_state is not None}")
+
     load_css()
 
     # ========== ПРОВЕРКА: ЕСТЬ ЛИ ТЕКУЩИЙ ПРОЕКТ ==========
     current_project_id = st.session_state.get('current_project_id')
     current_user_id = st.session_state.get('user_id')
+
+    print(f"   current_project_id: {current_project_id}")
+    print(f"   current_user_id: {current_user_id}")
 
     if not current_project_id or not current_user_id:
         st.warning("⚠️ Нет активного проекта. Выберите или создайте проект в фазе 1.")
@@ -1454,30 +1610,44 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
         saved_domain = st.session_state.get('current_domain', 'default')
         saved_site = st.session_state.get('current_site', 'steelborg')
 
-    # ========== ИНИЦИАЛИЗАЦИЯ AI МЕНЕДЖЕРОВ С ПРОЕКТОМ ==========
-    # ✅ ЯВНО ПЕРЕДАЁМ project_id ИЗ ТЕКУЩЕГО ПРОЕКТА
-    init_ai_managers(app_state, context)
-
-    # ========== СОЗДАНИЕ BLOCK_MANAGER ==========
+    # ========== ПОЛУЧАЕМ ТЕКУЩИЕ ДОМЕН И САЙТ ==========
     current_domain = st.session_state.get('current_domain', 'default')
     current_site = st.session_state.get('current_site', 'steelborg')
+    print(f"   current_domain: {current_domain}")
+    print(f"   current_site: {current_site}")
 
+    # ========== ИНИЦИАЛИЗАЦИЯ AI МЕНЕДЖЕРОВ ==========
+    init_ai_managers(app_state, context)
+
+    # ========== ИНИЦИАЛИЗАЦИЯ BLOCK_MANAGER ==========
+    print(f"   🔧 Инициализация BlockManager...")
     if ('block_manager' not in st.session_state or
             st.session_state.get('_bm_domain_key') != f"{current_site}_{current_domain}"):
-
+        print(f"   📦 Создаем НОВЫЙ BlockManager...")
         st.session_state.block_manager = BlockManager(
             domain_name=current_domain,
             site_name=current_site
         )
         st.session_state._bm_domain_key = f"{current_site}_{current_domain}"
-        print(f"📦 Создан новый BlockManager для домена '{current_domain}'")
     else:
+        print(f"   📦 Используем существующий BlockManager, перезагружаем...")
         st.session_state.block_manager.load_blocks()
-        print(f"📦 Перезагружены блоки для домена '{current_domain}'")
 
-    # ... остальной код ...
+    # ✅ ПРИНУДИТЕЛЬНАЯ ПЕРЕЗАГРУЗКА
+    print(f"   🔄 ПРИНУДИТЕЛЬНАЯ ПЕРЕЗАГРУЗКА БЛОКОВ...")
+    st.session_state.block_manager.load_blocks()
 
-    # ✅ ОБНОВЛЯЕМ AIInstructionManager с правильным доменом
+    # ========== ПРОВЕРКА БЛОКОВ ==========
+    blocks = st.session_state.block_manager.get_all_blocks()
+    print(f"   📊 Блоков после загрузки: {len(blocks)}")
+    if blocks:
+        for block_id, block in blocks.items():
+            print(f"      {block_id}: {block.get('name', 'N/A')}")
+            if 'variables_data' in block:
+                print(f"         variables_data: {len(block['variables_data'])} переменных")
+                print(f"         keys: {list(block['variables_data'].keys())}")
+
+    # ========== ОБНОВЛЯЕМ AIInstructionManager ==========
     from ai_settings.ai_module import AIInstructionManager
 
     domain_key = f"ai_mgr_{current_site}_{current_domain}"
@@ -1489,72 +1659,18 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
         st.session_state.ai_mgr_domain_key = domain_key
         print(f"🔄 AIInstructionManager обновлён для домена {current_domain}")
 
-    # ✅ СОЗДАЕМ BlockManager ТОЛЬКО ОДИН РАЗ
-    # ✅ СОЗДАЕМ BlockManager
-    # ✅ СОЗДАЕМ BlockManager
-    if ('block_manager' not in st.session_state or
-            st.session_state.get('_bm_domain_key') != f"{current_site}_{current_domain}"):
-
-        st.session_state.block_manager = BlockManager(
-            domain_name=current_domain,
-            site_name=current_site
-        )
-        st.session_state._bm_domain_key = f"{current_site}_{current_domain}"
-        print(f"📦 Создан новый BlockManager для домена '{current_domain}'")
-    else:
-        st.session_state.block_manager.load_blocks()
-        print(f"📦 Перезагружены блоки для домена '{current_domain}'")
-
-    # ====================== ОТЛАДКА ======================
-    current_blocks = st.session_state.block_manager.get_all_blocks()
-    print(f"📊 ЗАГРУЖЕНО БЛОКОВ ИЗ ДОМЕНА: {len(current_blocks)}")
-    if current_blocks:
-        print(f"   Блоки: {list(current_blocks.keys())}")
+    # ========== ОТЛАДКА ==========
+    print(f"📊 ЗАГРУЖЕНО БЛОКОВ ИЗ ДОМЕНА: {len(blocks)}")
+    if blocks:
+        print(f"   Блоки: {list(blocks.keys())}")
     else:
         print(f"   ⚠️ Блоков в домене НЕТ")
-    # ====================================================
+
     if show_instructions_only:
         show_all_ai_instructions_for_category()
         return
-    # === ЗАЩИТА ОТ АВТОМАТИЧЕСКОГО СОЗДАНИЯ ДЕФОЛТНЫХ БЛОКОВ ===
-    is_auto_mode = context is not None and hasattr(context, 'project_id')
 
-    # Проверка наличия блоков
-    blocks_count = len(st.session_state.block_manager.get_all_blocks())
-
-    if blocks_count == 0:
-        if is_auto_mode:
-            # АВТОГЕНЕРАЦИЯ - НЕ СОЗДАЕМ!
-            st.error("""
-            ## ❌ В домене нет блоков!
-            
-            Для автогенерации необходимо:
-            1. Запустить проект в ручном режиме
-            2. Создать блоки в фазе 3
-            3. Сохранить настройки
-            4. Затем использовать автогенерацию
-            """)
-            return {'success': False, 'blocks_count': 0, 'message': 'Нет блоков в домене'}
-        else:
-            # РУЧНОЙ РЕЖИМ - показываем кнопку создания
-            st.warning("⚠️ Нет созданных блоков. Создайте первый блок ниже.")
-            if st.button("➕ Создать первый блок", use_container_width=True):
-                new_id, new_block, vars_data = st.session_state.block_manager.create_new_block()
-                st.session_state.block_manager.save_block(new_block, vars_data)
-                st.rerun()
-            return {'success': False, 'blocks_count': 0, 'message': 'Нет созданных блоков'}
-    # ========================================================
-
-    # ✅ УБИРАЕМ ВТОРОЙ ВЫЗОВ load_blocks() - он уже вызван в __init__
-    # st.session_state.block_manager.load_blocks()  # ← ЗАКОММЕНТИРОВАТЬ!
-
-    # Проверяем, что блоки загрузились
-    current_blocks = st.session_state.block_manager.get_all_blocks()
-    print(f"📦 ИТОГО загружено блоков из домена '{current_domain}': {len(current_blocks)}")
-
-    # ... остальной код main() без изменений ...
-
-    # Инициализация остальных менеджеров
+    # ========== ИНИЦИАЛИЗАЦИЯ ОСТАЛЬНЫХ МЕНЕДЖЕРОВ ==========
     if 'variable_manager' not in st.session_state:
         st.session_state.variable_manager = VariableManager(st.session_state.block_manager)
 
@@ -1564,13 +1680,6 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
     if 'session_temp_vars' not in st.session_state:
         st.session_state.session_temp_vars = {}
 
-    # ✅ Инициализируем AI менеджеры с передачей app_state и правильного контекста
-    init_ai_managers(app_state, context)
-
-    # ... остальной код без изменений ...
-
-    # ========== ЗАГРУЖАЕМ ДАННЫЕ ФАЗ 1 И 2 ==========
-    # ========== ЗАГРУЖАЕМ ДАННЫЕ ФАЗ 1 И 2 ИЗ ПРОЕКТА (app_state) ==========
     # ========== ЗАГРУЖАЕМ ДАННЫЕ ФАЗ 1 И 2 ==========
     ctx_data = _get_context_data(context, st.session_state)
 
@@ -1604,9 +1713,37 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
             st.session_state.phase2_data = phase2_data
             print(f"📂 Загружена фаза 2 из проекта: категория '{phase2_data.get('category', '')}'")
 
-    # ========== ОСНОВНАЯ ЛОГИКА ==========
+    # ========== ПРОВЕРКА НА АВТОМАТИЧЕСКИЙ РЕЖИМ ==========
+    is_auto_mode = context is not None and hasattr(context, 'project_id')
+    blocks_count = len(st.session_state.block_manager.get_all_blocks())
 
-    # РЕЖИМ НАСТРОЕК - показываем редактор блоков
+    if blocks_count == 0:
+        if is_auto_mode:
+            st.error("""
+            ## ❌ В домене нет блоков!
+            
+            Для автогенерации необходимо:
+            1. Запустить проект в ручном режиме
+            2. Создать блоки в фазе 3
+            3. Сохранить настройки
+            4. Затем использовать автогенерацию
+            """)
+            return {'success': False, 'blocks_count': 0, 'message': 'Нет блоков в домене'}
+        else:
+            st.warning("⚠️ Нет созданных блоков. Создайте первый блок ниже.")
+            if st.button("➕ Создать первый блок", use_container_width=True):
+                print("🛠 Пользователь нажал 'Создать первый блок'")
+                new_id, new_block, vars_data = st.session_state.block_manager.create_new_block()
+                if st.session_state.block_manager.save_block(new_block, vars_data):
+                    st.session_state.block_manager.load_blocks()
+                    force_save_phase3_blocks(app_state)
+                    st.success("✅ Блок создан и сохранен в проект!")
+                    st.rerun()
+                else:
+                    st.error("❌ Ошибка создания блока")
+            return {'success': False, 'blocks_count': 0, 'message': 'Нет созданных блоков'}
+
+    # ========== РЕЖИМ НАСТРОЕК ==========
     if settings_mode:
         st.markdown("### 📝 Настройка блоков и шаблонов (Фаза 3)")
         st.caption("Настройте блоки и шаблоны промптов для автоматической генерации")
@@ -1616,8 +1753,15 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
         col1, col2 = st.columns(2)
         with col1:
             if st.button("💾 Сохранить настройки фазы 3", type="primary", use_container_width=True):
+                print("💾 Нажата кнопка 'Сохранить настройки фазы 3'")
+                st.session_state.block_manager.load_blocks()
                 if save_phase3_settings(app_state):
+                    # Дополнительно сохраняем через force
+                    force_save_phase3_blocks(app_state)
+                    if app_state:
+                        app_state.save_project()
                     st.success("✅ Настройки фазы 3 сохранены в проект!")
+                    st.rerun()
                 else:
                     st.error("❌ Ошибка сохранения настроек")
         with col2:
@@ -1625,10 +1769,10 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
                 st.session_state.show_settings = True
                 st.rerun()
         st.markdown("---")
-        return {'success': True, 'blocks_count': len(current_blocks), 'message': 'Режим настроек'}
+        return {'success': True, 'blocks_count': len(blocks), 'message': 'Режим настроек'}
 
     # ========== РУЧНОЙ РЕЖИМ ==========
-    # Проверка наличия данных
+    # Проверка наличия данных фаз 1 и 2
     phase2_data = get_phase2_data()
     if not phase2_data or not phase2_data.get('category'):
         st.warning("⚠️ Нет данных из фазы 2. Сначала настройте фазу 2.")
@@ -1638,17 +1782,6 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
     if not characteristics_data:
         st.warning("⚠️ Нет данных характеристик из фазы 1. Сначала настройте фазу 1.")
         return {'success': False, 'blocks_count': 0, 'message': 'Нет данных из фазы 1'}
-
-    # Проверка наличия блоков
-    # Проверка наличия блоков
-    if len(current_blocks) == 0:
-        st.warning("⚠️ Нет созданных блоков. Создайте первый блок ниже.")
-        if st.button("➕ Создать первый блок", use_container_width=True):
-            print("🛠 Пользователь нажал 'Создать первый блок'")
-            new_id, new_block, vars_data = st.session_state.block_manager.create_new_block()
-            st.session_state.block_manager.save_block(new_block, vars_data)
-            st.rerun()
-        return {'success': False, 'blocks_count': 0, 'message': 'Нет созданных блоков'}
 
     # РУЧНОЙ РЕЖИМ - показываем ПОЛНЫЙ РЕДАКТОР
     st.markdown("### 📝 Редактор блоков и переменных (Фаза 3)")
@@ -1661,55 +1794,91 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
         if category:
             st.success(f"✅ Загружена категория: **{category}**")
 
-    # Показываем ПОЛНЫЙ РЕДАКТОР (все 5 вкладок)
+    # Показываем ПОЛНЫЙ РЕДАКТОР
     show_edit_mode(app_state)
 
     st.markdown("---")
 
-    # Кнопки сохранения и перехода
-    col1, col2, col3 = st.columns([1, 1, 1])
+    # ========== КНОПКИ СОХРАНЕНИЯ И ПЕРЕХОДА ==========
+    st.markdown("---")
+    st.markdown("### 💾 Управление сохранением")
+
+    # Используем 4 колонки для большего количества кнопок
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
         if st.button("💾 Сохранить изменения", type="primary", use_container_width=True):
-            force_save_phase3_blocks(app_state)
-            if app_state:
-                app_state.save_project()
-            st.success("✅ Настройки фазы 3 сохранены!")
-            st.rerun()
+            print("💾 Нажата кнопка 'Сохранить изменения'")
+
+            # ✅ 1. Перезагружаем свежие блоки
+            if 'block_manager' in st.session_state:
+                st.session_state.block_manager.load_blocks()
+
+            # ✅ 2. Сохраняем через force_save_phase3_blocks
+            success = force_save_phase3_blocks(app_state)
+
+            if success:
+                # ✅ 3. Дополнительно сохраняем в проект через app_state
+                if app_state:
+                    app_state.save_project()
+
+                # ✅ 4. Показываем статистику сохранения
+                blocks_saved = st.session_state.block_manager.get_all_blocks()
+                st.success(f"✅ Сохранено {len(blocks_saved)} блоков!")
+                st.balloons()
+                time.sleep(0.5)
+                st.rerun()
+            else:
+                st.error("❌ Ошибка сохранения")
 
     with col2:
-        if st.button("🔄 Перезагрузить блоки", use_container_width=True):
-            st.session_state.block_manager.load_blocks()
-            st.rerun()
-
-    # ========== КНОПКА ПЕРЕХОДА К ФАЗЕ 4 ==========
-    with col3:
-        # Проверяем, сохранены ли данные
-        phase3_saved = False
-        if 'app_data' in st.session_state and 'phase3' in st.session_state.app_data:
-            phase3_data = st.session_state.app_data['phase3']
-            if phase3_data and phase3_data.get('blocks_count', 0) > 0:
-                phase3_saved = True
-
-        if not phase3_saved and 'block_manager' in st.session_state:
-            blocks = st.session_state.block_manager.get_all_blocks()
-            if blocks and len(blocks) > 0:
-                phase3_saved = True
-
-        if phase3_saved:
-            if st.button("➡️ Фаза 4", type="primary", use_container_width=True, help="Перейти к генерации промптов"):
+        if st.button("💾 Сохранить настройки", type="secondary", use_container_width=True):
+            print("💾 Нажата кнопка 'Сохранить настройки'")
+            if 'block_manager' in st.session_state:
+                st.session_state.block_manager.load_blocks()
+            if save_phase3_settings(app_state):
                 force_save_phase3_blocks(app_state)
                 if app_state:
                     app_state.save_project()
+                st.success("✅ Настройки сохранены в проект!")
+                st.balloons()
+                time.sleep(0.5)
+                st.rerun()
+            else:
+                st.error("❌ Ошибка сохранения")
+
+    with col3:
+        if st.button("🔄 Перезагрузить", use_container_width=True):
+            if 'block_manager' in st.session_state:
+                st.session_state.block_manager.load_blocks()
+                st.success("✅ Блоки перезагружены!")
+                st.rerun()
+
+    with col4:
+        # Проверяем, сохранены ли данные
+        phase3_saved = has_phase3_data(app_state)
+
+        if phase3_saved:
+            if st.button("➡️ Фаза 4", type="primary", use_container_width=True,
+                         help="Перейти к генерации промптов"):
+                # Принудительно сохраняем перед переходом
+                if 'block_manager' in st.session_state:
+                    st.session_state.block_manager.load_blocks()
+                force_save_phase3_blocks(app_state)
+                if app_state:
+                    app_state.save_project()
+
                 st.session_state.current_phase = 4
                 if app_state:
                     app_state.current_phase = 4
                 st.rerun()
         else:
-            st.button("➡️ Фаза 4", disabled=True, use_container_width=True, help="Сначала создайте и сохраните блоки")
+            st.button("➡️ Фаза 4", disabled=True, use_container_width=True,
+                      help="Сначала создайте и сохраните блоки")
 
-    # Сохранение после любого взаимодействия
+    # ========== СОХРАНЕНИЕ В КОНТЕКСТ/ПРОЕКТ ==========
     if app_state:
+        print(f"💾 Сохраняем данные в app_state...")
         force_save_phase3_blocks(app_state)
         save_data_to_app_state()
         blocks = st.session_state.block_manager.get_all_blocks()
@@ -1736,17 +1905,14 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
                 'saved_at': datetime.now().isoformat()
             })
             app_state.save_project()
+            print(f"✅ Данные сохранены в app_state")
 
+    print(f"🚀 ===== PHASE3 MAIN END =====")
     return {
         'success': True,
-        'blocks_count': len(current_blocks),
-        'message': f'Редактор блоков. Блоков: {len(current_blocks)}'
+        'blocks_count': len(blocks),
+        'message': f'Редактор блоков. Блоков: {len(blocks)}'
     }
-
-
-
-    # Добавить в phase3.py
-
 def get_all_ai_variables_with_details():
     """Возвращает список всех AI переменных с деталями для выбора"""
     if 'block_manager' not in st.session_state:
@@ -1959,6 +2125,8 @@ def show_ai_variables_overview():
         st.rerun()
 def show_edit_mode(app_state=None):
     # Проверяем, нужно ли переключиться на редактирование переменной
+    if 'active_editor_tab' not in st.session_state:
+        st.session_state.active_editor_tab = 1  # по умолчанию вкладка "Редактирование блока"
     if st.session_state.get('edit_variable_direct', False):
         # Показываем сразу редактор переменной
         st.button("← Назад к обзору переменных",
@@ -2011,30 +2179,37 @@ def show_edit_mode(app_state=None):
         show_block_editor()
     else:
         # Показываем все вкладки
-        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+        # Заменяем st.tabs на st.radio
+        tab_names = [
             "📋 Управление блоками",
             "✏️ Редактирование блока",
             "📊 Обзор переменных",
             "🌀 Редактирование глобальных переменных",
             "🤖 Управление AI‑переменными",
             "📋 Все инструкции"
-        ])
+        ]
+        selected_tab = st.radio(
+            "Разделы",
+            options=list(range(len(tab_names))),
+            format_func=lambda i: tab_names[i],
+            index=st.session_state.get("active_editor_tab", 1),
+            horizontal=True,
+            key="editor_tab_radio",
+            label_visibility="collapsed"
+        )
+        st.session_state.active_editor_tab = selected_tab
 
-        with tab1:
+        if selected_tab == 0:
             show_blocks_management(app_state)
-
-        with tab2:
+        elif selected_tab == 1:
             show_block_editor()
-
-        with tab3:
+        elif selected_tab == 2:
             show_variables_overview()
-
-        with tab4:
+        elif selected_tab == 3:
             show_dynamic_variables_editor()
-
-        with tab5:
+        elif selected_tab == 4:
             show_ai_variables_overview()
-        with tab6:
+        elif selected_tab == 5:
             show_all_ai_instructions_for_category()
     # Сохраняем блоки после любых изменений
 
@@ -2413,8 +2588,7 @@ def show_blocks_management(app_state=None):
     if not blocks:
         st.info("Блоки не найдены. Создайте первый блок.")
 
-        # ========== СОЗДАНИЕ НОВОГО БЛОКА ==========
-        # ========== СОЗДАНИЕ НОВОГО БЛОКА ==========
+    # ========== СОЗДАНИЕ НОВОГО БЛОКА ==========
     st.markdown("### ➕ Создать новый блок")
 
     col_create1, col_create2, col_create3, col_create4 = st.columns([2.2, 2, 1.2, 1])
@@ -2456,7 +2630,6 @@ def show_blocks_management(app_state=None):
 
             new_block["block_type"] = block_type
 
-            # Только устанавливаем тип — БЕЗ гигантских дефолтных шаблонов!
             if block_type == "characteristic" and characteristic_type:
                 if "settings" not in new_block:
                     new_block["settings"] = {}
@@ -2464,6 +2637,7 @@ def show_blocks_management(app_state=None):
                 print(f"   → characteristic_type установлен: {characteristic_type}")
 
             if st.session_state.block_manager.save_block(new_block, variables_data):
+                st.session_state.block_manager.load_blocks()
                 st.success(f"✅ Создан новый блок: **{new_block['name']}**")
                 force_save_phase3_blocks(app_state)
                 st.session_state.current_edit_block = new_block_id
@@ -2493,7 +2667,6 @@ def show_blocks_management(app_state=None):
             block_type = block.get("block_type", "other")
             block_type_display = "Характеристика" if block_type == "characteristic" else "Другой блок"
 
-            # Для characteristic блоков показываем дополнительную информацию
             char_type_info = ""
             if block_type == "characteristic":
                 char_type = block.get("settings", {}).get("characteristic_type", "regular")
@@ -2516,19 +2689,46 @@ def show_blocks_management(app_state=None):
             with col_list3:
                 if st.button("✏️", key=f"edit_{block_id}", help="Редактировать блок", use_container_width=True):
                     st.session_state.current_edit_block = block_id
-                    st.session_state.switch_to_edit_tab = True  # Устанавливаем флаг
+                    st.session_state.switch_to_edit_tab = True
                     st.rerun()
 
             with col_list4:
-                # Запрещаем удаление только стандартных блоков, если они есть
                 if st.button("🗑️", key=f"delete_{block_id}", help="Удалить блок", use_container_width=True):
                     if st.session_state.block_manager.delete_block(block_id):
+                        st.session_state.block_manager.load_blocks()
                         st.success(f"✅ Блок '{block.get('name', '')}' удален")
                         st.rerun()
     else:
         st.info("Нет созданных блоков")
 
-# Добавьте эти функции в конец phase3.py
+    # ================================================================
+    # ========== 🐛 БЛОК ОТЛАДКИ - ВСТАВИТЬ СЮДА ==========
+    # ================================================================
+    st.markdown("---")
+    st.subheader("🐛 Отладка")
+
+    if st.button("🔍 Проверить файлы блоков", use_container_width=True):
+        print("🐛 Нажата кнопка 'Проверить файлы блоков'")
+        results = debug_check_files()
+        if results:
+            st.success(f"✅ Проверено {len(results)} блоков. Смотрите консоль.")
+            # Показываем краткую сводку
+            for r in results:
+                status = "✅" if r["block_exists"] else "❌"
+                vars_status = "✅" if r["vars_exists"] else "❌"
+                st.write(f"{status} {r['name']} - block.json: {vars_status}")
+        else:
+            st.warning("Блоки не найдены")
+
+    if st.button("🔄 Принудительно перезагрузить все блоки", use_container_width=True):
+        print("🐛 Нажата кнопка 'Принудительно перезагрузить все блоки'")
+        if 'block_manager' in st.session_state:
+            st.session_state.block_manager.load_blocks()
+            st.success("✅ Блоки перезагружены! Смотрите консоль.")
+            st.rerun()
+        else:
+            st.error("❌ BlockManager не инициализирован")
+    # ================================================================
 
 def show_static_variable_editor(block_id, var_name, var_data, block):
     """Редактор статической переменной"""
@@ -2762,44 +2962,71 @@ def show_dynamic_variable_info(var_name):
             st.session_state.pop('edit_variable_direct', None)
             st.rerun()
 def show_block_editor():
-    """Редактор блока"""
+    """Редактор блока с МАКСИМАЛЬНОЙ отладкой"""
 
-    # Выбор блока для редактирования
+    print(f"✏️ ===== show_block_editor() START =====")
+
+    # ✅ ПРИНУДИТЕЛЬНАЯ ПЕРЕЗАГРУЗКА
+    if 'block_manager' in st.session_state:
+        print(f"   🔄 Принудительная перезагрузка блоков...")
+        st.session_state.block_manager.load_blocks()
+    else:
+        print(f"   ❌ block_manager НЕТ в session_state!")
+        st.error("BlockManager не инициализирован")
+        return
+
     blocks = st.session_state.block_manager.get_all_blocks()
+    print(f"   📊 Загружено блоков: {len(blocks)}")
+    print(f"   ID блоков: {list(blocks.keys())}")
 
     if not blocks:
+        print(f"   ⚠️ Нет блоков для редактирования")
         st.info("Нет блоков для редактирования")
         return
 
-    # Инициализируем текущий редактируемый блок
+    # Инициализируем current_edit_block
     if 'current_edit_block' not in st.session_state or st.session_state.current_edit_block not in blocks:
         block_ids = list(blocks.keys())
         st.session_state.current_edit_block = block_ids[0] if block_ids else None
+        print(f"   📌 Установлен current_edit_block: {st.session_state.current_edit_block}")
 
     # Выбор блока
     block_ids = list(blocks.keys())
-    # Убеждаемся, что current_edit_block существует
     if st.session_state.current_edit_block not in block_ids:
         st.session_state.current_edit_block = block_ids[0]
+
+    print(f"   📌 Текущий выбранный блок: {st.session_state.current_edit_block}")
 
     selected_block_id = st.selectbox(
         "Выберите блок для редактирования:",
         block_ids,
-        index=block_ids.index(
-            st.session_state.current_edit_block) if st.session_state.current_edit_block in block_ids else 0,
+        index=block_ids.index(st.session_state.current_edit_block) if st.session_state.current_edit_block in block_ids else 0,
         format_func=lambda x: f"{blocks[x].get('name', x)} ({blocks[x].get('block_type', 'other')})",
         key="block_editor_select"
     )
 
+    print(f"   📌 Выбран блок: {selected_block_id}")
+
     if selected_block_id != st.session_state.current_edit_block:
+        print(f"   🔄 Смена блока с {st.session_state.current_edit_block} на {selected_block_id}")
         st.session_state.current_edit_block = selected_block_id
         st.rerun()
 
     selected_block = blocks[selected_block_id]
+    print(f"   📦 Данные блока:")
+    print(f"      name: {selected_block.get('name', 'N/A')}")
+    print(f"      block_type: {selected_block.get('block_type', 'N/A')}")
+    print(f"      variables: {selected_block.get('variables', [])}")
+    if 'variables_data' in selected_block:
+        print(f"      variables_data keys: {list(selected_block['variables_data'].keys())}")
+        print(f"      variables_data count: {len(selected_block['variables_data'])}")
+
+    # Проверяем, не открыт ли редактор переменной
     if 'edit_variable_direct' in st.session_state:
         var_to_edit = st.session_state.edit_variable_direct
+        print(f"   📝 Редактирование переменной: {var_to_edit}")
         # Проверяем, что это тот же блок
-        if var_to_edit['block_id'] == selected_block_id:
+        if var_to_edit.get('block_id') == selected_block_id:
             # Показываем редактор переменной
             st.markdown("---")
             st.markdown(f"### ✏️ Редактирование переменной: `{var_to_edit['var_name']}`")
@@ -2808,7 +3035,7 @@ def show_block_editor():
             variables_data = selected_block.get("variables_data", {})
             var_data = variables_data.get(var_to_edit['var_name'], {})
 
-            # Создаем табы для разных типов (если нужно)
+            # Создаем табы для разных типов
             if var_to_edit['type'] == 'static':
                 show_static_variable_editor(selected_block_id, var_to_edit['var_name'], var_data, selected_block)
             elif var_to_edit['type'] == 'ai':
@@ -2822,19 +3049,22 @@ def show_block_editor():
                 st.rerun()
 
             st.markdown("---")
-            # Не показываем остальной интерфейс
             return
         else:
             # Если блок не совпадает, сбрасываем
             del st.session_state.edit_variable_direct
-    # Редактирование блока
+
+    # ====== ФОРМА РЕДАКТИРОВАНИЯ ======
     with st.form(key="edit_block_form"):
+        print(f"   📝 Отображение формы редактирования")
+
         st.subheader(f"✏️ Редактирование блока: {selected_block['name']}")
 
         # Основные поля
         col1, col2 = st.columns([3, 1])
         with col1:
             block_name = st.text_input("Название блока", value=selected_block.get("name", ""))
+            print(f"      block_name: {block_name}")
         with col2:
             block_type = st.selectbox(
                 "Тип блока:",
@@ -2842,10 +3072,11 @@ def show_block_editor():
                 index=0 if selected_block.get("block_type", "other") == "characteristic" else 1,
                 format_func=lambda x: "Характеристика" if x == "characteristic" else "Другой блок"
             )
+            print(f"      block_type: {block_type}")
 
         block_desc = st.text_area("Описание блока", value=selected_block.get("description", ""))
 
-        # Для characteristic блоков - выбор типа характеристики
+        # Для characteristic блоков
         if block_type == "characteristic":
             char_type = st.selectbox(
                 "Тип характеристики:",
@@ -2853,9 +3084,7 @@ def show_block_editor():
                 index=0 if selected_block.get("settings", {}).get("characteristic_type", "regular") == "regular" else 1,
                 format_func=lambda x: "Regular (обычная)" if x == "regular" else "Unique (уникальная)"
             )
-
-            # Информация о форматах значений
-
+            print(f"      char_type: {char_type}")
 
         # Шаблон
         st.markdown("### Шаблон промпта")
@@ -2865,8 +3094,9 @@ def show_block_editor():
             value=selected_block.get("template", ""),
             height=300
         )
+        print(f"      template length: {len(template)}")
 
-        # Переменные блока
+        # Переменные
         st.markdown("### Переменные блока")
         st.caption("Переменные автоматически определяются из шаблона и настроек ниже")
         if selected_block.get("variables", []):
@@ -2874,55 +3104,104 @@ def show_block_editor():
         else:
             st.info("Переменные не найдены. Добавьте их в шаблоне с помощью {имя_переменной}")
 
-        # Кнопки сохранения
+        # ====== КНОПКА СОХРАНЕНИЯ ======
         col_save1, col_save2 = st.columns(2)
         with col_save1:
             if st.form_submit_button("💾 Сохранить блок", use_container_width=True):
-                # Обновляем блок
+                print(f"💾 ===== НАЖАТА КНОПКА СОХРАНЕНИЯ =====")
+                print(f"   selected_block_id: {selected_block_id}")
+                print(f"   block_name: {block_name}")
+                print(f"   block_type: {block_type}")
+
+                # 1. Обновляем данные
+                print(f"   📝 Обновляем данные блока...")
                 selected_block["name"] = block_name
                 selected_block["description"] = block_desc
                 selected_block["template"] = template
+                selected_block["block_type"] = block_type
+
+                # Обновляем переменные из шаблона
                 template_vars = set(re.findall(r'\{([^}]+)\}', template))
                 existing_vars = set(selected_block.get("variables", []))
                 all_vars = list(template_vars | existing_vars)
                 selected_block["variables"] = all_vars
-                selected_block["block_type"] = block_type
+                print(f"   variables: {all_vars}")
 
-                # Обновляем настройки для characteristic блоков
+                # ✅ АВТОМАТИЧЕСКИ СОЗДАЁМ ЗАПИСИ ДЛЯ НОВЫХ ПЕРЕМЕННЫХ
+                variables_data = selected_block.get("variables_data", {})
+                dynamic_var_names = []
+                if 'dynamic_var_manager' in st.session_state:
+                    dynamic_var_names = list(st.session_state.dynamic_var_manager.get_all_dynamic_vars().keys())
+
+                for var_name in all_vars:
+                    if var_name not in variables_data:
+                        if var_name in dynamic_var_names:
+                            var_type = "dynamic"
+                            values = []
+                        else:
+                            var_type = "static"
+                            values = [f"Значение для {var_name}"]
+
+                        variables_data[var_name] = {
+                            "name": var_name,
+                            "description": f"Переменная {var_name}",
+                            "type": var_type,
+                            "values": values
+                        }
+                        print(f"   ✅ Автоматически создана переменная: {var_name} (тип: {var_type})")
+
+                # Обновляем настройки для characteristic
                 if block_type == "characteristic":
-                    # Автоматически добавляем/убираем переменную скобки в зависимости от типа
-                    variables_list = all_vars.copy()
-                    if char_type == "regular":
-                        # Для regular характеристик добавляем скобки_характеристика если еще нет
-                        if "скобки_характеристика" not in variables_list:
-                            variables_list.append("скобки_характеристика")
-                    else:  # unique
-                        # Для unique характеристик убираем скобки_характеристика если есть
-                        if "скобки_характеристика" in variables_list:
-                            variables_list.remove("скобки_характеристика")
+                    if "settings" not in selected_block:
+                        selected_block["settings"] = {}
+                    selected_block["settings"]["characteristic_type"] = char_type
+                    print(f"   characteristic_type: {char_type}")
 
-                    selected_block["variables"] = variables_list
+                # ✅ Сохраняем variables_data обратно в блок
+                selected_block["variables_data"] = variables_data
 
-                    selected_block["settings"] = {
-                        "маркер_позиция": "начало",  # фиксированное значение
-                        "формат_значения_regular": "[[значение]]",  # фиксированное значение
-                        "формат_значения_unique": "\"[значение]\"",  # фиксированное значение
-                        "добавлять_скобки_переменную": (char_type == "regular"),  # автоматически
-                        "characteristic_type": char_type
-                    }
-                elif "settings" not in selected_block:
-                    selected_block["settings"] = {}
+                print(f"   variables_data перед сохранением: {len(variables_data)} переменных")
+                print(f"   variables_data keys: {list(variables_data.keys())}")
 
-                # Сохраняем
-                if st.session_state.block_manager.save_block(selected_block):
+                # ✅ 3. СОХРАНЯЕМ
+                print(f"   💾 Вызов save_block()...")
+                success = st.session_state.block_manager.save_block(selected_block, variables_data)
+                print(f"   save_block() вернул: {success}")
+
+                if success:
+                    # ✅ 4. ПРИНУДИТЕЛЬНАЯ ПЕРЕЗАГРУЗКА
+                    print(f"   🔄 Перезагружаем блоки из файлов...")
+                    st.session_state.block_manager.load_blocks()
+
+                    # ✅ 5. ПРОВЕРЯЕМ, ЧТО ДАННЫЕ СОХРАНИЛИСЬ
+                    fresh_blocks = st.session_state.block_manager.get_all_blocks()
+                    print(f"   📊 После перезагрузки блоков: {len(fresh_blocks)}")
+                    if selected_block_id in fresh_blocks:
+                        fresh_block = fresh_blocks[selected_block_id]
+                        print(f"   ✅ Блок найден в свежих данных:")
+                        print(f"      name: {fresh_block.get('name', 'N/A')}")
+                        print(f"      variables: {fresh_block.get('variables', [])}")
+                        if 'variables_data' in fresh_block:
+                            print(f"      variables_data keys: {list(fresh_block['variables_data'].keys())}")
+                            print(f"      variables_data count: {len(fresh_block['variables_data'])}")
+
+                        st.session_state.current_edit_block = selected_block_id
+                    else:
+                        print(f"   ❌ Блок НЕ НАЙДЕН в свежих данных!")
+
                     st.success("✅ Блок сохранен!")
+                    st.session_state.active_editor_tab = 1
+                    print(f"💾 ===== СОХРАНЕНИЕ УСПЕШНО =====")
                     st.rerun()
                 else:
+                    print(f"💾 ===== СОХРАНЕНИЕ НЕ УДАЛОСЬ =====")
                     st.error("❌ Ошибка сохранения блока")
 
         with col_save2:
             if st.form_submit_button("❌ Отмена", type="secondary", use_container_width=True):
+                print(f"   ❌ Отмена редактирования")
                 st.rerun()
+
     # После формы редактирования блока добавляем управление статическими переменными
     st.markdown("---")
     st.subheader("📦 Переменные этого блока")
@@ -2972,18 +3251,11 @@ def show_block_editor():
     template_vars = set(re.findall(r'\{([^}]+)\}', template))
     for var_name in template_vars:
         if var_name not in variables:
-            # Автоматически добавляем в список, но не создаём данные
-            if var_name not in variables:
-                variables.append(var_name)
-                # Определяем предполагаемый тип
-                if var_name in dynamic_var_names:
-                    dynamic_vars.append(var_name)
-                else:
-                    # По умолчанию считаем статической, но данные не создаём
-                    static_vars.append(var_name)
-                    # Можно создать пустую запись, но лучше оставить на усмотрение пользователя
-                    # Для простоты пока не создаём
-                    pass
+            variables.append(var_name)
+            if var_name in dynamic_var_names:
+                dynamic_vars.append(var_name)
+            else:
+                static_vars.append(var_name)
 
     # Создаём табы для разных типов переменных
     tab_static, tab_ai, tab_dynamic = st.tabs([
@@ -3003,6 +3275,7 @@ def show_block_editor():
             col_new1, col_new2 = st.columns([3, 1])
             with col_new1:
                 if st.button("Создать локальную", key=f"create_static_{selected_block_id}") and new_static_name:
+                    print(f"   ➕ Создание новой статической переменной: {new_static_name}")
                     if new_static_name not in variables:
                         variables.append(new_static_name)
                         variables_data[new_static_name] = {
@@ -3013,7 +3286,9 @@ def show_block_editor():
                         }
                         selected_block["variables"] = variables
                         selected_block["variables_data"] = variables_data
+                        print(f"   💾 Сохраняем блок с новой переменной...")
                         if st.session_state.block_manager.save_block(selected_block, variables_data):
+                            st.session_state.block_manager.load_blocks()
                             st.success(f"Переменная '{new_static_name}' создана")
                             st.rerun()
                     else:
@@ -3037,29 +3312,33 @@ def show_block_editor():
                         col_act1, col_act2, col_act3 = st.columns([2, 1, 1])
                         with col_act1:
                             if st.form_submit_button("💾 Сохранить"):
+                                print(f"   💾 Сохраняем статическую переменную: {var_name}")
                                 var_data["description"] = desc
                                 var_data["values"] = [v.strip() for v in new_values.split("\n") if v.strip()]
                                 variables_data[var_name] = var_data
                                 selected_block["variables_data"] = variables_data
                                 if st.session_state.block_manager.save_block(selected_block, variables_data):
+                                    st.session_state.block_manager.load_blocks()
                                     st.success(f"Переменная '{var_name}' сохранена")
                                     st.rerun()
                         with col_act2:
                             if st.form_submit_button("🗑️ Удалить"):
                                 if st.session_state.get(f"confirm_del_static_{selected_block_id}_{var_name}", False):
+                                    print(f"   🗑️ Удаляем статическую переменную: {var_name}")
                                     variables.remove(var_name)
                                     del variables_data[var_name]
                                     selected_block["variables"] = variables
                                     selected_block["variables_data"] = variables_data
                                     if st.session_state.block_manager.save_block(selected_block, variables_data):
+                                        st.session_state.block_manager.load_blocks()
                                         st.success(f"Переменная '{var_name}' удалена")
                                         st.rerun()
                                 else:
                                     st.session_state[f"confirm_del_static_{selected_block_id}_{var_name}"] = True
                                     st.warning("Нажмите 'Удалить' ещё раз для подтверждения")
                         with col_act3:
-                            # Кнопка преобразования в AI
                             if st.form_submit_button("🤖 Преобразовать в AI"):
+                                print(f"   🤖 Преобразуем {var_name} в AI")
                                 var_data["type"] = "ai"
                                 var_data["ai_prompt"] = "Сгенерируй текст для {характеристика}..."
                                 var_data["ai_num_variants"] = 3
@@ -3067,6 +3346,7 @@ def show_block_editor():
                                 variables_data[var_name] = var_data
                                 selected_block["variables_data"] = variables_data
                                 if st.session_state.block_manager.save_block(selected_block, variables_data):
+                                    st.session_state.block_manager.load_blocks()
                                     st.success(f"Переменная '{var_name}' теперь AI")
                                     st.rerun()
         else:
@@ -3081,9 +3361,9 @@ def show_block_editor():
                 key=f"new_ai_{selected_block_id}"
             )
             if st.button("Создать AI", key=f"create_ai_{selected_block_id}") and new_ai_name:
+                print(f"   🤖 Создание новой AI переменной: {new_ai_name}")
                 if new_ai_name not in variables:
                     variables.append(new_ai_name)
-                    # Базовый промпт в зависимости от типа блока
                     if block_type == "characteristic":
                         base_prompt = """Сгенерируй перечень аналитических тезисов для характеристики {характеристика} в категории {категория}."""
                     else:
@@ -3100,6 +3380,7 @@ def show_block_editor():
                     selected_block["variables"] = variables
                     selected_block["variables_data"] = variables_data
                     if st.session_state.block_manager.save_block(selected_block, variables_data):
+                        st.session_state.block_manager.load_blocks()
                         st.success(f"AI переменная '{new_ai_name}' создана")
                         st.rerun()
                 else:
@@ -3133,16 +3414,10 @@ def show_block_editor():
                             "Провайдер",
                             available_providers,
                             format_func=lambda x: provider_labels.get(x, x),
-                            index=available_providers.index(current_provider)
-                            if current_provider in available_providers else 1,
+                            index=available_providers.index(current_provider) if current_provider in available_providers else 1,
                             key=f"ai_provider_{selected_block_id}_{var_name}"
                         )
 
-                        # Дополнительные подсказки
-                        if provider == "true_gemini":
-                            st.caption("⚠️ Требует VPN из России")
-                        elif provider == "genapi_gemini":
-                            st.info("Работает без VPN, оплата рублями")
                         num_variants = st.number_input(
                             "Количество вариантов",
                             min_value=1, max_value=10,
@@ -3157,6 +3432,7 @@ def show_block_editor():
                         col_act1, col_act2, col_act3 = st.columns([2, 1, 1])
                         with col_act1:
                             if st.form_submit_button("💾 Сохранить настройки"):
+                                print(f"   💾 Сохраняем AI настройки для {var_name}")
                                 var_data.update({
                                     "description": desc,
                                     "ai_provider": provider,
@@ -3166,11 +3442,12 @@ def show_block_editor():
                                 variables_data[var_name] = var_data
                                 selected_block["variables_data"] = variables_data
                                 if st.session_state.block_manager.save_block(selected_block, variables_data):
+                                    st.session_state.block_manager.load_blocks()
                                     st.success(f"AI переменная '{var_name}' сохранена")
                                     st.rerun()
                         with col_act2:
                             if st.form_submit_button("🚀 Генерировать"):
-                                # Сохраняем и переходим к генерации
+                                print(f"   🚀 Запуск генерации для {var_name}")
                                 var_data.update({
                                     "description": desc,
                                     "ai_provider": provider,
@@ -3186,11 +3463,13 @@ def show_block_editor():
                         with col_act3:
                             if st.form_submit_button("🗑️ Удалить"):
                                 if st.session_state.get(f"confirm_del_ai_{selected_block_id}_{var_name}", False):
+                                    print(f"   🗑️ Удаляем AI переменную: {var_name}")
                                     variables.remove(var_name)
                                     del variables_data[var_name]
                                     selected_block["variables"] = variables
                                     selected_block["variables_data"] = variables_data
                                     if st.session_state.block_manager.save_block(selected_block, variables_data):
+                                        st.session_state.block_manager.load_blocks()
                                         st.success(f"AI переменная '{var_name}' удалена")
                                         st.rerun()
                                 else:
@@ -3202,8 +3481,7 @@ def show_block_editor():
                             st.session_state.get("current_block_for_ai") == selected_block_id):
                         st.markdown("---")
                         if block_type == "characteristic":
-                            show_ai_generation_for_characteristics(selected_block_id, var_name, var_data,
-                                                                   selected_block)
+                            show_ai_generation_for_characteristics(selected_block_id, var_name, var_data, selected_block)
                         else:
                             show_ai_generation_for_other_blocks(selected_block_id, var_name, var_data, selected_block)
                         if st.button("❌ Отменить генерацию", key=f"cancel_gen_ai_{var_name}"):
@@ -3233,8 +3511,7 @@ def show_block_editor():
                     else:
                         st.write("Информация о переменной не найдена")
         else:
-            st.info(
-                "глобальные переменные не используются в этом блоке. Чтобы добавить, используйте `{имя}` в шаблоне и создайте переменную во вкладке «🌀 Редактирование глобальных переменных».")
+            st.info("глобальные переменные не используются в этом блоке. Чтобы добавить, используйте `{имя}` в шаблоне и создайте переменную во вкладке «🌀 Редактирование глобальных переменных».")
 
     # Информация о переменных блока
     with st.expander("📊 Статистика по переменным", expanded=False):
@@ -3248,6 +3525,7 @@ def show_block_editor():
         if dynamic_vars:
             st.metric("глобальных", len(dynamic_vars))
 
+    print(f"✏️ ===== show_block_editor() END =====")
 
 # Заменить функцию show_ai_generation_for_characteristics на новую версию:
 def show_ai_generation_for_characteristics(block_id, var_name, var_data, block):
@@ -4207,86 +4485,134 @@ def show_variables_editor():
             ai_count = len([v for v in variables if variables_data.get(v, {}).get("type") == "ai"])
             st.metric("AI", ai_count)
 
-def load_blocks(self):
-    """Загружает все блоки из файлов"""
-    self.blocks = {}
 
-    # Проверяем, есть ли папки блоков
-    print(f"🔍 BlockManager.load_blocks() — сканируем папку: {self.blocks_dir}")
-    block_dirs = [d for d in self.blocks_dir.iterdir() if d.is_dir()]
-    print(f"   Найдено папок блоков: {len(block_dirs)}")
+# В конец phase3.py (перед if __name__ == "__main__":)
+def debug_check_files(block_id=None):
+    """Отладочная функция для проверки файлов блоков"""
+    print(f"🐛 ===== DEBUG CHECK FILES =====")
 
-    # Загружаем все блоки
+    if 'block_manager' not in st.session_state:
+        print(f"   ❌ block_manager не в session_state")
+        st.error("BlockManager не инициализирован")
+        return
+
+    bm = st.session_state.block_manager
+    blocks_dir = bm.blocks_dir
+
+    print(f"   blocks_dir: {blocks_dir}")
+    print(f"   exists: {blocks_dir.exists()}")
+
+    if not blocks_dir.exists():
+        print(f"   ❌ Папка не существует!")
+        st.error(f"Папка не существует: {blocks_dir}")
+        return
+
+    # Сканируем папки
+    block_dirs = [d for d in blocks_dir.iterdir() if d.is_dir()]
+    print(f"   Найдено папок: {len(block_dirs)}")
+
+    results = []
     for block_dir in block_dirs:
+        print(f"\n   📁 {block_dir.name}")
         block_file = block_dir / "block.json"
         variables_file = block_dir / "variables.json"
 
-        if block_file.exists():
-            try:
-                with open(block_file, 'r', encoding='utf-8') as f:
-                    block_data = json.load(f)
-
-                # Устанавливаем тип блока по умолчанию, если не указан
-                if "block_type" not in block_data:
-                    # Определяем тип по названию или другим признакам
-                    if "характеристика" in block_data.get("name", "").lower() or "характеристик" in block_data.get(
-                            "description", "").lower():
-                        block_data["block_type"] = "characteristic"
-                    else:
-                        block_data["block_type"] = "other"
-
-                # Для characteristic блоков устанавливаем characteristic_type по умолчанию, если не указан
-                if block_data.get("block_type") == "characteristic":
-                    if "settings" not in block_data:
-                        block_data["settings"] = {}
-                    if "characteristic_type" not in block_data["settings"]:
-                        # Определяем по названию
-                        block_name = block_data.get("name", "").lower()
-                        if "unique" in block_name:
-                            block_data["settings"]["characteristic_type"] = "unique"
-                        else:
-                            block_data["settings"]["characteristic_type"] = "regular"
-
-                # Загружаем переменные
-                if variables_file.exists():
-                    with open(variables_file, 'r', encoding='utf-8') as f:
-                        block_data["variables_data"] = json.load(f)
-                else:
-                    block_data["variables_data"] = {}
-
-                self.blocks[block_data["block_id"]] = block_data
-
-            except Exception as e:
-                st.error(f"Ошибка загрузки блока {block_dir.name}: {e}")
-# В конец phase3.py (перед if __name__ == "__main__":)
-
-# ===== Новые функции для массовой генерации AI =====
-def save_phase3_settings(app_state=None):
-    """Сохраняет ТОЛЬКО выбранные блоки в ПРОЕКТ (сами блоки уже в домене)"""
-    if 'block_manager' in st.session_state:
-        # ❌ НЕ сохраняем блоки в домен - они уже там через BlockManager
-        # ✅ Сохраняем ТОЛЬКО информацию о выбранных блоках в проект
-        selected_blocks = st.session_state.get('selected_blocks', {})
-
-        phase3_data = {
-            'selected_blocks': selected_blocks,
-            'blocks_count': len(st.session_state.block_manager.get_all_blocks()),
-            'settings_saved': True,
-            'saved_at': datetime.now().isoformat()
+        block_info = {
+            "name": block_dir.name,
+            "block_exists": block_file.exists(),
+            "vars_exists": variables_file.exists(),
+            "block_data": None,
+            "vars_data": None
         }
 
-        if 'app_data' in st.session_state:
-            st.session_state.app_data['phase3'] = phase3_data
+        print(f"      block.json: {block_file.exists()}")
+        if block_file.exists():
+            with open(block_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                block_info["block_data"] = data
+                print(f"         name: {data.get('name', 'N/A')}")
+                print(f"         variables: {data.get('variables', [])}")
+                if "variables_data" in data:
+                    print(f"         variables_data в block.json: {len(data['variables_data'])} переменных")
 
-        if app_state:
-            app_state.set_phase_data(3, phase3_data)
-            app_state.save_project()
+        print(f"      variables.json: {variables_file.exists()}")
+        if variables_file.exists():
+            with open(variables_file, 'r', encoding='utf-8') as f:
+                vars_data = json.load(f)
+                block_info["vars_data"] = vars_data
+                print(f"         переменных: {len(vars_data)}")
+                print(f"         keys: {list(vars_data.keys())}")
+                # Показываем содержимое первых 3 переменных
+                for i, (k, v) in enumerate(list(vars_data.items())[:3]):
+                    values_preview = str(v.get('values', []))[:50]
+                    print(f"            {k}: {v.get('description', 'N/A')[:30]}... values: {values_preview}...")
 
-        print(f"💾 Phase3 settings saved to project")
-        return True
-    return False
-# ЗАМЕНИТЕ существующие функции batch_generate_for_characteristic и batch_generate_for_other
-# на этот исправленный код:
+        results.append(block_info)
+
+    # Проверяем соответствие с кэшем
+    print(f"\n   🔍 Проверка соответствия с кэшем...")
+    cached_blocks = bm.get_all_blocks()
+    print(f"   Блоков в кэше: {len(cached_blocks)}")
+
+    for block_id, block in cached_blocks.items():
+        print(f"      {block_id}: {block.get('name', 'N/A')}")
+        if 'variables_data' in block:
+            print(f"         variables_data в кэше: {len(block['variables_data'])} переменных")
+            print(f"         keys: {list(block['variables_data'].keys())}")
+
+    print(f"🐛 ===== DEBUG CHECK FILES END =====")
+
+    # Возвращаем результаты для отображения в UI
+    return results
+# ===== Новые функции для массовой генерации AI =====
+def save_phase3_settings(app_state=None):
+    """Сохраняет настройки фазы 3 в проект с ДЕТАЛЬНЫМ логированием"""
+    print(f"💾 ===== save_phase3_settings() START =====")
+
+    if 'block_manager' not in st.session_state:
+        print("❌ save_phase3_settings: block_manager не в session_state")
+        return False
+
+    print(f"   🔄 Загружаем свежие блоки...")
+    st.session_state.block_manager.load_blocks()
+
+    blocks = st.session_state.block_manager.get_all_blocks()
+    print(f"   📊 Блоков в домене: {len(blocks)}")
+
+    # ✅ Сохраняем ВСЕ блоки
+    blocks_data = {}
+    for block_id, block in blocks.items():
+        blocks_data[block_id] = {
+            'block_id': block_id,
+            'name': block.get('name', ''),
+            'block_type': block.get('block_type', 'other'),
+            'description': block.get('description', ''),
+            'template': block.get('template', ''),
+            'variables': block.get('variables', []),
+            'settings': block.get('settings', {}),
+            'variables_data': block.get('variables_data', {})
+        }
+        print(f"      {block_id}: {block.get('name', 'N/A')} - {len(block.get('variables_data', {}))} переменных")
+
+    phase3_data = {
+        'blocks': blocks_data,
+        'blocks_count': len(blocks),
+        'settings_saved': True,
+        'saved_at': datetime.now().isoformat()
+    }
+
+    if 'app_data' in st.session_state:
+        st.session_state.app_data['phase3'] = phase3_data
+        print(f"   ✅ Сохранено в session_state.app_data['phase3']")
+
+    if app_state:
+        app_state.set_phase_data(3, phase3_data)
+        app_state.save_project()
+        print(f"   ✅ Сохранено в app_state")
+
+    print(f"💾 Phase3 settings saved to project: {len(blocks)} blocks")
+    print(f"💾 ===== save_phase3_settings() END =====")
+    return True
 
 def batch_generate_for_characteristic(block_id, var_name, var_data, block, provider=None):
     """

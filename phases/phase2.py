@@ -289,7 +289,7 @@ def save_to_session_state(app_state=None, context=None):
 def main(app_state=None, settings_mode=False, site_config=None, task_config=None, context=None):
     # --- ОСНОВНОЕ ПРИЛОЖЕНИЕ ---
     load_css()
-    local_css()
+
 
     # ✅ ДОБАВИТЬ СИНХРОНИЗАЦИЮ ДОМЕНА ИЗ ФАЙЛА
     if 'domain_manager' not in st.session_state:

@@ -71092,3 +71092,29 @@ tornado.websocket.WebSocketClosedError
 2026-08-04 09:46:00,853 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
 2026-08-04 09:46:06,784 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
 2026-08-04 09:46:10,418 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-04 10:20:35,571 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 10:25:16,018 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 10:27:02,249 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 10:29:45,540 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 10:30:16,070 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 10:30:45,176 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 10:34:32,107 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 10:35:09,133 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 10:40:12,505 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 10:40:31,290 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 11:35:32,000 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 12:01:34,058 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 12:43:01,221 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 13:39:56,546 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 13:41:40,386 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-04 13:41:45,911 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-04 13:41:59,677 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-04 13:42:01,331 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-04 13:42:07,522 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-04 13:42:14,109 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-04 13:42:24,428 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-04 13:51:42,233 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 13:55:47,523 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 14:06:10,096 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 14:07:22,934 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-04 14:08:06,730 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
