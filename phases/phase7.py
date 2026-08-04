@@ -549,6 +549,7 @@ class EnhancedTextProcessor:
         replacements = [
             (r'в\s*\{system\s*город\}', 'в {system городе}'),
             (r'по\s*\{system\s*город\}', 'по {system по_городу}'),
+            (r'из\s*\{system\s*город\}', 'в {system городе}'),  # ← НОВАЯ СТРОКА
             (r'(?<!\w)\{system\s*город\}(?!\w)', '{system городе}'),  # изолированный
             (r'\{system\s+городе\}', '{system городе}'),             # нормализация
             (r'\{system\s+по_городу\}', '{system по_городу}'),
@@ -777,11 +778,24 @@ class EnhancedTextProcessor:
     # --------------------------------------------------------------
     def _find_special_symbols(self, text: str) -> List[Tuple[str, int, int]]:
         specials = []
+
+        # Разрешенные символы: знаки препинания и стандартные
+        allowed = ['[', ']', '{', '}', ',', '.', '-', '_', ' ', '\t', '\n', '?', '!', ':', ';', '(', ')']
+
+        stripped_text = text.strip()
+        if stripped_text.startswith('<') and stripped_text.endswith('>'):
+            text_without_tags = re.sub(r'<[^>]+>', ' ', stripped_text)
+            if not text_without_tags.strip():
+                return specials
+            for match in self.special_symbols_pattern.finditer(text_without_tags):
+                symbol = match.group()
+                if symbol not in allowed:
+                    specials.append((symbol, match.start(), match.end()))
+            return specials
+
         for match in self.special_symbols_pattern.finditer(text):
             symbol = match.group()
-            # Исключаем разрешённые символы: [ ] , . - _ пробел и табуляция
-            # и ДОБАВЛЯЕМ { } в список разрешённых!
-            if symbol not in ['[', ']', '{', '}', ',', '.', '-', '_', ' ', '\t', '\n']:
+            if symbol not in allowed:
                 specials.append((symbol, match.start(), match.end()))
         return specials
 
@@ -1123,18 +1137,20 @@ class EnhancedTextProcessor:
                 found.add(unit)
         return sorted(found)
     def check_digits_after_replacement(self, text: str) -> List[Dict]:
-        """Проверяет наличие цифр после замены переменных (исключая HTML-теги)"""
+        """Проверяет наличие цифр после замены переменных (исключая HTML-теги и содержимое переменных)"""
         errors = []
 
         # Удаляем HTML-теги перед проверкой цифр
         text_without_tags = re.sub(r'<[^>]+>', ' ', text)
 
+        # Удаляем содержимое переменных {prop ...} и {system ...} и {fragment ...}
+        text_without_vars = re.sub(r'\{[^}]+\}', ' ', text_without_tags)
+
         # Ищем любые цифры (включая десятичные дроби и числа)
         digit_pattern = r'\d+'
-        matches = re.finditer(digit_pattern, text_without_tags)
+        matches = re.finditer(digit_pattern, text_without_vars)
 
         for match in matches:
-            # Получаем позицию в исходном тексте (приблизительно)
             digit = match.group()
             errors.append({
                 'type': ErrorType.DIGITS_FOUND.value,
@@ -1338,7 +1354,7 @@ class EnhancedTextProcessor:
             'обучению', 'техническому обслуживанию', 'индивидуального заказа',
             'изготавливаем', 'услуги по индивидуальному', 'услуги по резке',
             'услуги по упаковке', 'по ремонту', 'по обработке', 'под ключ',
-            'долговеч', 'идеал', "услуг", 'наш продукт','наша продукция','наши решения','нашу продукцию','бонус'
+            'долговеч', 'идеал', "услуг", 'наш продукт','наша продукция','наши решения','нашу продукцию','бонус', 'cписок', 'списку'
         ]
 
         text_lower = text.lower()
@@ -1855,7 +1871,6 @@ class Phase7Interface:
             if html_key in st.session_state:
                 block.html_text = st.session_state[html_key]
     def _recalculate_block_errors(self, block: FragmentBlock):
-        """Полный пересчёт ошибок для одного блока (без дублирования)"""
         new_errors = []
 
         # 1. Regular блоки — проверка скобок
@@ -1865,16 +1880,48 @@ class Phase7Interface:
             )
             new_errors.extend(bracket_errors)
 
-        # 2. Non-regular — неизвестные переменные
-        else:
-            matches = self.text_processor.pattern.finditer(block.processed_text)
-            for match in matches:
-                var_name = match.group(1).strip().lower()
-                if not any(sys_var.lower() == var_name for sys_var in self.vm.system_vars.keys()):
-                    new_errors.append({
-                        'type': ErrorType.UNKNOWN_VARIABLE.value,
-                        'message': f"Неизвестная переменная '{var_name}' в non-regular блоке"
-                    })
+        # 2. Проверка НЕИЗВЕСТНЫХ переменных во ВСЕХ блоках
+        # Ищем все { ... } в тексте
+        var_pattern = r'\{([^}]+)\}'
+        matches = re.finditer(var_pattern, block.processed_text)
+
+        for match in matches:
+            var_content = match.group(1).strip()
+
+            # Проверяем, является ли это валидной переменной
+            is_valid = False
+
+            # Проверяем prop
+            if var_content.startswith('prop '):
+                is_valid = True
+            # Проверяем system
+            elif var_content.startswith('system '):
+                sys_var_name = var_content[7:].strip()
+                is_valid = False
+
+                # 1. Проверяем по ключам
+                if sys_var_name in self.vm.system_vars:
+                    is_valid = True
+                else:
+                    # 2. Проверяем по всем variants
+                    for key, data in self.vm.system_vars.items():
+                        for variant in data.get('variants', []):
+                            # Ищем все {system ...} внутри variant
+                            matches = re.findall(r'\{system\s+([^}]+)\}', variant)
+                            if sys_var_name in matches:
+                                is_valid = True
+                                break
+                        if is_valid:
+                            break
+            # Проверяем fragment
+            elif var_content.startswith('fragment '):
+                is_valid = True
+
+            if not is_valid:
+                new_errors.append({
+                    'type': ErrorType.UNKNOWN_VARIABLE.value,
+                    'message': f'Неизвестная переменная: {{{var_content}}}'
+                })
 
         # 3. Общие проверки (всегда выполняем)
         new_errors.extend(self.text_processor.check_square_brackets(block.processed_text))
@@ -1884,10 +1931,17 @@ class Phase7Interface:
         new_errors.extend(self.text_processor.check_gost_tu_outside(block.processed_text))
         new_errors.extend(self.text_processor.check_foreign_language(block.processed_text))
         new_errors.extend(self.text_processor.check_stop_words(block.processed_text))
-        new_errors.extend(self.text_processor.check_digits_after_replacement(block.processed_text))
+        # Проверяем цифры на HTML если он сгенерирован, иначе на тексте
+        if block.html_text:
+            new_errors.extend(self.text_processor.check_digits_after_replacement(block.html_text))
+        else:
+            new_errors.extend(self.text_processor.check_digits_after_replacement(block.processed_text))
 
         # 4. Специальные символы
-        specials = self.text_processor._find_special_symbols(block.processed_text)
+        if block.html_text:
+            specials = self.text_processor._find_special_symbols(block.html_text)
+        else:
+            specials = self.text_processor._find_special_symbols(block.processed_text)
         if specials:
             sym_list = ', '.join(set(s[0] for s in specials))
             new_errors.append({
@@ -4206,7 +4260,7 @@ class Phase7Interface:
 
             # Кнопка сброса состояния
             confirm = st.checkbox("Подтвердите сброс", key="top_reset_confirm")
-            if st.button("🔄 Сбросить состояние фазы 6", key="reset_phase6_top", use_container_width=True, disabled=not confirm):
+            if st.button("🔄 Сбросить состояние фазы 7", key="reset_phase6_top", use_container_width=True, disabled=not confirm):
                 self._reset_state()
     def _show_updated_stats(self):
         """Показывает статистику после обновления"""

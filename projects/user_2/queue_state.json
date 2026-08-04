@@ -88,5 +88,20 @@
     "error": null,
     "site_name": "steelborg",
     "domain_name": "kz"
+  },
+  {
+    "project_id": "218d22af-ac40-46ee-af02-421d8767e02f",
+    "user_id": 2,
+    "project_name": "тройник латунныйъ",
+    "category": "Тройник латунный",
+    "status": "completed",
+    "current_phase": 7,
+    "message": "Завершён успешно",
+    "progress": 100,
+    "started_at": "2026-08-04T09:43:11.482777",
+    "completed_at": "2026-08-04T09:46:12.558174",
+    "error": null,
+    "site_name": "steelborg",
+    "domain_name": "kz"
   }
 ]

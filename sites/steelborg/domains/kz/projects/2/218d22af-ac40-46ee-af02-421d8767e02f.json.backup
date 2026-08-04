@@ -1,0 +1,404 @@
+{
+  "project_id": "218d22af-ac40-46ee-af02-421d8767e02f",
+  "project_name": "тройник латунныйъ",
+  "category": "Тройник латунный",
+  "current_phase": 4,
+  "app_data": {
+    "phase1": {
+      "characteristics": [
+        {
+          "char_id": "9118799 02",
+          "char_name": "Диаметр 1",
+          "original_name": "Диаметр 1",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "20",
+              "count": 201,
+              "offers": 753
+            },
+            {
+              "value": "32",
+              "count": 128,
+              "offers": 446
+            },
+            {
+              "value": "25",
+              "count": 144,
+              "offers": 446
+            },
+            {
+              "value": "15",
+              "count": 106,
+              "offers": 358
+            },
+            {
+              "value": "26",
+              "count": 81,
+              "offers": 310
+            }
+          ]
+        },
+        {
+          "char_id": "9118799 03",
+          "char_name": "Диаметр 2",
+          "original_name": "Диаметр 2",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "20",
+              "count": 195,
+              "offers": 773
+            },
+            {
+              "value": "15",
+              "count": 184,
+              "offers": 677
+            },
+            {
+              "value": "25",
+              "count": 108,
+              "offers": 309
+            },
+            {
+              "value": "16",
+              "count": 51,
+              "offers": 228
+            },
+            {
+              "value": "32",
+              "count": 46,
+              "offers": 168
+            }
+          ]
+        },
+        {
+          "char_id": "00004320",
+          "char_name": "Давление",
+          "original_name": "Давление",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "Ру40",
+              "count": 9,
+              "offers": 12
+            },
+            {
+              "value": "Ру20",
+              "count": 6,
+              "offers": 12
+            },
+            {
+              "value": "Ру16",
+              "count": 6,
+              "offers": 10
+            }
+          ]
+        }
+      ],
+      "category": "Тройник латунный"
+    },
+    "phase2": {
+      "category": "Тройник латунный",
+      "original_category": "Тройник латунный",
+      "markers": [
+        "латунный тройник",
+        "тройник латунный",
+        "латунные тройники",
+        "тройник из латуни",
+        "продукция"
+      ],
+      "source_category": "Тройник латунный",
+      "custom_category_mode": false
+    },
+    "phase3": {},
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "9118799 02": {
+            "prompts_per_value": 1,
+            "char_name": "Диаметр 1"
+          },
+          "9118799 03": {
+            "prompts_per_value": 1,
+            "char_name": "Диаметр 2"
+          },
+          "00004320": {
+            "prompts_per_value": 1,
+            "char_name": "Давление"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 1
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 1,
+        "global_other_prompts": 1
+      },
+      "prompts": []
+    },
+    "phase5": {},
+    "phase6": {},
+    "phase7": {},
+    "category": "Тройник латунный",
+    "project_name": "тройник латунныйъ",
+    "created_at": "2026-08-04T09:37:25.164737",
+    "updated_at": "2026-08-04T09:42:28.803388",
+    "phase5_completed": false,
+    "phase5_results": {},
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase4_settings": {
+      "char_settings": {
+        "9118799 02": {
+          "prompts_per_value": 1,
+          "char_name": "Диаметр 1"
+        },
+        "9118799 03": {
+          "prompts_per_value": 1,
+          "char_name": "Диаметр 2"
+        },
+        "00004320": {
+          "prompts_per_value": 1,
+          "char_name": "Давление"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 1
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 1,
+      "global_other_prompts": 1
+    },
+    "phase4_configured": true,
+    "phase2_data": {
+      "category": "Тройник латунный"
+    },
+    "loaded_data": {
+      "characteristics": [
+        {
+          "char_id": "9118799 02",
+          "char_name": "Диаметр 1",
+          "original_name": "Диаметр 1",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "20",
+              "count": 201,
+              "offers": 753
+            },
+            {
+              "value": "32",
+              "count": 128,
+              "offers": 446
+            },
+            {
+              "value": "25",
+              "count": 144,
+              "offers": 446
+            },
+            {
+              "value": "15",
+              "count": 106,
+              "offers": 358
+            },
+            {
+              "value": "26",
+              "count": 81,
+              "offers": 310
+            }
+          ]
+        },
+        {
+          "char_id": "9118799 03",
+          "char_name": "Диаметр 2",
+          "original_name": "Диаметр 2",
+          "is_unique": false,
+          "unit": "мм",
+          "values": [
+            {
+              "value": "20",
+              "count": 195,
+              "offers": 773
+            },
+            {
+              "value": "15",
+              "count": 184,
+              "offers": 677
+            },
+            {
+              "value": "25",
+              "count": 108,
+              "offers": 309
+            },
+            {
+              "value": "16",
+              "count": 51,
+              "offers": 228
+            },
+            {
+              "value": "32",
+              "count": 46,
+              "offers": 168
+            }
+          ]
+        },
+        {
+          "char_id": "00004320",
+          "char_name": "Давление",
+          "original_name": "Давление",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "Ру40",
+              "count": 9,
+              "offers": 12
+            },
+            {
+              "value": "Ру20",
+              "count": 6,
+              "offers": 12
+            },
+            {
+              "value": "Ру16",
+              "count": 6,
+              "offers": 10
+            }
+          ]
+        }
+      ],
+      "category": "Тройник латунный"
+    }
+  },
+  "created_at": "2026-08-04T09:37:25.164737",
+  "updated_at": "2026-08-04T09:43:57.407031",
+  "site_name": "steelborg",
+  "domain_name": "kz",
+  "user_id": 2
+}
