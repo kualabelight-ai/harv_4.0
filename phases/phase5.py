@@ -877,55 +877,83 @@ class GenerationManager:
         print(f"Текущий статус: {st.session_state.phase5.get('generation_status')}")
         print(f"phase_completed: {st.session_state.phase5.get('phase_completed')}")
 
-        # === ПРИНУДИТЕЛЬНЫЙ СБРОС ВСЕХ СТАТУСОВ ===
-        st.session_state.phase5['generation_status'] = 'idle'
-        st.session_state.phase5['generation_running'] = False
-        st.session_state.phase5['phase_completed'] = False
-        st.session_state.phase5['generation_queue'] = []
-        st.session_state.phase5['current_index'] = 0
+        # ✅ НЕ СБРАСЫВАЕМ СТАТУСЫ ПРИНУДИТЕЛЬНО!
+        # Только если генерация уже запущена - не запускаем повторно
+        if st.session_state.phase5.get('generation_running', False):
+            st.warning("⚠️ Генерация уже запущена")
+            return
 
+        # ✅ ПОЛУЧАЕМ ВЫБРАННЫЕ ID
         selected_ids = st.session_state.phase5.get('selected_prompt_ids', [])
         print(f"Выбрано пользователем: {len(selected_ids)}")
+
+        # ✅ ЕСЛИ selected_ids ПУСТЫЕ - ПЫТАЕМСЯ ВОССТАНОВИТЬ ИЗ temp_selections
+        if not selected_ids and 'temp_selections' in st.session_state:
+            selected_ids = [pid for pid, val in st.session_state.temp_selections.items() if val]
+            if selected_ids:
+                st.session_state.phase5['selected_prompt_ids'] = selected_ids
+                print(f"✅ Восстановлены selected_prompt_ids из temp_selections: {len(selected_ids)}")
 
         if not selected_ids:
             st.warning("Не выбрано ни одного промпта")
             return
 
+        # ✅ ЕСЛИ ВСЁ РАВНО НЕТ - ВЫБИРАЕМ ВСЕ ПРОМПТЫ
+        if not selected_ids:
+            prompts = st.session_state.phase5_prompts
+            if prompts:
+                all_ids = [p.get('phase5_id') for p in prompts if p.get('phase5_id')]
+                if all_ids:
+                    st.session_state.phase5['selected_prompt_ids'] = all_ids
+                    selected_ids = all_ids
+                    print(f"✅ Автоматически выбраны все {len(all_ids)} промптов")
+
+        if not selected_ids:
+            st.error("❌ Нет доступных промптов для генерации")
+            return
+
+        print(f"✅ Итоговое количество выбранных промптов: {len(selected_ids)}")
+
         # Получаем только те, которые действительно нужно генерировать
         prompts = st.session_state.phase5_prompts
         results = st.session_state.phase5.get('results', {})
 
+        # ✅ СОЗДАЁМ ЗАПИСИ ДЛЯ ВСЕХ ВЫБРАННЫХ ПРОМПТОВ, ДАЖЕ ЕСЛИ ИХ НЕТ В results
         to_generate = []
         for p in prompts:
             pid = p.get('phase5_id')
+            if not pid:
+                continue
+
             if pid not in selected_ids:
                 continue
 
+            # ✅ ЕСЛИ ЗАПИСИ НЕТ - СОЗДАЁМ
+            if pid not in results:
+                results[pid] = {
+                    'prompt_id': pid,
+                    'status': 'pending',
+                    'ai_response': '',
+                    'edited_text': '',
+                    'error_message': None,
+                    'model': '',
+                    'provider': '',
+                    'tokens_used': 0,
+                    'generated_at': None,
+                    'characteristic_name': p.get('characteristic_name', ''),
+                    'characteristic_value': p.get('value', ''),
+                    'block_name': p.get('block_name', ''),
+                    'prompt_num': p.get('prompt_num', 1),
+                    'type': p.get('type', p.get('block_type', 'unknown'))
+                }
+                print(f"   ✅ Создана запись для {pid}")
+
+            # ✅ ПРОВЕРЯЕМ НУЖНО ЛИ ГЕНЕРИРОВАТЬ
             result = results.get(pid, {})
             status = result.get('status')
             response = str(result.get('ai_response', '')).strip()
 
-            # Если записи нет или статус не success – добавляем в очередь
-            if pid not in results or status != 'success' or len(response) < 30:
-                # Создаём запись, если отсутствует
-                if pid not in results:
-                    results[pid] = {
-                        'prompt_id': pid,
-                        'status': 'pending',
-                        'ai_response': '',
-                        'edited_text': '',
-                        'error_message': None,
-                        'model': '',
-                        'provider': '',
-                        'tokens_used': 0,
-                        'generated_at': None,
-                        'characteristic_name': p.get('characteristic_name', ''),
-                        'characteristic_value': p.get('value', ''),
-                        'block_name': p.get('block_name', ''),
-                        'prompt_num': p.get('prompt_num', 1),
-                        'type': p.get('type', p.get('block_type', 'unknown'))
-                    }
-                    print(f"   ✅ Создана запись для {pid}")
+            if status != 'success' or len(response) < 30:
                 to_generate.append(p)
 
         print(f"Реально будут генерироваться: {len(to_generate)} промптов")
@@ -933,6 +961,7 @@ class GenerationManager:
         if not to_generate:
             st.success("✅ Все выбранные промпты уже успешно сгенерированы!")
             self.data_manager._update_statistics()
+            st.session_state.phase5['generation_status'] = 'completed'
             return
 
         pending_ids = [p.get('phase5_id') for p in to_generate]
@@ -946,21 +975,27 @@ class GenerationManager:
             'generation_running': True,
             'current_batch': 0,
             'total_batches': len(pending_ids),
-            'error_message': None
+            'error_message': None,
+            'phase_completed': False  # ✅ ЯВНО УСТАНАВЛИВАЕМ
         })
 
         self._should_stop = False
         self._should_pause = False
 
+        # ✅ СОХРАНЯЕМ ДАННЫЕ ПЕРЕД ГЕНЕРАЦИЕЙ
+        self.data_manager.save_to_app_data()
+
         # ✅ НЕМЕДЛЕННО ОБРАБАТЫВАЕМ ПЕРВЫЙ БАТЧ
         processed = self.process_batch(batch_size=batch_size)
+
+        # ✅ ОБНОВЛЯЕМ СТАТИСТИКУ ПОСЛЕ БАТЧА
+        self.data_manager._update_statistics()
+        self.data_manager.save_to_app_data()
 
         if processed > 0:
             st.success(f"🚀 Запущена генерация для {len(pending_ids)} выбранных промптов! Обработано {processed} за батч.")
         else:
             st.error("❌ Не удалось запустить генерацию. Проверьте логи.")
-
-        st.rerun()
 
     def run_one_generation_step(self):
         """Выполнить один шаг генерации"""
@@ -1053,28 +1088,37 @@ class GenerationManager:
 
     def process_batch(self, batch_size=10):
         phase5 = st.session_state.phase5
+
+        # ✅ ПРОВЕРЯЕМ ВСЕ УСЛОВИЯ ДО НАЧАЛА
         print(f"\n📦 process_batch START: current_index={phase5.get('current_index')}, queue_len={len(phase5.get('generation_queue', []))}")
 
-        if not phase5.get('generation_running', False):
-            print("   ⚠️ generation_running = False")
-            return 0
-
-
-
-
-        print(f"   current_index={phase5.get('current_index', 0)}")
-        print(f"   generation_queue len={len(phase5.get('generation_queue', []))}")
-
+        # ✅ ПРОВЕРКА 1: generation_running
         if not phase5.get('generation_running', False):
             print("   ⚠️ generation_running = False, выход")
             return 0
 
+        # ✅ ПРОВЕРКА 2: generation_queue
         if not phase5.get('generation_queue'):
             phase5['generation_running'] = False
             phase5['generation_status'] = 'completed'
             phase5['generation_end_time'] = datetime.now().isoformat()
+            phase5['phase_completed'] = True
+            self.data_manager.save_to_app_data()
             print("   ⚠️ generation_queue пуст, завершение")
             return 0
+
+        # ✅ ПРОВЕРКА 3: есть ли ещё что генерировать
+        if phase5['current_index'] >= len(phase5['generation_queue']):
+            phase5['generation_status'] = 'completed'
+            phase5['generation_running'] = False
+            phase5['generation_end_time'] = datetime.now().isoformat()
+            phase5['phase_completed'] = True
+            self.data_manager.save_to_app_data()
+            print("   ✅ Все промпты уже обработаны, завершение")
+            return 0
+
+        print(f"   current_index={phase5.get('current_index', 0)}")
+        print(f"   generation_queue len={len(phase5.get('generation_queue', []))}")
 
         start_idx = phase5['current_index']
         end_idx = min(start_idx + batch_size, len(phase5['generation_queue']))
@@ -1093,6 +1137,7 @@ class GenerationManager:
 
         for i in range(start_idx, end_idx):
             if self._should_stop:
+                print(f"   ⏹️ Остановка по запросу пользователя")
                 break
 
             prompt_id = phase5['generation_queue'][i]
@@ -1149,15 +1194,17 @@ class GenerationManager:
                 'edited_text': self._clean_response(ai_response) if success else ''
             }
 
-            # Сохраняем в файл не каждый раз
-            save_now = (processed_count % 5 == 0) or (i == end_idx - 1)
-            self.data_manager.update_result(prompt_id, result_data, save_to_app=save_now)
+            # ✅ СОХРАНЯЕМ КАЖДЫЙ РЕЗУЛЬТАТ СРАЗУ
+            self.data_manager.update_result(prompt_id, result_data, save_to_app=True)
 
             phase5['current_index'] += 1
             processed_count += 1
 
             # Обновляем статистику
             self.data_manager._update_statistics()
+
+        # ✅ ЯВНО СОХРАНЯЕМ ПОСЛЕ БАТЧА
+        self.data_manager.save_to_app_data()
 
         # Логируем после батча
         print(f"\n   📊 После батча:")
@@ -1166,11 +1213,11 @@ class GenerationManager:
         print(f"      generation_queue len: {len(phase5['generation_queue'])}")
 
         # Завершение генерации
-        # Завершение генерации
         if phase5['current_index'] >= len(phase5['generation_queue']):
             phase5['generation_status'] = 'completed'
             phase5['generation_running'] = False
             phase5['generation_end_time'] = datetime.now().isoformat()
+            phase5['phase_completed'] = True
             # Явно сохраняем данные в файл, чтобы все результаты были зафиксированы
             self.data_manager.save_to_app_data()
             print(f"   ✅ Генерация успешно завершена! Обработано {processed_count} промптов, данные сохранены")
@@ -1635,7 +1682,6 @@ class Phase5UIComponents:
                 st.success("Настройки сохранены!")
 
     @staticmethod
-
     def show_generation_control(generation_manager: GenerationManager, data_manager: Phase5DataManager):
         init_phase5_structure()
 
@@ -1647,6 +1693,21 @@ class Phase5UIComponents:
         status = st.session_state.phase5.get('generation_status', 'idle')
         stats = st.session_state.phase5.get('statistics', {})
         phase5 = st.session_state.phase5
+
+        # ✅ АВТОМАТИЧЕСКИЙ ЗАПУСК ПРОЦЕССА ЕСЛИ generation_running = True
+        if phase5.get('generation_running', False) and status == 'running':
+            print("🔄 Автоматический вызов process_batch() из show_generation_control")
+            with st.spinner("Генерация текстов..."):
+                processed = generation_manager.process_batch(batch_size=10)
+                if processed > 0:
+                    print(f"✅ Обработано {processed} промптов")
+                    st.rerun()
+                else:
+                    # Если ничего не обработано, возможно генерация завершена
+                    if phase5.get('generation_status') == 'completed':
+                        st.success("✅ Генерация завершена!")
+                    else:
+                        st.warning("⚠️ Нет новых промптов для обработки")
 
         # Статистика
         col_s1, col_s2, col_s3, col_s4 = st.columns(4)
@@ -1661,7 +1722,7 @@ class Phase5UIComponents:
             total = len(phase5['generation_queue'])
 
             if total > 0:
-                progress = current / total
+                progress = current / total if total > 0 else 0
                 st.progress(progress)
 
                 # Показываем примерный текущий промпт (немного вперёд)
@@ -1692,24 +1753,24 @@ class Phase5UIComponents:
                 st.caption(f"{current} / {total} • {int(progress*100)}%")
 
         if status == 'running':
-            st.info("Генерация идёт батчами по 10 промптов…")
+            st.info("🔄 Генерация выполняется...")
         elif status == 'paused':
             st.warning("⏸️ Генерация приостановлена")
         elif status == 'completed':
-            st.success("Генерация завершена!")
+            st.success("✅ Генерация завершена!")
         elif status == 'stopped':
-            st.warning("Генерация остановлена пользователем")
+            st.warning("⏹️ Генерация остановлена пользователем")
 
         # Кнопки управления
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
-            if status in ['idle', 'paused', 'stopped', 'completed']:
+            if status in ['idle', 'stopped', 'completed']:
                 if st.button("🚀 Запустить", type="primary"):
-                    # ✅ ПРИНУДИТЕЛЬНО СБРАСЫВАЕМ СТАТУС ПЕРЕД ЗАПУСКОМ
+                    # ✅ НЕ СБРАСЫВАЕМ ВСЁ ПРИНУДИТЕЛЬНО
+                    # Просто вызываем start_generation
                     st.session_state.phase5['generation_status'] = 'idle'
                     st.session_state.phase5['generation_running'] = False
-                    st.session_state.phase5['phase_completed'] = False
                     generation_manager.start_generation()
                     st.rerun()
 
@@ -2022,6 +2083,7 @@ def force_load_phase5_from_file(context=None):
     """
     ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА ДАННЫХ ИЗ ФАЙЛА
     ✅ С проверкой, что данные принадлежат ТЕКУЩЕМУ проекту
+    ✅ Восстанавливаем generation_running если генерация не завершена
     """
     from pathlib import Path
     import json
@@ -2127,7 +2189,33 @@ def force_load_phase5_from_file(context=None):
             for pid in all_ids:
                 st.session_state.temp_selections[pid] = True
 
+        # ✅ ВОССТАНАВЛИВАЕМ СТАТУС ГЕНЕРАЦИИ
+        # Если есть pending промпты и генерация не завершена - возобновляем
+        pending_count = st.session_state.phase5['statistics']['pending']
+        if pending_count > 0 and not st.session_state.phase5.get('phase_completed', False):
+            # Проверяем, есть ли незавершённая генерация в файле
+            saved_status = phase5_data.get('generation_status', 'idle')
+            if saved_status in ['running', 'paused']:
+                # Восстанавливаем очередь
+                if 'generation_queue' in phase5_data and phase5_data['generation_queue']:
+                    st.session_state.phase5['generation_queue'] = phase5_data['generation_queue']
+                    st.session_state.phase5['current_index'] = phase5_data.get('current_index', 0)
+                    st.session_state.phase5['generation_status'] = saved_status
+                    st.session_state.phase5['generation_running'] = True
+                    print(f"✅ Восстановлена генерация: статус={saved_status}, индекс={st.session_state.phase5['current_index']}")
+                else:
+                    # Если очередь не сохранена, но есть pending - создаём новую очередь
+                    pending_ids = [pid for pid, r in results.items() if r.get('status') != 'success']
+                    if pending_ids:
+                        st.session_state.phase5['generation_queue'] = pending_ids
+                        st.session_state.phase5['current_index'] = 0
+                        st.session_state.phase5['generation_status'] = 'running'
+                        st.session_state.phase5['generation_running'] = True
+                        print(f"✅ Создана новая очередь из {len(pending_ids)} pending промптов")
+
         print(f"✅ Загрузка завершена успешно!")
+        print(f"   generation_running: {st.session_state.phase5.get('generation_running', False)}")
+        print(f"   generation_status: {st.session_state.phase5.get('generation_status', 'idle')}")
         print(f"{'='*60}\n")
         return True
 
@@ -2996,23 +3084,41 @@ def main(app_state=None, settings_mode=False, context=None):
             with st.spinner("Загрузка промптов из фазы 4..."):
                 data_manager.load_prompts_from_phase4()
 
-        # Обработка фоновой генерации
-        # Обработка фоновой генерации
+        # ✅ ОБРАБОТКА ФОНОВОЙ ГЕНЕРАЦИИ С ПРОВЕРКОЙ СОСТОЯНИЯ
         phase5 = st.session_state.phase5
-        if (phase5.get('generation_running', False) and
-                phase5.get('generation_status') == 'running'):
 
-            print(f"🔄 Запускаем process_batch | current_index = {phase5.get('current_index', 0)}")
+        # ✅ ПРОВЕРЯЕМ СТАТУС И ВЫЗЫВАЕМ process_batch ЕСЛИ НУЖНО
+        if phase5.get('generation_running', False):
+            if phase5.get('generation_status') == 'running':
+                print(f"🔄 Запускаем process_batch | current_index = {phase5.get('current_index', 0)}")
 
-            BATCH_SIZE = 10
-            with st.spinner(f"Генерируем батч {phase5.get('current_index', 0) // BATCH_SIZE + 1}..."):
-                processed = generation_manager.process_batch(batch_size=BATCH_SIZE)
+                BATCH_SIZE = 10
+                with st.spinner(f"Генерируем батч {phase5.get('current_index', 0) // BATCH_SIZE + 1}..."):
+                    processed = generation_manager.process_batch(batch_size=BATCH_SIZE)
 
-            if processed > 0:
-                print(f"✅ Обработано {processed} промптов в этом батче")
-                st.rerun()
-            else:
-                print("⚠️ process_batch вернул 0")
+                if processed > 0:
+                    print(f"✅ Обработано {processed} промптов в этом батче")
+                    # ✅ СОХРАНЯЕМ ПОСЛЕ БАТЧА
+                    data_manager.save_to_app_data()
+                    st.rerun()
+                else:
+                    print("⚠️ process_batch вернул 0")
+                    # Проверяем, может генерация уже завершена
+                    if phase5.get('generation_status') == 'completed':
+                        st.success("✅ Генерация завершена!")
+                        st.rerun()
+            elif phase5.get('generation_status') == 'paused':
+                print("⏸️ Генерация на паузе")
+            elif phase5.get('generation_status') == 'completed':
+                print("✅ Генерация уже завершена")
+                phase5['generation_running'] = False
+                data_manager.save_to_app_data()
+        else:
+            # ✅ ЕСЛИ generation_running = False, НО status = running - исправляем
+            if phase5.get('generation_status') == 'running':
+                print("⚠️ generation_running = False, но status = running. Исправляем...")
+                phase5['generation_status'] = 'idle'
+                data_manager.save_to_app_data()
 
         # Создаём словарь для быстрого поиска
         if st.session_state.phase5_prompts:

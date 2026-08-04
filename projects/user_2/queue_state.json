@@ -103,5 +103,20 @@
     "error": null,
     "site_name": "steelborg",
     "domain_name": "kz"
+  },
+  {
+    "project_id": "793055ef-09de-4674-a6da-98dc70745355",
+    "user_id": 2,
+    "project_name": "3фт",
+    "category": "Шпалы железобетонные",
+    "status": "completed",
+    "current_phase": 7,
+    "message": "Завершён успешно",
+    "progress": 100,
+    "started_at": "2026-08-04T15:06:27.690741",
+    "completed_at": "2026-08-04T15:11:00.182526",
+    "error": null,
+    "site_name": "steelborg",
+    "domain_name": "kz"
   }
 ]
