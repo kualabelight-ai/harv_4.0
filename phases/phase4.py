@@ -57,12 +57,22 @@ def restore_ai_instructions(context=None):
 
     # ========== ПРИОРИТЕТ 1: ИЗ КОНТЕКСТА ==========
     if context is not None:
-        phase3_data = context.get_phase_data(3)
-        if phase3_data and phase3_data.get('ai_instructions'):
-            ai_mgr.instructions = phase3_data['ai_instructions']
-            total = sum(len(b) for b in phase3_data['ai_instructions'].values())
-            print(f"✅ Восстановлены AI инструкции из контекста: {total} контекстов")
-            return True
+        # ✅ ЕСЛИ context - словарь, используем его как словарь
+        if isinstance(context, dict):
+            phase3_data = context.get('phase3', {})
+            if phase3_data and phase3_data.get('ai_instructions'):
+                ai_mgr.instructions = phase3_data['ai_instructions']
+                total = sum(len(b) for b in phase3_data['ai_instructions'].values())
+                print(f"✅ Восстановлены AI инструкции из словаря context: {total} контекстов")
+                return True
+        # ✅ ЕСЛИ context - объект с методом get_phase_data
+        elif hasattr(context, 'get_phase_data'):
+            phase3_data = context.get_phase_data(3)
+            if phase3_data and phase3_data.get('ai_instructions'):
+                ai_mgr.instructions = phase3_data['ai_instructions']
+                total = sum(len(b) for b in phase3_data['ai_instructions'].values())
+                print(f"✅ Восстановлены AI инструкции из контекста: {total} контекстов")
+                return True
 
     # ========== ПРИОРИТЕТ 2: ИЗ SESSION_STATE ==========
     try:
@@ -1155,6 +1165,8 @@ def show_generation_mode(phase1_data, category, markers, settings_mode=False, ap
         st.info(f"**Характеристик:** {len(characteristics)} (Regular: {regular_count}, Unique: {unique_count})")
 
 
+    # ✅ ПРИМЕНЯЕМ НАДСТРОЙКУ (ЕСЛИ ЕСТЬ)
+    apply_project_override_to_blocks(st.session_state.block_manager)
 
     # Получаем блоки по типам
     blocks = st.session_state.block_manager.get_all_blocks()
@@ -1912,7 +1924,76 @@ def create_default_templates():
 # phase4.py - добавить в конец файла
 
 # phase4.py - исправленная функция
+def apply_project_override_to_blocks(block_manager, project_id=None, user_id=None, site_name=None, domain_name=None):
+    """Применяет надстройку проекта к блокам в Phase 4"""
+    from pathlib import Path
 
+    # Если параметры не переданы - берем из session_state
+    if project_id is None:
+        project_id = st.session_state.get('current_project_id')
+    if user_id is None:
+        user_id = st.session_state.get('user_id')
+    if site_name is None:
+        site_name = st.session_state.get('current_site', 'steelborg')
+    if domain_name is None:
+        domain_name = st.session_state.get('current_domain', 'default')
+
+    # ✅ ЕСЛИ ВСЕ РАВНО НЕТ - ПЫТАЕМСЯ ИЗ КОНТЕКСТА
+    if project_id is None or user_id is None:
+        # Пробуем из ctx_data если есть
+        try:
+            ctx_data = _get_context_data(None, st.session_state)
+            if project_id is None:
+                project_id = ctx_data.get('project_id')
+            if user_id is None:
+                user_id = ctx_data.get('user_id')
+            if site_name is None or site_name == 'steelborg':
+                site_name = ctx_data.get('site_name', 'steelborg')
+            if domain_name is None or domain_name == 'default':
+                domain_name = ctx_data.get('domain_name', 'default')
+        except:
+            pass
+
+    if not project_id or not user_id:
+        print(f"⚠️ Нет данных проекта для применения надстройки: project_id={project_id}, user_id={user_id}")
+        return False
+
+    override_file = Path(f"sites/{site_name}/domains/{domain_name}/projects/{user_id}/{project_id}.override.json")
+
+    if not override_file.exists():
+        print(f"ℹ️ Файл надстройки не найден: {override_file}")
+        return False
+
+    try:
+        with open(override_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            enabled = data.get('enabled', False)
+            override_text = data.get('text', '').strip()
+
+        if not enabled or not override_text:
+            print(f"ℹ️ Надстройка отключена или текст пуст")
+            return False
+
+        print(f"✅ Надстройка найдена: {override_text[:50]}...")
+
+        # Применяем надстройку к блокам
+        blocks = block_manager.get_all_blocks()
+        applied_count = 0
+
+        for block_id, block in blocks.items():
+            if "_original_template" not in block:
+                block["_original_template"] = block.get("template", "")
+            original_template = block.get("_original_template", "")
+            block["template"] = f"{override_text}\n\n{original_template}"
+            block["_has_override"] = True
+            applied_count += 1
+
+        print(f"✅ Надстройка применена к {applied_count} блокам в Phase 4")
+        return True
+
+    except Exception as e:
+        print(f"❌ Ошибка применения надстройки: {e}")
+        return False
 def auto_generate_all_prompts(app_state=None, context=None):
     """Генерация промптов с приоритетом контекста"""
     from pathlib import Path
@@ -2051,26 +2132,26 @@ def auto_generate_all_prompts(app_state=None, context=None):
     dm = st.session_state.domain_manager
     blocks_data = {}
 
-    # ИЗ КОНТЕКСТА
-    if ctx_data['has_context'] and context is not None:
+    # ✅ ПРИОРИТЕТ 1: ИЗ APP_STATE (где блоки с надстройкой)
+    blocks_data = {}
+    if hasattr(st.session_state, 'app_data') and st.session_state.app_data:
+        blocks_data = st.session_state.app_data.get('phase3', {}).get('blocks', {})
+        if blocks_data:
+            print(f"✅ Блоки из APP_STATE: {len(blocks_data)} блоков")
+
+    # ✅ ПРИОРИТЕТ 2: ИЗ КОНТЕКСТА
+    if not blocks_data and ctx_data['has_context'] and context is not None:
         phase3_data = context.get_phase_data(3)
         if phase3_data and phase3_data.get('blocks'):
             blocks_data = phase3_data.get('blocks', {})
             print(f"✅ Блоки из КОНТЕКСТА: {len(blocks_data)} блоков")
 
-    # ИЗ ДОМЕНА
+    # ✅ ПРИОРИТЕТ 3: ИЗ ДОМЕНА (если ничего нет)
     if not blocks_data:
         phase3_from_domain = dm.load_phase_data(3)
         if phase3_from_domain and phase3_from_domain.get('blocks'):
             blocks_data = phase3_from_domain.get('blocks', {})
             print(f"✅ Блоки из ДОМЕНА: {len(blocks_data)} блоков")
-
-    # ИЗ APP_STATE
-    if not blocks_data:
-        blocks_data = st.session_state.app_data.get('phase3', {}).get('blocks', {})
-        if blocks_data:
-            print(f"✅ Блоки из APP_STATE: {len(blocks_data)} блоков")
-
     if not blocks_data:
         return {
             'success': False,
@@ -2083,7 +2164,6 @@ def auto_generate_all_prompts(app_state=None, context=None):
     if 'block_manager' not in st.session_state:
         from phases.phase3 import BlockManager, VariableManager, DynamicVariableManager
 
-        # ✅ БЕРЁМ ДОМЕН ИЗ КОНТЕКСТА
         domain_name = ctx_data.get('domain_name', 'default')
         site_name = ctx_data.get('site_name', 'steelborg')
 
@@ -2094,16 +2174,32 @@ def auto_generate_all_prompts(app_state=None, context=None):
         st.session_state.variable_manager = VariableManager(st.session_state.block_manager)
         st.session_state.dynamic_var_manager = DynamicVariableManager()
 
-
     st.session_state.block_manager.load_blocks()
 
-    # ========== 8. ПОДГОТОВКА ДАННЫХ ==========
-    characteristics = phase1_data.get('characteristics', [])
-    category = phase1_data.get('category', '')
+    # ========== 7.5. ПРИМЕНЯЕМ НАДСТРОЙКУ ПРОЕКТА ==========
+    # Берем параметры из ctx_data
+    override_project_id = ctx_data.get('project_id')
+    override_user_id = ctx_data.get('user_id')
+    override_site_name = ctx_data.get('site_name', 'steelborg')
+    override_domain_name = ctx_data.get('domain_name', 'default')
+
+    override_applied = apply_project_override_to_blocks(
+        st.session_state.block_manager,
+        project_id=override_project_id,
+        user_id=override_user_id,
+        site_name=override_site_name,
+        domain_name=override_domain_name
+    )
+    if override_applied:
+        print(f"✅ Надстройка применена к блокам в Phase 4")
+    else:
+        print(f"ℹ️ Надстройка не применена")
 
     # ========== 8. ПОДГОТОВКА ДАННЫХ ==========
     characteristics = phase1_data.get('characteristics', [])
     category = phase1_data.get('category', '')
+
+
 
     # Получаем маркеры с приоритетом
     markers = []

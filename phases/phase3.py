@@ -1,5 +1,3 @@
-
-
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -18,6 +16,86 @@ from styles import load_css
 from domain_manager import DomainManager
 from pathlib import Path
 import warnings
+# Нет новых импортов - всё внутри phase3.py
+# ================================================================
+# ========== ФУНКЦИИ ДЛЯ РАБОТЫ С НАДСТРОЙКОЙ ПРОЕКТА ==========
+# ================================================================
+# ================================================================
+# ========== НАДСТРОЙКА ПРОЕКТА - ОТДЕЛЬНЫЙ ФАЙЛ ==========
+# ================================================================
+
+def get_override_file_path():
+    """Возвращает путь к файлу надстройки для текущего проекта"""
+    project_id = st.session_state.get('current_project_id')
+    user_id = st.session_state.get('user_id')
+    site_name = st.session_state.get('current_site', 'steelborg')
+    domain_name = st.session_state.get('current_domain', 'default')
+
+    if not project_id or not user_id:
+        return None
+
+    return Path(f"sites/{site_name}/domains/{domain_name}/projects/{user_id}/{project_id}.override.json")
+
+
+def get_project_override(project_id=None, user_id=None, site_name=None, domain_name=None):
+    """Читает надстройку из отдельного файла"""
+    # Если параметры не переданы - берем из session_state
+    if project_id is None:
+        project_id = st.session_state.get('current_project_id')
+    if user_id is None:
+        user_id = st.session_state.get('user_id')
+    if site_name is None:
+        site_name = st.session_state.get('current_site', 'steelborg')
+    if domain_name is None:
+        domain_name = st.session_state.get('current_domain', 'default')
+
+    if not project_id or not user_id:
+        return {'enabled': False, 'text': ''}
+
+    file_path = Path(f"sites/{site_name}/domains/{domain_name}/projects/{user_id}/{project_id}.override.json")
+    # ... остальной код ...
+    if not file_path or not file_path.exists():
+        return {'enabled': False, 'text': ''}
+
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            return {
+                'enabled': data.get('enabled', False),
+                'text': data.get('text', '')
+            }
+    except:
+        return {'enabled': False, 'text': ''}
+
+
+def save_project_override(override_data):
+    """Сохраняет надстройку в отдельный файл"""
+    file_path = get_override_file_path()
+    if not file_path:
+        return False
+
+    try:
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump({
+                'enabled': override_data.get('enabled', False),
+                'text': override_data.get('text', '')
+            }, f, ensure_ascii=False, indent=2)
+        return True
+    except:
+        return False
+
+
+def delete_project_override():
+    """Удаляет файл надстройки"""
+    file_path = get_override_file_path()
+    if file_path and file_path.exists():
+        try:
+            file_path.unlink()
+            return True
+        except:
+            return False
+    return False
 def _get_context_data(context, st_session):
     """
     Возвращает данные контекста.
@@ -597,18 +675,26 @@ class DynamicVariableProcessor:
 
 # --- Классы для работы с данными ---
 class BlockManager:
-    def __init__(self, domain_name: str = None, site_name: str = None):
+    def __init__(self, domain_name: str = None, site_name: str = None, project_id: str = None, user_id: str = None):
         print(f"🛠 ===== BlockManager.__init__ =====")
         print(f"   domain_name: {domain_name}")
         print(f"   site_name: {site_name}")
+        print(f"   project_id: {project_id}")
+        print(f"   user_id: {user_id}")
 
         if domain_name is None:
             domain_name = st.session_state.get('current_domain', 'default')
         if site_name is None:
             site_name = st.session_state.get('current_site', 'steelborg')
+        if project_id is None:
+            project_id = st.session_state.get('current_project_id')
+        if user_id is None:
+            user_id = st.session_state.get('user_id')
 
         self.domain_name = domain_name
         self.site_name = site_name
+        self.project_id = project_id
+        self.user_id = user_id
         self.blocks_dir = Path(f"sites/{site_name}/domains/{domain_name}/blocks")
         print(f"   blocks_dir: {self.blocks_dir}")
         print(f"   blocks_dir exists: {self.blocks_dir.exists()}")
@@ -684,6 +770,9 @@ class BlockManager:
                         block_data["variables_data"] = {}
                         print(f"      ⚠️ Нет variables.json, создан пустой словарь")
 
+                    # Сохраняем оригинальный шаблон (без надстройки)
+                    block_data["_original_template"] = block_data.get("template", "")
+
                     # Сохраняем в кэш
                     self.blocks[block_data["block_id"]] = block_data
                     loaded_count += 1
@@ -696,10 +785,35 @@ class BlockManager:
             else:
                 print(f"      ⚠️ Нет block.json в папке {block_dir.name}")
 
+        # ✅ НОВОЕ: Применяем надстройку проекта
+        self._apply_project_override()
+
         print(f"   📊 ИТОГО загружено блоков: {loaded_count}")
         print(f"   🆔 ID загруженных блоков: {list(self.blocks.keys())}")
         print(f"🔍 ===== load_blocks() END =====")
+    def _apply_project_override(self):
+        """Применяет надстройку проекта ко всем блокам"""
+        # ✅ ТОЛЬКО ИЗ ФАЙЛА
+        override_data = get_project_override()
 
+        print(f"🔧 _apply_project_override: enabled={override_data.get('enabled')}, text={override_data.get('text', '')[:50]}...")
+
+        if not override_data.get('enabled'):
+            return
+
+        override_text = override_data.get('text', '').strip()
+        if not override_text:
+            return
+
+        for block_id, block in self.blocks.items():
+            if "_original_template" not in block:
+                block["_original_template"] = block.get("template", "")
+
+            original_template = block.get("_original_template", "")
+            block["template"] = f"{override_text}\n\n{original_template}"
+            block["_has_override"] = True
+
+        print(f"✅ Надстройка применена к {len(self.blocks)} блокам")
     def save_block(self, block_data, variables_data=None):
         """Сохраняет блок с ДЕТАЛЬНЫМ логированием"""
         import traceback
@@ -732,10 +846,28 @@ class BlockManager:
             print(f"   block_file: {block_file}")
             print(f"   variables_file: {variables_file}")
 
-            # ✅ 1. СОХРАНЯЕМ block.json
+            # ✅ НОВОЕ: Сохраняем ОРИГИНАЛЬНЫЙ шаблон (без надстройки)
+            # Если в block_data есть _original_template - используем его
+            # Иначе используем текущий template (который может быть с надстройкой)
+            original_template = block_data.get("_original_template", block_data.get("template", ""))
+
+            # Создаем копию данных для сохранения, без служебных полей
+            save_data = block_data.copy()
+            # Удаляем служебные поля
+            save_data.pop("_original_template", None)
+            save_data.pop("_has_override", None)
+            save_data.pop("_override_var_name", None)
+            save_data.pop("_override_text", None)
+            # Устанавливаем оригинальный шаблон
+            save_data["template"] = original_template
+
+            print(f"   📝 Сохраняем ОРИГИНАЛЬНЫЙ шаблон (без надстройки)")
+            print(f"   template length: {len(original_template)}")
+
+            # ✅ 1. СОХРАНЯЕМ block.json (с оригинальным шаблоном)
             print(f"   📝 Записываем block.json...")
             with open(block_file, 'w', encoding='utf-8') as f:
-                json.dump(block_data, f, ensure_ascii=False, indent=2)
+                json.dump(save_data, f, ensure_ascii=False, indent=2)
             print(f"   ✅ block.json записан")
             print(f"      Размер: {block_file.stat().st_size if block_file.exists() else 0} байт")
 
@@ -774,6 +906,10 @@ class BlockManager:
                 test_data = json.load(f)
                 print(f"      Имя в файле: {test_data.get('name', 'N/A')}")
                 print(f"      variables в файле: {test_data.get('variables', [])}")
+                # Проверяем, что шаблон сохранен без надстройки
+                if "template" in test_data:
+                    template_preview = test_data["template"][:100]
+                    print(f"      template (первые 100 символов): {template_preview}...")
                 if "variables_data" in test_data:
                     print(f"      variables_data в файле: {len(test_data['variables_data'])} переменных")
                     print(f"         Имена: {list(test_data['variables_data'].keys())}")
@@ -785,12 +921,16 @@ class BlockManager:
                     print(f"      Переменных в файле: {len(vars_data)}")
                     print(f"      Имена: {list(vars_data.keys())}")
 
-            # ✅ 5. ОБНОВЛЯЕМ КЭШ
+            # ✅ 5. ОБНОВЛЯЕМ КЭШ (сохраняем ВЕРСИЮ С НАДСТРОЙКОЙ в памяти)
             print(f"   🔄 Обновляем кэш self.blocks...")
+            # В кэше оставляем версию с надстройкой (для отображения в UI)
             if "variables_data" not in block_data and variables_data is not None:
                 block_data["variables_data"] = variables_data
+            # Восстанавливаем служебные поля, если они были
+            if "_original_template" not in block_data:
+                block_data["_original_template"] = original_template
             self.blocks[block_id] = block_data
-            print(f"   ✅ Кэш обновлен")
+            print(f"   ✅ Кэш обновлен (с надстройкой в памяти)")
 
             print(f"🔵 ===== SAVE_BLOCK SUCCESS =====")
             return True
@@ -1223,6 +1363,10 @@ def has_instructions_for_category(block_id, var_name, category, context=None):
 
 def run_mass_generation_auto(app_state=None, context=None):
     print("🔍 run_mass_generation_auto STARTED")
+
+
+
+
     print(f"   app_state: {app_state}")
     print(f"   context: {context is not None}")
 
@@ -1345,13 +1489,70 @@ def run_mass_generation_auto(app_state=None, context=None):
     print(f"🔄 run_mass_generation_auto: используем domain='{effective_domain}', site='{effective_site}'")
 
     from phases.phase3 import BlockManager
+    # ========== ПРОВЕРКА НАДСТРОЙКИ ПРОЕКТА ==========
+    override_data = get_project_override(
+        project_id=project_id,
+        user_id=user_id,
+        site_name=site_name,
+        domain_name=domain_name
+    )
+    print(f"📋 Надстройка в авторежиме: enabled={override_data.get('enabled')}, text={override_data.get('text', '')[:50]}...")
+    if override_data.get('enabled'):
+        print(f"✅ Надстройка активна, будет применена к блокам")
+    else:
+        print(f"⚠️ Надстройка не активна")
+    # ✅ СОЗДАЕМ BlockManager С project_id и user_id
     block_manager = BlockManager(
-        domain_name=effective_domain,   # ← Явная передача!
-        site_name=effective_site
+        domain_name=effective_domain,
+        site_name=effective_site,
+        project_id=project_id,
+        user_id=user_id
     )
 
+    # ПОСЛЕ ТОГО КАК ПОЛУЧИЛИ blocks
     blocks = block_manager.get_all_blocks()
     print(f"📦 Блоков из ДОМЕНА (в автогенерации): {len(blocks)} | domain={effective_domain}")
+    
+    # ✅ ПРЯМО ПРИМЕНЯЕМ НАДСТРОЙКУ К БЛОКАМ
+    override_data = get_project_override()
+    if override_data.get('enabled'):
+        override_text = override_data.get('text', '').strip()
+        if override_text:
+            for block_id, block in blocks.items():
+                if "_original_template" not in block:
+                    block["_original_template"] = block.get("template", "")
+                block["template"] = f"{override_text}\n\n{block.get('_original_template', block.get('template', ''))}"
+                block["_has_override"] = True
+            print(f"✅ Надстройка применена к {len(blocks)} блокам в авторежиме")
+        else:
+            print(f"⚠️ Текст надстройки пуст")
+    else:
+        print(f"ℹ️ Надстройка отключена")
+
+    # ✅ СОХРАНЯЕМ В app_data ДЛЯ PHASE 4
+    if not hasattr(st.session_state, 'app_data') or st.session_state.app_data is None:
+        st.session_state.app_data = {}
+
+    blocks_data = {}
+    for block_id, block in blocks.items():
+        blocks_data[block_id] = {
+            'block_id': block_id,
+            'name': block.get('name', ''),
+            'block_type': block.get('block_type', 'other'),
+            'description': block.get('description', ''),
+            'template': block.get('template', ''),  # ← С НАДСТРОЙКОЙ
+            'variables': block.get('variables', []),
+            'settings': block.get('settings', {}),
+            'variables_data': block.get('variables_data', {})
+        }
+    st.session_state.app_data['phase3'] = {
+        'blocks': blocks_data,
+        'blocks_count': len(blocks),
+        'phase3_generated': True
+    }
+    print(f"✅ Блоки с надстройкой сохранены в app_data: {len(blocks_data)} блоков")
+
+    # ДАЛЬШЕ СОБИРАЕМ AI ПЕРЕМЕННЫЕ И ГЕНЕРИРУЕМ...
 
     if len(blocks) == 0:
         print(f"❌ Нет блоков в домене '{effective_domain}'!")
@@ -1573,7 +1774,20 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
     print(f"   show_instructions_only: {show_instructions_only}")
     print(f"   context: {context is not None}")
     print(f"   app_state: {app_state is not None}")
-
+    # ✅ ЕСЛИ context - ЭТО СЛОВАРЬ - ПРЕВРАЩАЕМ В ОБЪЕКТ
+    if isinstance(context, dict):
+        from project_context import ProjectContext
+        context_obj = ProjectContext(
+            project_id=context.get('project_id'),
+            user_id=context.get('user_id'),
+            site_name=context.get('site_name', 'steelborg'),
+            domain_name=context.get('domain_name', 'default')
+        )
+        for key, value in context.items():
+            if hasattr(context_obj, 'set'):
+                context_obj.set(key, value)
+        context = context_obj
+        print(f"✅ Phase3: context преобразован из dict в ProjectContext")
     load_css()
 
     # ========== ПРОВЕРКА: ЕСТЬ ЛИ ТЕКУЩИЙ ПРОЕКТ ==========
@@ -1626,7 +1840,9 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
         print(f"   📦 Создаем НОВЫЙ BlockManager...")
         st.session_state.block_manager = BlockManager(
             domain_name=current_domain,
-            site_name=current_site
+            site_name=current_site,
+            project_id=current_project_id,  # ← НОВЫЙ ПАРАМЕТР
+            user_id=current_user_id         # ← НОВЫЙ ПАРАМЕТР
         )
         st.session_state._bm_domain_key = f"{current_site}_{current_domain}"
     else:
@@ -2124,6 +2340,8 @@ def show_ai_variables_overview():
         st.session_state.phase3_tab = 6  # индекс вкладки "Все инструкции"
         st.rerun()
 def show_edit_mode(app_state=None):
+    # ✅ Принудительно перезагружаем блоки при каждом открытии
+
     # Проверяем, нужно ли переключиться на редактирование переменной
     if 'active_editor_tab' not in st.session_state:
         st.session_state.active_editor_tab = 1  # по умолчанию вкладка "Редактирование блока"
@@ -2185,6 +2403,7 @@ def show_edit_mode(app_state=None):
             "✏️ Редактирование блока",
             "📊 Обзор переменных",
             "🌀 Редактирование глобальных переменных",
+            "🔧 Доп.контекст (проект)",
             "🤖 Управление AI‑переменными",
             "📋 Все инструкции"
         ]
@@ -2208,8 +2427,10 @@ def show_edit_mode(app_state=None):
         elif selected_tab == 3:
             show_dynamic_variables_editor()
         elif selected_tab == 4:
-            show_ai_variables_overview()
+            show_project_override_editor()
         elif selected_tab == 5:
+            show_ai_variables_overview()
+        elif selected_tab == 6:
             show_all_ai_instructions_for_category()
     # Сохраняем блоки после любых изменений
 
@@ -2418,7 +2639,61 @@ def show_dynamic_variables_editor():
                     else:
                         st.error("❌ Введите имя переменной")
 
+def show_project_override_editor():
+    """Редактор надстройки проекта"""
+    st.subheader("🔧 Дополнительный контекст проекта")
 
+    project_name = st.session_state.get('project_name', 'Новый проект')
+    project_id = st.session_state.get('current_project_id')
+
+    if not project_id:
+        st.warning("⚠️ Нет активного проекта")
+        return
+
+    st.caption(f"📁 Проект: **{project_name}**")
+
+    # ✅ КАЖДЫЙ РАЗ читаем из отдельного файла
+    override_data = get_project_override()
+
+    with st.form(key="override_form"):
+        enabled = st.checkbox(
+            "✅ Включить дополнительный контекст",
+            value=override_data.get('enabled', False)
+        )
+
+        text = st.text_area(
+            "Текст контекста (будет добавлен в начало каждого блока):",
+            value=override_data.get('text', ''),
+            height=200
+        )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.form_submit_button("💾 Применить ко всем блокам", type="primary", use_container_width=True):
+                if save_project_override({'enabled': enabled, 'text': text}):
+                    if 'block_manager' in st.session_state:
+                        st.session_state.block_manager.load_blocks()
+                    st.success("✅ Надстройка сохранена и применена!")
+                    st.rerun()
+                else:
+                    st.error("❌ Ошибка сохранения")
+
+        with col2:
+            if st.form_submit_button("🗑️ Удалить из всех блоков", use_container_width=True):
+                if delete_project_override():
+                    if 'block_manager' in st.session_state:
+                        st.session_state.block_manager.load_blocks()
+                    st.success("✅ Надстройка удалена!")
+                    st.rerun()
+                else:
+                    st.error("❌ Ошибка удаления")
+
+    # Статус
+    if override_data.get('enabled') and override_data.get('text', '').strip():
+        st.success("✅ Надстройка АКТИВНА")
+    else:
+        st.info("ℹ️ Надстройка ОТКЛЮЧЕНА")
 def insert_session_vars_to_all_blocks(session_vars):
     """Вставляет все временные переменные во все блоки (в начало каждого блока)"""
 
