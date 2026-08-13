@@ -29,26 +29,32 @@ class DomainPermissionManager:
         """
         Проверяет, может ли пользователь получить доступ к сайту/домену.
         """
-        # Если site_name не указан, используем текущий
         if site_name is None:
             site_name = self.site_name
-
-        # Если domain_name не указан, используем текущий домен
         if domain_name is None:
             domain_name = st.session_state.get('current_domain', 'default')
 
-        # Проверяем права администратора (админы имеют доступ ко всему)
+        # ✅ ПРОВЕРЯЕМ СТАТУС ПОЛЬЗОВАТЕЛЯ (НЕ ПОДТВЕРЖДЕННЫМ - ДОСТУП ЗАКРЫТ)
         try:
             from database_settings.database import get_db
             with get_db() as conn:
                 user = conn.execute(
-                    "SELECT is_admin FROM users WHERE id = ?",
+                    "SELECT is_admin, status FROM users WHERE id = ?",
                     (user_id,)
                 ).fetchone()
-                if user and user["is_admin"] == 1:
+
+                if not user:
+                    return False
+
+                # Админы имеют доступ ко всему
+                if user["is_admin"] == 1:
                     return True
+
+                # ❌ НЕ ПОДТВЕРЖДЕННЫЕ ПОЛЬЗОВАТЕЛИ НЕ ИМЕЮТ ДОСТУПА
+                if user["status"] != "approved":
+                    return False
         except:
-            pass
+            return False
 
         # Проверяем права в таблице user_domain_permissions
         try:

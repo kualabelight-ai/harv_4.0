@@ -42,8 +42,17 @@ def render_users_manager():
                     st.write(f"**Зарегистрирован:** {user['created_at']}")
 
                 with col2:
+
+                    if user["status"] == "pending":
+                        if st.button("✅ Подтвердить пользователя", key=f"approve_{user['id']}"):
+                            with get_db() as conn:
+                                conn.execute("UPDATE users SET status = 'approved' WHERE id = ?", (user['id'],))
+                                conn.commit()
+                                st.success(f"✅ Пользователь {user['username']} подтвержден")
+                                st.rerun()
                     # Разблокировка
                     if user["banned"]:
+
                         if st.button("🔓 Разблокировать", key=f"unban_{user['id']}"):
                             with get_db() as conn:
                                 conn.execute("UPDATE users SET banned = 0 WHERE id = ?", (user['id'],))

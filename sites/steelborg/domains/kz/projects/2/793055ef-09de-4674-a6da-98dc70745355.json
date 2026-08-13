@@ -4067,6 +4067,158 @@
       "generated_count": 48,
       "generated_at": "2026-08-04T15:49:13.804474"
     },
+    "phase6": {},
+    "phase7": {},
+    "category": "Шпалы железобетонные",
+    "project_name": "3фт",
+    "created_at": "2026-08-04T10:21:21.833525",
+    "updated_at": "2026-08-04T15:48:05.049117",
+    "phase4_generated_prompts": [],
+    "site_name": "steelborg",
+    "domain_name": "kz",
+    "phase3_generated": true,
+    "phase4_settings": {
+      "char_settings": {
+        "00004457": {
+          "prompts_per_value": 3,
+          "char_name": "Маркировка"
+        },
+        "9113991 01": {
+          "prompts_per_value": 3,
+          "char_name": "Материал"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 2
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 2
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 3,
+      "global_other_prompts": 2
+    },
+    "phase4_configured": true,
+    "phase6_completed": false,
+    "phase7_completed": false,
+    "phase2_data": {
+      "category": "Шпалы железобетонные"
+    },
+    "loaded_data": {
+      "characteristics": [
+        {
+          "char_id": "00004457",
+          "char_name": "Маркировка",
+          "original_name": "Маркировка",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "Ш1",
+              "count": 1,
+              "offers": 33
+            },
+            {
+              "value": "Ш3",
+              "count": 1,
+              "offers": 11
+            },
+            {
+              "value": "Ш1-1",
+              "count": 1,
+              "offers": 9
+            },
+            {
+              "value": "АРС",
+              "count": 1,
+              "offers": 6
+            },
+            {
+              "value": "Ш-АРС-М",
+              "count": 1,
+              "offers": 4
+            }
+          ]
+        },
+        {
+          "char_id": "9113991 01",
+          "char_name": "Материал",
+          "original_name": "Материал",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "железобетонные",
+              "count": 20,
+              "offers": 93
+            }
+          ]
+        }
+      ],
+      "category": "Шпалы железобетонные"
+    },
+    "phase3_override": {
+      "enabled": true,
+      "text": "пупупу",
+      "var_name": "ДОПКОНТЕКСТ"
+    },
     "phase5": {
       "results": {
         "char_00004457_Ш1_1": {
@@ -4886,165 +5038,29 @@
           "type": "other"
         }
       },
-      "phase_completed": true
-    },
-    "phase6": {},
-    "phase7": {},
-    "category": "Шпалы железобетонные",
-    "project_name": "3фт",
-    "created_at": "2026-08-04T10:21:21.833525",
-    "updated_at": "2026-08-04T15:48:05.049117",
-    "phase5_completed": true,
-    "phase5_results": {},
-    "phase4_generated_prompts": [],
-    "site_name": "steelborg",
-    "domain_name": "kz",
-    "phase3_generated": true,
-    "phase4_settings": {
-      "char_settings": {
-        "00004457": {
-          "prompts_per_value": 3,
-          "char_name": "Маркировка"
-        },
-        "9113991 01": {
-          "prompts_per_value": 3,
-          "char_name": "Материал"
-        }
+      "statistics": {
+        "total": 48,
+        "success": 48,
+        "error": 0,
+        "completed": 48,
+        "pending": 0,
+        "selected": 48
       },
-      "other_blocks_settings": {
-        "description_template": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "new_block_1779776713": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "new_block_1779778327": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "new_block_1779778598": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "new_block_1779778817": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "new_block_1779778987": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "new_block_1779779151": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "new_block_1779779413": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "new_block_1779780432": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "new_block_1779781080": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "new_block_1779963133": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "new_block_1779963989": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "new_block_1780481514": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "new_block_1780481860": {
-          "enabled": true,
-          "prompts_count": 2
-        },
-        "product_header_template": {
-          "enabled": true,
-          "prompts_count": 2
-        }
+      "generation_settings": {
+        "provider": "agentplatform",
+        "temperature": 0.7,
+        "max_tokens": 2000,
+        "retry_count": 3,
+        "delay_between_requests": 2.0
       },
-      "selected_regular_block_id": "new_block_1771409674",
-      "selected_unique_block_id": "new_block_1769685883",
-      "global_prompts": 3,
-      "global_other_prompts": 2
+      "phase_completed": false,
+      "completed_at": "2026-08-13T15:11:27.618804",
+      "prompts_count": 48
     },
-    "phase4_configured": true,
-    "phase6_completed": false,
-    "phase7_completed": false,
-    "phase2_data": {
-      "category": "Шпалы железобетонные"
-    },
-    "loaded_data": {
-      "characteristics": [
-        {
-          "char_id": "00004457",
-          "char_name": "Маркировка",
-          "original_name": "Маркировка",
-          "is_unique": false,
-          "unit": "",
-          "values": [
-            {
-              "value": "Ш1",
-              "count": 1,
-              "offers": 33
-            },
-            {
-              "value": "Ш3",
-              "count": 1,
-              "offers": 11
-            },
-            {
-              "value": "Ш1-1",
-              "count": 1,
-              "offers": 9
-            },
-            {
-              "value": "АРС",
-              "count": 1,
-              "offers": 6
-            },
-            {
-              "value": "Ш-АРС-М",
-              "count": 1,
-              "offers": 4
-            }
-          ]
-        },
-        {
-          "char_id": "9113991 01",
-          "char_name": "Материал",
-          "original_name": "Материал",
-          "is_unique": false,
-          "unit": "",
-          "values": [
-            {
-              "value": "железобетонные",
-              "count": 20,
-              "offers": 93
-            }
-          ]
-        }
-      ],
-      "category": "Шпалы железобетонные"
-    },
-    "phase3_override": {
-      "enabled": true,
-      "text": "пупупу",
-      "var_name": "ДОПКОНТЕКСТ"
-    }
+    "phase5_completed": false
   },
   "created_at": "2026-08-04T10:21:21.833525",
-  "updated_at": "2026-08-04T15:59:17.587237",
+  "updated_at": "2026-08-13T15:11:27.722287",
   "site_name": "steelborg",
   "domain_name": "kz",
   "user_id": 2

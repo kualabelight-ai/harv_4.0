@@ -16,6 +16,8 @@ from styles import load_css
 from domain_manager import DomainManager
 from pathlib import Path
 import warnings
+import openpyxl
+from io import BytesIO
 # Нет новых импортов - всё внутри phase3.py
 # ================================================================
 # ========== ФУНКЦИИ ДЛЯ РАБОТЫ С НАДСТРОЙКОЙ ПРОЕКТА ==========
@@ -2975,7 +2977,29 @@ def show_blocks_management(app_state=None):
                         st.rerun()
     else:
         st.info("Нет созданных блоков")
-
+        # ========== ЭКСПОРТ ДЛЯ АДМИНИСТРАТОРА ==========
+    if is_admin(st.session_state.get('user_id')):
+        st.markdown("---")
+        st.subheader("📤 Экспорт данных (только для администратора)")
+        col_exp1, col_exp2 = st.columns(2)
+        with col_exp1:
+            json_data = export_blocks_json()
+            st.download_button(
+                label="📥 Скачать JSON",
+                data=json_data,
+                file_name=f"blocks_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+                mime="application/json",
+                use_container_width=True
+            )
+        with col_exp2:
+            xlsx_file = export_blocks_xlsx()
+            st.download_button(
+                label="📥 Скачать XLSX",
+                data=xlsx_file,
+                file_name=f"blocks_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True
+            )
     # ================================================================
     # ========== 🐛 БЛОК ОТЛАДКИ - ВСТАВИТЬ СЮДА ==========
     # ================================================================
@@ -5859,5 +5883,152 @@ def has_phase3_data(app_state=None):
             return True
 
     return False
+
+
+# ================================================================
+# ========== ЭКСПОРТ БЛОКОВ ДЛЯ АДМИНИСТРАТОРА ==========
+# ================================================================
+
+# ================================================================
+# ========== ЭКСПОРТ БЛОКОВ ДЛЯ АДМИНИСТРАТОРА (исправленный) ==========
+# ================================================================
+
+def export_blocks_json():
+    """Собирает все данные (блоки, переменные, AI-инструкции, глобальные переменные) в JSON."""
+    data = {
+        "metadata": {
+            "export_date": datetime.now().isoformat(),
+            "site": st.session_state.get('current_site', 'steelborg'),
+            "domain": st.session_state.get('current_domain', 'default'),
+            "project": st.session_state.get('current_project_id', ''),
+            "user": st.session_state.get('user_id', '')
+        }
+    }
+
+    if 'block_manager' in st.session_state:
+        data["blocks"] = st.session_state.block_manager.get_all_blocks()
+    else:
+        data["blocks"] = {}
+
+    if 'dynamic_var_manager' in st.session_state:
+        data["global_variables"] = st.session_state.dynamic_var_manager.get_all_dynamic_vars()
+    else:
+        data["global_variables"] = {}
+
+    if 'ai_instruction_manager' in st.session_state:
+        data["ai_instructions"] = st.session_state.ai_instruction_manager.instructions
+    else:
+        data["ai_instructions"] = {}
+
+    return json.dumps(data, ensure_ascii=False, indent=2)
+
+
+def export_blocks_xlsx():
+    """Создаёт Excel-файл с листами: Blocks, Variables (с названиями блоков),
+    AI Instructions (с названиями блоков), Global Variables."""
+    wb = openpyxl.Workbook()
+
+    # ---- Лист 1: Blocks ----
+    ws_blocks = wb.active
+    ws_blocks.title = "Blocks"
+    headers_blocks = ["block_id", "name", "block_type", "description", "template", "settings", "variables"]
+    ws_blocks.append(headers_blocks)
+
+    blocks = {}
+    if 'block_manager' in st.session_state:
+        blocks = st.session_state.block_manager.get_all_blocks()
+
+    for block_id, block in blocks.items():
+        settings_str = json.dumps(block.get("settings", {}), ensure_ascii=False)
+        variables_str = ", ".join(block.get("variables", []))
+        ws_blocks.append([
+            block_id,
+            block.get("name", ""),
+            block.get("block_type", ""),
+            block.get("description", ""),
+            block.get("template", ""),
+            settings_str,
+            variables_str
+        ])
+
+    # ---- Лист 2: Variables (с именами блоков) ----
+    ws_vars = wb.create_sheet("Variables")
+    headers_vars = ["block_id", "block_name", "block_type", "var_name", "type", "description",
+                    "values", "ai_prompt", "ai_provider", "ai_num_variants"]
+    ws_vars.append(headers_vars)
+
+    for block_id, block in blocks.items():
+        block_name = block.get("name", "")
+        block_type = block.get("block_type", "")
+        variables_data = block.get("variables_data", {})
+        for var_name, var_data in variables_data.items():
+            var_type = var_data.get("type", "static")
+            values_str = "; ".join(var_data.get("values", []))
+            ai_prompt = var_data.get("ai_prompt", "") if var_type == "ai" else ""
+            ai_provider = var_data.get("ai_provider", "") if var_type == "ai" else ""
+            ai_num = var_data.get("ai_num_variants", "") if var_type == "ai" else ""
+            ws_vars.append([
+                block_id,
+                block_name,
+                block_type,
+                var_name,
+                var_type,
+                var_data.get("description", ""),
+                values_str,
+                ai_prompt,
+                ai_provider,
+                ai_num
+            ])
+
+    # ---- Лист 3: AI Instructions (с именами блоков) ----
+    ws_ai = wb.create_sheet("AI Instructions")
+    headers_ai = ["block_id", "block_name", "block_type", "var_name", "context_hash", "context", "instruction_text"]
+    ws_ai.append(headers_ai)
+
+    ai_instructions = {}
+    if 'ai_instruction_manager' in st.session_state:
+        ai_instructions = st.session_state.ai_instruction_manager.instructions
+
+    for block_id, block_ai in ai_instructions.items():
+        block_name = blocks.get(block_id, {}).get("name", "")
+        block_type = blocks.get(block_id, {}).get("block_type", "")
+        for var_name, contexts in block_ai.items():
+            for context_hash, data in contexts.items():
+                context = data.get("context", {})
+                context_str = json.dumps(context, ensure_ascii=False)
+                values = data.get("values", [])
+                for val in values:
+                    ws_ai.append([
+                        block_id,
+                        block_name,
+                        block_type,
+                        var_name,
+                        context_hash,
+                        context_str,
+                        val
+                    ])
+
+    # ---- Лист 4: Global Variables ----
+    ws_global = wb.create_sheet("Global Variables")
+    headers_global = ["var_name", "description", "source", "values"]
+    ws_global.append(headers_global)
+
+    global_vars = {}
+    if 'dynamic_var_manager' in st.session_state:
+        global_vars = st.session_state.dynamic_var_manager.get_all_dynamic_vars()
+
+    for var_name, var_data in global_vars.items():
+        values_str = "; ".join(var_data.get("values", []))
+        ws_global.append([
+            var_name,
+            var_data.get("description", ""),
+            var_data.get("source", ""),
+            values_str
+        ])
+
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+    return output
 if __name__ == "__main__":
     main()

@@ -71756,3 +71756,26 @@ tornado.websocket.WebSocketClosedError
 2026-08-05 12:18:47,347 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
 2026-08-05 12:18:51,516 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
 2026-08-05 12:18:54,873 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 12:01:49,684 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-13 14:41:12,576 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 14:41:15,086 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 14:41:22,482 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 14:41:29,808 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 14:41:34,176 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 14:41:40,105 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 14:41:42,986 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 14:41:55,173 - INFO - Loading dictionaries from C:\Users\reus\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pymorphy3_dicts_ru\data
+2026-08-13 14:41:55,268 - INFO - format: 2.4, revision: 417150, updated: 2022-01-08T22:09:24.565962
+2026-08-13 14:41:58,884 - INFO - Loading dictionaries from C:\Users\reus\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pymorphy3_dicts_ru\data
+2026-08-13 14:41:58,917 - INFO - format: 2.4, revision: 417150, updated: 2022-01-08T22:09:24.565962
+2026-08-13 16:09:04,029 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-13 16:10:28,174 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-13 16:13:40,958 - INFO - Login attempt - User: mag66035  - Status: FAILURE - IP: unknown
+2026-08-13 16:13:42,386 - INFO - Login attempt - User: mag66035  - Status: FAILURE - IP: unknown
+2026-08-13 16:13:44,254 - INFO - Login attempt - User: mag66035  - Status: FAILURE - IP: unknown
+2026-08-13 16:13:46,067 - INFO - Login attempt - User: mag66035 - Status: SUCCESS - IP: unknown
+2026-08-13 16:15:45,489 - INFO - Login attempt - User: mag66035 - Status: SUCCESS - IP: unknown
+2026-08-13 16:17:30,552 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-13 16:17:53,515 - INFO - Login attempt - User: info - Status: SUCCESS - IP: unknown
+2026-08-13 16:18:22,457 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-13 16:18:55,197 - INFO - Login attempt - User: mag66035 - Status: SUCCESS - IP: unknown

@@ -484,8 +484,33 @@ def render_domain_selector(phase: int = None, key_suffix: str = "") -> str:
     dm = st.session_state.domain_manager
     all_domains = dm.get_available_domains()
 
+    # ✅ ФИЛЬТРУЕМ ДОМЕНЫ ПО ПРАВАМ
+    from domain_permissions import DomainPermissionManager
+    perm_manager = DomainPermissionManager()
+    user_id = st.session_state.get('user_id')
+
+    # Если пользователь админ - показывает все домены
+    from database_settings.database import get_db
+    with get_db() as conn:
+        user = conn.execute("SELECT is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
+        is_admin = user and user['is_admin'] == 1
+
+    if not is_admin and user_id:
+        # Фильтруем только те домены, к которым есть доступ
+        filtered_domains = []
+        for domain in all_domains:
+            if perm_manager.can_access(user_id, st.session_state.get('current_site', 'steelborg'), domain):
+                filtered_domains.append(domain)
+        all_domains = filtered_domains
+
+        # Если нет доступа ни к одному домену - показываем сообщение
+        if not all_domains:
+            st.warning("🚫 У вас нет доступа ни к одному домену. Обратитесь к администратору.")
+            return 'default'
+
     current_site = st.session_state.get('current_site', 'steelborg')
     current_domain = st.session_state.get('current_domain', 'default')
+    # ... остальной код без изменений
     user_id = st.session_state.get('user_id')
 
     domain_options = {}
