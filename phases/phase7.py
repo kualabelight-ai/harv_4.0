@@ -1792,45 +1792,49 @@ class Phase7Interface:
             fm = FragmentManager("Без_категории")
             st.session_state.fragment_manager = fm
 
-        # ===== ДОБАВИТЬ СИНХРОНИЗАЦИЮ ID ПРОЕКТА =====
         current_project_id = st.session_state.get('current_project_id')
+        last_loaded = st.session_state.get('phase7_last_loaded_project')
 
-        # Если ID проекта не совпадает с сохраненным - синхронизируем
-        if current_project_id and st.session_state.get('phase7_last_loaded_project') != current_project_id:
-            # Обновляем ID, НО НЕ ОЧИЩАЕМ ДАННЫЕ (они еще не загружены)
-            st.session_state.phase7_last_loaded_project = current_project_id
-            print(f"🔄 phase7_last_loaded_project синхронизирован: {current_project_id}")
+        # ✅ ГЛАВНОЕ ИСПРАВЛЕНИЕ: проверяем ID проекта
+        if current_project_id != last_loaded:
+            # Проект изменился - очищаем старые данные
+            fm.fragments = []
+            fm.fragment_names = set()
+            fm.fragment_properties = defaultdict(list)
+            fm.templates = {}
 
-        # Если уже есть блоки - проверяем соответствие
-        if len(fm.fragments) > 0:
-            return True
+            # ✅ Очищаем кэш для этого проекта
+            if 'phase7_projects_data' in st.session_state.app_data:
+                st.session_state.app_data['phase7_projects_data'] = {}
 
-        # === ПРИОРИТЕТ ВОССТАНОВЛЕНИЯ ===
-        current_project_id = st.session_state.get('current_project_id', 'default')
+            # ✅ Удаляем старые ключи session_state
+            keys_to_delete = [key for key in list(st.session_state.keys())
+                              if key.startswith('edit_text_') or key.startswith('edit_html_')]
+            for key in keys_to_delete:
+                if key in st.session_state:
+                    del st.session_state[key]
 
-        # 1. Из phase7_projects_data
-        phase7_projects = st.session_state.app_data.get('phase7_projects_data', {})
-        project_data = phase7_projects.get(current_project_id)
+            st.session_state.phase7_initialized = False
+            st.session_state.variables_replaced = False
 
-        if project_data and project_data.get('blocks'):
-            self._restore_from_saved(project_data)
-            st.session_state.phase7_last_loaded_project = current_project_id
-            print(f"✅ Восстановлено {len(fm.fragments)} блоков из сохранённого проекта")
-            return True
-
-        # 2. Из файла проекта
-        if self._load_data():
-            st.session_state.phase7_last_loaded_project = current_project_id
-            return True
-
-        # 3. Из phase6
-        if 'phase6' in st.session_state.app_data:
+            # ✅ Загружаем новые данные
             success = self._load_data()
             if success:
                 st.session_state.phase7_last_loaded_project = current_project_id
                 return True
+            return False
 
-        print("⚠️ Данные не найдены. Нажмите 'Обновить данные из фазы 6'")
+        # Если данные уже есть - синхронизируем
+        if len(fm.fragments) > 0:
+            self._sync_session_state_to_blocks()
+            self._sync_html_to_session_state()
+            return True
+
+        # Если данных нет - загружаем
+        success = self._load_data()
+        if success:
+            st.session_state.phase7_last_loaded_project = current_project_id
+            return True
         return False
 
     def _restore_from_saved(self, saved_data: dict):
@@ -2842,7 +2846,6 @@ class Phase7Interface:
         log("=" * 60, "INFO")
         log("🔍 _load_data() CALLED", "INFO")
 
-        # Получаем путь к файлу проекта
         ctx_data = _get_context_data(self.context, st.session_state)
 
         if ctx_data['has_context'] and self.context is not None:
@@ -2857,6 +2860,20 @@ class Phase7Interface:
             domain = st.session_state.get('current_domain', 'default')
 
         log(f"   current_project_id: {current_project_id}", "INFO")
+
+        # ✅ ДОБАВИТЬ: проверяем, что файл существует
+        project_file = Path(f"sites/{site}/domains/{domain}/projects/{user_id}/{current_project_id}.json")
+        if not project_file.exists():
+            log(f"❌ Файл проекта НЕ СУЩЕСТВУЕТ: {project_file}", "ERROR")
+            return False
+
+        # ✅ ДОБАВИТЬ: игнорируем старый кэш при смене проекта
+        if current_project_id != st.session_state.get('phase7_last_loaded_project'):
+            if 'phase7_projects_data' in st.session_state.app_data:
+                st.session_state.app_data['phase7_projects_data'] = {}
+            log(f"🔄 Очищен кэш для проекта {current_project_id}", "INFO")
+
+
 
         # ✅ Если проект изменился - ПОЛНОСТЬЮ ОЧИЩАЕМ ВСЁ
         last_loaded = st.session_state.get('phase7_last_loaded_project')
@@ -5343,11 +5360,12 @@ def main(app_state=None, settings_mode=False, context=None):
     current_project_id = st.session_state.get('current_project_id')
     last_loaded = st.session_state.get('phase7_last_loaded_project')
 
-    # Если проект изменился - ПОЛНОСТЬЮ ОЧИЩАЕМ
     if current_project_id and last_loaded != current_project_id:
-        print(f"🔄 Смена проекта в main: {last_loaded} -> {current_project_id}")
+        # Принудительно сбрасываем флаг загрузки при смене проекта
+        st.session_state.phase7_initialized = False
+        st.session_state._force_reload_phase7 = True
 
-        # ✅ Очищаем fragment_manager
+        # Очищаем fragment_manager если есть
         if 'fragment_manager' in st.session_state:
             fm = st.session_state.fragment_manager
             fm.fragments = []

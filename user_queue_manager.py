@@ -467,12 +467,20 @@ class UserQueueManager:
                 task.error = f"Нет блоков в домене {domain_name}. Сначала создайте блоки вручную."
                 self._save_queue()
                 return
-            phase3_data = ctx.get_phase_data(3)
-            has_blocks = phase3_data and phase3_data.get('blocks') and len(phase3_data.get('blocks', {})) > 0
+            phase3_data = ctx.get_phase_data(3) or {}
+            has_blocks = bool(phase3_data.get('blocks')) and len(phase3_data.get('blocks', {})) > 0
+            ai_instructions = phase3_data.get('ai_instructions') or {}
+            has_ai_instructions = bool(ai_instructions)
+            phase3_generated = bool(phase3_data.get('phase3_generated')) and has_ai_instructions
+
             print(f"   phase3_data: {bool(phase3_data)}")
             print(f"   has_blocks: {has_blocks}")
+            print(f"   has_ai_instructions: {has_ai_instructions}")
+            print(f"   phase3_generated: {phase3_generated}")
 
-            if not has_blocks:
+            # Пропускаем только если AI-инструкции УЖЕ сгенерированы.
+            # Наличие блоков — не повод пропускать генерацию.
+            if not phase3_generated:
                 print("🚀 ЗАПУСК ФАЗЫ 3...")
                 task.current_phase = 3
                 task.message = "Фаза 3: создание AI-инструкций..."
@@ -484,17 +492,29 @@ class UserQueueManager:
 
                 print(f"   RESULT: {result}")
                 print(f"   success: {result.get('success') if result else 'None'}")
+                print(f"   count: {result.get('count') if result else 0}")
 
                 if result and result.get('success'):
-                    ctx.set_phase_data(3, result.get('phase3_data', {}))
+                    # Сохраняем и флаг, и инструкции (если есть в результате/контексте)
+                    new_phase3 = result.get('phase3_data') or {}
+                    new_phase3['phase3_generated'] = True
+                    if 'ai_instructions' not in new_phase3:
+                        # подтягиваем из менеджера/контекста после генерации
+                        from_ctx = ctx.get_phase_data(3) or {}
+                        if from_ctx.get('ai_instructions'):
+                            new_phase3['ai_instructions'] = from_ctx['ai_instructions']
+                    ctx.set_phase_data(3, new_phase3)
                     ctx.save()
                     print("✅ Фаза 3 выполнена")
                 else:
-                    error_msg = result.get('error', 'неизвестная ошибка') if result else 'result is None'
+                    error_msg = (
+                        (result.get('error') or result.get('message') or 'неизвестная ошибка')
+                        if result else 'result is None'
+                    )
                     print(f"❌ ОШИБКА ФАЗЫ 3: {error_msg}")
                     raise Exception(f"Ошибка фазы 3: {error_msg}")
             else:
-                print("⏭️ Фаза 3 пропущена (уже есть блоки)")
+                print("⏭️ Фаза 3 пропущена (AI-инструкции уже сгенерированы)")
 
             # ========== ФАЗА 4 ==========
             print("\n" + "-"*60)

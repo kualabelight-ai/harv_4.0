@@ -1229,20 +1229,113 @@ class VariableManager:
         return self.block_manager.get_block(block_id)
 
 def force_save_phase3_blocks(app_state=None):
-    """Сохраняет информацию о блоках в проект с ДЕТАЛЬНЫМ логированием"""
     print(f"💾 ===== force_save_phase3_blocks() START =====")
 
     if 'block_manager' not in st.session_state:
         print("❌ force_save_phase3_blocks: block_manager не в session_state")
         return False
 
-    print(f"   🔄 Загружаем свежие блоки...")
+    # ===== Принудительно загружаем фазу 2 из файла текущего проекта =====
+    from pathlib import Path
+    import json
+
+    project_id = st.session_state.get('current_project_id')
+    user_id = st.session_state.get('user_id')
+    site_name = st.session_state.get('current_site', 'steelborg')
+    domain_name = st.session_state.get('current_domain', 'default')
+
+    if project_id and user_id:
+        project_file = Path(f"sites/{site_name}/domains/{domain_name}/projects/{user_id}/{project_id}.json")
+        if project_file.exists():
+            try:
+                with open(project_file, 'r', encoding='utf-8') as f:
+                    file_data = json.load(f)
+                app_data = file_data.get('app_data', {})
+                phase2_data = app_data.get('phase2', {})
+                phase1_data = app_data.get('phase1', {})
+
+                st.session_state.phase2_data = phase2_data
+                st.session_state.loaded_data = {
+                    'category': phase1_data.get('category', ''),
+                    'characteristics': phase1_data.get('characteristics', [])
+                }
+                print(f"✅ Фаза 2 перезагружена из проекта: категория '{phase1_data.get('category', '')}'")
+            except Exception as e:
+                print(f"⚠️ Ошибка чтения файла проекта: {e}")
+        else:
+            print(f"⚠️ Файл проекта не найден: {project_file}")
+
+    # ===== 1. Перезагружаем блоки =====
     st.session_state.block_manager.load_blocks()
-
     blocks = st.session_state.block_manager.get_all_blocks()
-    print(f"   📊 Блоков в домене: {len(blocks)}")
 
-    # ✅ Сохраняем ВСЕ блоки (не только выбранные)
+    # ===== 2. Пересоздаём AIInstructionManager =====
+    from ai_settings.ai_module import AIInstructionManager
+
+    if project_id and user_id:
+        st.session_state.ai_instruction_manager = AIInstructionManager(
+            project_id=project_id,
+            user_id=user_id,
+            site_name=site_name,
+            domain_name=domain_name
+        )
+        st.session_state.ai_instruction_manager.reload()
+        ai_instructions = st.session_state.ai_instruction_manager.instructions
+        print(f"✅ AIInstructionManager пересоздан для проекта {project_id}")
+    else:
+        ai_instructions = {}
+        print("⚠️ Нет данных проекта, инструкции не загружены")
+
+    # ===== ВСТАВИТЬ БЛОК ОТЛАДКИ ЗДЕСЬ (ПОСЛЕ ЗАГРУЗКИ БЛОКОВ И AI ИНСТРУКЦИЙ) =====
+    print(f"\n{'='*60}")
+    print(f"🔍 ОТЛАДКА: force_save_phase3_blocks")
+    print(f"{'='*60}")
+    print(f"📌 Текущий проект: {project_id}")
+    print(f"📌 Пользователь: {user_id}")
+    print(f"📌 Домен: {domain_name}, Сайт: {site_name}")
+
+    print(f"\n📦 phase2_data в session_state:")
+    if 'phase2_data' in st.session_state:
+        p2 = st.session_state.phase2_data
+        print(f"   category: '{p2.get('category')}'")
+        print(f"   markers: {p2.get('markers', [])}")
+        print(f"   original_category: '{p2.get('original_category')}'")
+    else:
+        print(f"   ❌ phase2_data НЕТ в session_state")
+
+    print(f"\n📦 loaded_data в session_state:")
+    if 'loaded_data' in st.session_state:
+        ld = st.session_state.loaded_data
+        print(f"   category: '{ld.get('category')}'")
+        print(f"   characteristics: {len(ld.get('characteristics', []))}")
+    else:
+        print(f"   ❌ loaded_data НЕТ в session_state")
+
+    print(f"\n📦 МАРКЕРЫ В БЛОКАХ:")
+    for block_id, block in blocks.items():
+        variables_data = block.get('variables_data', {})
+        for var_name, var_data in variables_data.items():
+            if 'маркер' in var_name.lower():
+                values = var_data.get('values', [])
+                print(f"   Блок {block_id} -> {var_name}: {values}")
+
+    print(f"\n📦 МАРКЕРЫ В AI ИНСТРУКЦИЯХ:")
+    marker_count = 0
+    for b_id, b_data in ai_instructions.items():
+        for v_name, v_data in b_data.items():
+            for ctx_hash, ctx_info in v_data.items():
+                context = ctx_info.get('context', {})
+                markers = context.get('маркер') or context.get('маркеры')
+                if markers:
+                    print(f"   Блок {b_id} -> {v_name} -> {ctx_hash[:8]}: {markers}")
+                    marker_count += 1
+    if marker_count == 0:
+        print(f"   ⚠️ МАРКЕРОВ В AI ИНСТРУКЦИЯХ НЕТ!")
+
+    print(f"{'='*60}\n")
+    # ===== КОНЕЦ БЛОКА ОТЛАДКИ =====
+
+    # ===== 3. Собираем данные блоков =====
     blocks_data = {}
     for block_id, block in blocks.items():
         blocks_data[block_id] = {
@@ -1255,8 +1348,8 @@ def force_save_phase3_blocks(app_state=None):
             'settings': block.get('settings', {}),
             'variables_data': block.get('variables_data', {})
         }
-        print(f"      {block_id}: {block.get('name', 'N/A')} - {len(block.get('variables_data', {}))} переменных")
 
+    # ===== 4. Сохраняем phase3_data =====
     phase3_data = {
         'blocks': blocks_data,
         'blocks_count': len(blocks),
@@ -1265,23 +1358,20 @@ def force_save_phase3_blocks(app_state=None):
         'settings_saved': True,
         'saved_at': datetime.now().isoformat(),
         'phase3_generated': True,
-        'ai_instructions': st.session_state.ai_instruction_manager.instructions if 'ai_instruction_manager' in st.session_state else {}
+        'ai_instructions': ai_instructions
     }
 
     if 'app_data' in st.session_state:
         st.session_state.app_data['phase3'] = phase3_data
         st.session_state.app_data['phase3_generated'] = True
-        print(f"   ✅ Сохранено в session_state.app_data['phase3']")
 
     if app_state:
         app_state.set_phase_data(3, phase3_data)
         app_state.save_project()
-        print(f"   ✅ Сохранено в app_state")
 
-    print(f"✅ Phase3 settings saved to project: {len(blocks)} blocks")
+    print(f"✅ Phase3 сохранён: {len(blocks)} блоков, инструкций: {len(ai_instructions)}")
     print(f"💾 ===== force_save_phase3_blocks() END =====")
     return True
-
 def has_instructions_for_category(block_id, var_name, category, context=None):
     """Проверяет, есть ли уже сгенерированные инструкции для данной категории"""
 
@@ -1578,6 +1668,11 @@ def run_mass_generation_auto(app_state=None, context=None):
     print(f"🤖 AI переменных: {len(ai_vars)}")
 
     if not ai_vars:
+        for block_id, block in blocks.items():
+            vd = block.get("variables_data", {})
+            print(f"   Блок {block_id}: vars={list(vd.keys())}")
+            for vn, item in vd.items():
+                print(f"      {vn}: type={item.get('type')!r}")
         return {"success": True, "message": "Нет AI переменных", "count": 0}
 
     # ========== ПРОВЕРКА СУЩЕСТВУЮЩИХ ИНСТРУКЦИЙ ==========
@@ -1979,6 +2074,7 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
                     if app_state:
                         app_state.save_project()
                     st.success("✅ Настройки фазы 3 сохранены в проект!")
+                    time.sleep(0.5)
                     st.rerun()
                 else:
                     st.error("❌ Ошибка сохранения настроек")
@@ -2022,34 +2118,34 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
     st.markdown("### 💾 Управление сохранением")
 
     # Используем 4 колонки для большего количества кнопок
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
 
-    with col1:
-        if st.button("💾 Сохранить изменения", type="primary", use_container_width=True):
-            print("💾 Нажата кнопка 'Сохранить изменения'")
+    #with col1:
+        #if st.button("💾 Сохранить изменения", type="primary", use_container_width=True):
+            #print("💾 Нажата кнопка 'Сохранить изменения'")
 
-            # ✅ 1. Перезагружаем свежие блоки
-            if 'block_manager' in st.session_state:
-                st.session_state.block_manager.load_blocks()
+            ## ✅ 1. Перезагружаем свежие блоки
+            #if 'block_manager' in st.session_state:
+                #st.session_state.block_manager.load_blocks()
 
             # ✅ 2. Сохраняем через force_save_phase3_blocks
-            success = force_save_phase3_blocks(app_state)
+            #success = force_save_phase3_blocks(app_state)
 
-            if success:
+            #if success:
                 # ✅ 3. Дополнительно сохраняем в проект через app_state
-                if app_state:
-                    app_state.save_project()
+                #if app_state:
+                    #app_state.save_project()
 
                 # ✅ 4. Показываем статистику сохранения
-                blocks_saved = st.session_state.block_manager.get_all_blocks()
-                st.success(f"✅ Сохранено {len(blocks_saved)} блоков!")
-                st.balloons()
-                time.sleep(0.5)
-                st.rerun()
-            else:
-                st.error("❌ Ошибка сохранения")
+                #blocks_saved = st.session_state.block_manager.get_all_blocks()
+                #st.success(f"✅ Сохранено {len(blocks_saved)} блоков!")
+                #st.balloons()
+                #time.sleep(0.5)
+                #st.rerun()
+            #else:
+                #st.error("❌ Ошибка сохранения")
 
-    with col2:
+    with col1:
         if st.button("💾 Сохранить настройки", type="secondary", use_container_width=True):
             print("💾 Нажата кнопка 'Сохранить настройки'")
             if 'block_manager' in st.session_state:
@@ -2065,14 +2161,14 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
             else:
                 st.error("❌ Ошибка сохранения")
 
-    with col3:
+    with col2:
         if st.button("🔄 Перезагрузить", use_container_width=True):
             if 'block_manager' in st.session_state:
                 st.session_state.block_manager.load_blocks()
                 st.success("✅ Блоки перезагружены!")
                 st.rerun()
 
-    with col4:
+    with col3:
         # Проверяем, сохранены ли данные
         phase3_saved = has_phase3_data(app_state)
 
@@ -2276,8 +2372,8 @@ def show_ai_variables_overview():
                         errors_total += 1
                         results_details.append({"item": item, "error": str(e)})
 
-                progress_bar = st.progress(0)
-                status_text = st.empty()
+                progress_bar.empty()
+                status_text.empty()
 
                 if 'ai_instruction_manager' in st.session_state:
                     st.session_state.ai_instruction_manager.reload()
@@ -2307,26 +2403,31 @@ def show_ai_variables_overview():
     cols[4].write("**Статус**")
     cols[5].write("**Действия**")
 
+    # Обработчик изменения чекбокса
+    def on_checkbox_change(unique_key, checkbox_key):
+        current_value = st.session_state.get(checkbox_key, False)
+        if current_value:
+            st.session_state.selected_ai_vars.add(unique_key)
+        else:
+            st.session_state.selected_ai_vars.discard(unique_key)
+
     for idx, (block_id, block, var_name, var_data) in enumerate(ai_vars):
         unique_key = f"{block_id}||{var_name}"
+        is_checked = unique_key in st.session_state.selected_ai_vars
         checkbox_key = f"ai_chk_{idx}_{block_id}_{var_name}"
 
         col_chk, col_var, col_block, col_type, col_status, col_action = st.columns([0.5, 2, 2, 1, 2, 3])
 
         with col_chk:
-            is_checked = unique_key in st.session_state.selected_ai_vars
-            new_value = st.checkbox(
+            st.session_state[checkbox_key] = is_checked
+            st.checkbox(
                 "",
                 value=is_checked,
                 key=checkbox_key,
+                on_change=on_checkbox_change,
+                args=(unique_key, checkbox_key),
                 label_visibility="collapsed"
             )
-            if new_value != is_checked:
-                if new_value:
-                    st.session_state.selected_ai_vars.add(unique_key)
-                else:
-                    st.session_state.selected_ai_vars.discard(unique_key)
-                st.rerun()  # ← ОБНОВЛЯЕТ СЧЕТЧИК
 
         with col_var:
             st.write(f"`{var_name}`")
@@ -2340,8 +2441,9 @@ def show_ai_variables_overview():
             if st.button("🚀", key=f"gen_single_{block_id}_{var_name}"):
                 # одиночная генерация
                 pass
+
     if st.button("📋 Показать все инструкции для текущей категории", use_container_width=True):
-        st.session_state.phase3_tab = 6  # индекс вкладки "Все инструкции"
+        st.session_state.phase3_tab = 6
         st.rerun()
 def show_edit_mode(app_state=None):
     # ✅ Принудительно перезагружаем блоки при каждом открытии
@@ -5336,16 +5438,18 @@ def batch_generate_for_characteristic_with_data(block_id, var_name, var_data, bl
         ai_mgr = st.session_state.ai_instruction_manager
         print(f"   ✅ Пересоздан: {ai_mgr.storage_dir}")
 
-    # ========== ПРОВЕРЯЕМ API КЛЮЧ ==========
     from api_key_manager import APIKeyManager
-    key_manager = APIKeyManager(user_id=user_id, context=context)
-    if 'domain_manager' not in st.session_state:
-        st.session_state.domain_manager = DomainManager()
-    dm = st.session_state.domain_manager
-
-    api_key = key_manager.get_api_key(dm.site_name, dm.get_current_domain(), provider)
+    key_manager = APIKeyManager(user_id=user_id, context=context if hasattr(context, 'project_id') else None)
+    effective_site = site_name or st.session_state.get('current_site', 'steelborg')
+    effective_domain = domain_name or st.session_state.get('current_domain', 'default')
+    api_key = key_manager.get_api_key(effective_site, effective_domain, provider)
     if not api_key:
-        print(f"❌ Нет API ключа для {provider} в домене {dm.get_current_domain()}")
+        if 'domain_manager' not in st.session_state:
+            st.session_state.domain_manager = DomainManager()
+        dm = st.session_state.domain_manager
+        api_key = key_manager.get_api_key(dm.site_name, dm.get_current_domain(), provider)
+    if not api_key:
+        print(f"❌ Нет API ключа для {provider} (site={effective_site}, domain={effective_domain})")
         return {"success": 0, "errors": 0, "error": f"Нет API ключа для {provider}"}
 
     # ========== ЗАПУСКАЕМ ГЕНЕРАЦИЮ ==========
@@ -5631,15 +5735,19 @@ def batch_generate_for_other_with_data(block_id, var_name, var_data, block, prov
         print(f"   ✅ Пересоздан: {ai_mgr.storage_dir}")
 
     # ========== ПРОВЕРЯЕМ API КЛЮЧ ==========
+    # ========== ПРОВЕРЯЕМ API КЛЮЧ ==========
     from api_key_manager import APIKeyManager
     key_manager = APIKeyManager(user_id=user_id, context=context if hasattr(context, 'project_id') else None)
-    if 'domain_manager' not in st.session_state:
-        st.session_state.domain_manager = DomainManager()
-    dm = st.session_state.domain_manager
-
-    api_key = key_manager.get_api_key(dm.site_name, dm.get_current_domain(), provider)
+    effective_site = site_name or st.session_state.get('current_site', 'steelborg')
+    effective_domain = domain_name or st.session_state.get('current_domain', 'default')
+    api_key = key_manager.get_api_key(effective_site, effective_domain, provider)
     if not api_key:
-        print(f"❌ Нет API ключа для {provider} в домене {dm.get_current_domain()}")
+        if 'domain_manager' not in st.session_state:
+            st.session_state.domain_manager = DomainManager()
+        dm = st.session_state.domain_manager
+        api_key = key_manager.get_api_key(dm.site_name, dm.get_current_domain(), provider)
+    if not api_key:
+        print(f"❌ Нет API ключа для {provider} (site={effective_site}, domain={effective_domain})")
         return {"success": 0, "errors": 0, "error": f"Нет API ключа для {provider}"}
 
     # ========== ЗАПУСКАЕМ ГЕНЕРАЦИЮ ==========

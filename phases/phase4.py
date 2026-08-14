@@ -911,17 +911,13 @@ def save_phase4_settings(app_state=None, context=None):
     st.session_state.phase4_settings = settings
 
     # ✅ ПРИОРИТЕТ 1: СОХРАНЯЕМ В КОНТЕКСТ
-    if context is not None:
-        # Получаем текущие данные фазы 4
+    # ===== ИСПРАВЛЕНИЕ: проверяем, что context - объект, а не словарь =====
+    if context is not None and hasattr(context, 'get_phase_data'):
         phase4_data = context.get_phase_data(4) or {}
         phase4_data['settings'] = settings
-
-        # Сохраняем промпты если есть
         if 'phase4_generated_prompts' in st.session_state:
             phase4_data['prompts'] = st.session_state.phase4_generated_prompts
             phase4_data['generated_count'] = len(st.session_state.phase4_generated_prompts)
-        phase4_data = context.get_phase_data(4) or {}
-        phase4_data['settings'] = settings
         context.set_phase_data(4, phase4_data)
         context.save()
         print(f"💾 Settings saved to CONTEXT: global_prompts={settings['global_prompts']}")
@@ -1079,7 +1075,16 @@ def show_generation_mode(phase1_data, category, markers, settings_mode=False, ap
         if project_file.exists():
             with open(project_file, 'r', encoding='utf-8') as f:
                 file_data = json.load(f)
-
+            # ✅ ВСТАВИТЬ ЭТОТ БЛОК ЗДЕСЬ (СРАЗУ ПОСЛЕ ЗАГРУЗКИ file_data)
+            phase2_in_file = file_data.get('app_data', {}).get('phase2', {})
+            if phase2_in_file:
+                markers = phase2_in_file.get('markers', markers)
+                # Обновляем session_state, чтобы другие части приложения тоже получили свежие данные
+                st.session_state.phase2_data = phase2_in_file
+                if 'app_data' in st.session_state:
+                    st.session_state.app_data['phase2'] = phase2_in_file
+                print(f"✅ Загружены данные phase2 из файла: {len(markers)} маркеров")
+                # КОНЕЦ ВСТАВКИ
             phase1_in_file = file_data.get('app_data', {}).get('phase1', {})
             chars = phase1_in_file.get('characteristics', [])
 
@@ -1154,7 +1159,72 @@ def show_generation_mode(phase1_data, category, markers, settings_mode=False, ap
 
     if not settings_mode:
         st.header("🎯 Генерация промптов")
+        # ===== ВСТАВИТЬ БЛОК ОТЛАДКИ В phase4.py (show_generation_mode) =====
+    print(f"\n{'='*60}")
+    print(f"🔍 ОТЛАДКА PHASE4: show_generation_mode")
+    print(f"{'='*60}")
 
+    # Откуда взялись маркеры
+    print(f"📌 Маркеры в переменной 'markers': {markers}")
+    print(f"📌 Категория: '{category}'")
+    print(f"📌 Характеристик: {len(characteristics)}")
+
+    # Проверяем phase2_data в session_state
+    if 'phase2_data' in st.session_state:
+        p2 = st.session_state.phase2_data
+        print(f"\n📦 phase2_data в session_state:")
+        print(f"   category: '{p2.get('category')}'")
+        print(f"   markers: {p2.get('markers', [])}")
+        print(f"   original_category: '{p2.get('original_category')}'")
+    else:
+        print(f"\n⚠️ phase2_data НЕТ в session_state")
+
+    # Проверяем app_data
+    if 'app_data' in st.session_state and 'phase2' in st.session_state.app_data:
+        ap2 = st.session_state.app_data['phase2']
+        print(f"\n📦 app_data['phase2']:")
+        print(f"   category: '{ap2.get('category')}'")
+        print(f"   markers: {ap2.get('markers', [])}")
+    else:
+        print(f"\n⚠️ app_data['phase2'] НЕТ")
+
+    # Проверяем phase3_data (откуда берутся блоки)
+    if 'app_data' in st.session_state and 'phase3' in st.session_state.app_data:
+        phase3 = st.session_state.app_data['phase3']
+        ai_instructions = phase3.get('ai_instructions', {})
+        print(f"\n📦 phase3_data в app_data:")
+        print(f"   blocks_count: {phase3.get('blocks_count', 0)}")
+        print(f"   ai_instructions: {len(ai_instructions)} блоков")
+
+        # Ищем маркеры в ai_instructions
+        marker_count = 0
+        for b_id, b_data in ai_instructions.items():
+            for v_name, v_data in b_data.items():
+                for ctx_hash, ctx_info in v_data.items():
+                    context = ctx_info.get('context', {})
+                    markers_in_ctx = context.get('маркер') or context.get('маркеры')
+                    if markers_in_ctx:
+                        print(f"   ✅ Маркер в AI инструкциях: {markers_in_ctx}")
+                        marker_count += 1
+                        if marker_count >= 3:
+                            break
+                if marker_count >= 3:
+                    break
+            if marker_count >= 3:
+                break
+        if marker_count == 0:
+            print(f"   ⚠️ МАРКЕРОВ В AI ИНСТРУКЦИЯХ НЕТ!")
+    else:
+        print(f"\n⚠️ phase3_data НЕТ в app_data")
+
+    # Проверяем глобальные переменные (dynamic_var_manager)
+    if 'dynamic_var_manager' in st.session_state:
+        dm_vars = st.session_state.dynamic_var_manager.get_all_dynamic_vars()
+        if 'маркер' in dm_vars:
+            print(f"\n📦 Глобальная переменная 'маркер': {dm_vars['маркер'].get('values', [])}")
+
+    print(f"{'='*60}\n")
+    # ===== КОНЕЦ БЛОКА ОТЛАДКИ =====
     # Информация
     col_info1, col_info2 = st.columns(2)
     with col_info1:
@@ -1531,12 +1601,41 @@ def show_generation_mode(phase1_data, category, markers, settings_mode=False, ap
     if not settings_mode:
         if st.button("🚀 Сгенерировать все промпты", type="primary", use_container_width=True):
             with st.spinner("Генерация промптов..."):
+                # ===== ПРИНУДИТЕЛЬНО ОБНОВЛЯЕМ МАРКЕРЫ ПЕРЕД ГЕНЕРАЦИЕЙ =====
+                print(f"\n{'='*60}")
+                print(f"🔍 ГЕНЕРАЦИЯ ПРОМПТОВ: обновление маркеров")
+                print(f"{'='*60}")
+
+                # 1. Берём свежие маркеры из phase2_data
+                fresh_phase2 = st.session_state.get('phase2_data', {})
+                fresh_markers = fresh_phase2.get('markers', [])
+                print(f"📌 Маркеры из phase2_data: {fresh_markers}")
+
+                # 2. Если пусто, пробуем из app_data
+                if not fresh_markers and 'app_data' in st.session_state:
+                    fresh_markers = st.session_state.app_data.get('phase2', {}).get('markers', [])
+                    print(f"📌 Маркеры из app_data: {fresh_markers}")
+
+                # 3. Если всё ещё пусто, используем переданные (fallback)
+                if not fresh_markers:
+                    fresh_markers = markers
+                    print(f"📌 Маркеры из параметров (fallback): {fresh_markers}")
+
+                # 4. Обновляем переменную markers
+                markers = fresh_markers
+                print(f"✅ ИТОГОВЫЕ маркеры для генерации: {markers}")
+                print(f"{'='*60}\n")
+
+                # 5. СОЗДАЁМ НОВЫЙ РОТАТОР с актуальными маркерами
                 if markers:
                     st.session_state.marker_rotator = MarkerRotator(markers)
+                else:
+                    st.session_state.marker_rotator = None
 
+                # Очищаем статистику использования
                 st.session_state.prompt_generator.reset_usage_tracking()
 
-                # ========== 7. ГЕНЕРАЦИЯ ПРОМПТОВ ==========
+                # ========== ГЕНЕРАЦИЯ ПРОМПТОВ ==========
                 all_prompts = []
 
                 for char in characteristics:
@@ -1546,15 +1645,17 @@ def show_generation_mode(phase1_data, category, markers, settings_mode=False, ap
                     char_type = "unique" if is_unique else "regular"
 
                     char_setting = CHAR_SETTINGS.get(char_id, {})
-
-                    # ✅ БЕЗОПАСНОЕ ПОЛУЧЕНИЕ prompts_per_value
                     prompts_per_value = char_setting.get('prompts_per_value', GLOBAL_PROMPTS_PER_VALUE)
+
                     if isinstance(prompts_per_value, dict):
                         prompts_per_value = GLOBAL_PROMPTS_PER_VALUE
                     try:
                         prompts_per_value = int(prompts_per_value)
                     except (TypeError, ValueError):
                         prompts_per_value = GLOBAL_PROMPTS_PER_VALUE
+
+                    if prompts_per_value == 0:
+                        continue
 
                     if char_type == "unique" and unique_blocks:
                         selected_block_id = SELECTED_UNIQUE_BLOCK_ID
@@ -1577,10 +1678,12 @@ def show_generation_mode(phase1_data, category, markers, settings_mode=False, ap
                         num_prompts_per_value=prompts_per_value,
                         char_type=char_type,
                         category=category,
-                        markers=markers,
-                        marker_rotator=marker_rotator
+                        markers=markers,  # ← передаём свежие маркеры
+                        marker_rotator=st.session_state.marker_rotator
                     )
                     all_prompts.extend(prompts)
+
+                    # ... остальной код (other блоки, сохранение и т.д.) ...
 
                 if other_blocks:
                     for block_id, settings in st.session_state.phase4_other_blocks_settings.items():

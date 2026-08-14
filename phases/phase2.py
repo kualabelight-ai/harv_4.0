@@ -6,6 +6,7 @@ from difflib import get_close_matches
 from styles import load_css
 from domain_manager import DomainManager
 import warnings
+import time
 warnings.filterwarnings("ignore", message=r".*ScriptRunContext.*")
 import os
 
@@ -863,7 +864,8 @@ def main(app_state=None, settings_mode=False, site_config=None, task_config=None
                 if save_to_session_state(app_state, context):
                     msg = "✅ Данные сохранены в проект!" if not st.session_state.custom_category_mode else "✅ Данные сохранены в проект (ручной режим)!"
                     st.success(msg)
-
+                    time.sleep(0.5)
+                    st.rerun()
                 else:
                     st.error("❌ Ошибка сохранения")
 

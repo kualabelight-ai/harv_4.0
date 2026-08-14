@@ -29,8 +29,12 @@ def get_theme_colors():
             'error': '#c62828',
             'card_bg': '#f5f0e6',
             'card_hover': '#ede5d9',
-            'highlight_bg': '#90EE90',  # Добавлено для подсветки
-            'highlight_hover': '#6BCB6B',  # Добавлено для подсветки
+            'highlight_bg': '#90EE90',
+            'highlight_hover': '#6BCB6B',
+            'badge_bg': '#e8f4fd',
+            'badge_text': '#0066cc',
+            'badge_default_bg': '#f0e6d4',
+            'badge_default_text': '#8b7355',
         }
     else:
         return {
@@ -49,8 +53,12 @@ def get_theme_colors():
             'error': '#ef5350',
             'card_bg': '#2d2d2d',
             'card_hover': '#3d3d3d',
-            'highlight_bg': '#2e5c2e',  # Темно-зеленый для темной темы
-            'highlight_hover': '#3d7a3d',  # Добавлено для подсветки
+            'highlight_bg': '#2e5c2e',
+            'highlight_hover': '#3d7a3d',
+            'badge_bg': '#2a3a4a',
+            'badge_text': '#7fb8e0',
+            'badge_default_bg': '#3a3a2a',
+            'badge_default_text': '#b0a080',
         }
 
 def load_css():
@@ -82,7 +90,61 @@ def load_css():
         h2 {{ font-size: 1.5rem; font-weight: 500; margin-bottom: 0.75rem; }}
         h3 {{ font-size: 1.25rem; font-weight: 500; margin-bottom: 0.5rem; }}
 
-        /* ========== ПОДСВЕТКА ЗАМЕН (ДОБАВЛЕНО ИЗ PHASE6) ========== */
+        /* ========== СТИЛИ ДЛЯ МАРКЕРОВ (ДОБАВЛЕНО) ========== */
+        .marker-name {{
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            flex-wrap: wrap !important;
+            font-size: 14px !important;
+            color: {colors['text']} !important;
+        }}
+        
+        .marker-type-badge {{
+            font-size: 10px !important;
+            padding: 1px 8px !important;
+            border-radius: 10px !important;
+            margin-left: 4px !important;
+            background-color: {colors['badge_bg']} !important;
+            color: {colors['badge_text']} !important;
+            font-weight: 500 !important;
+            display: inline-block !important;
+            line-height: 1.4 !important;
+            white-space: nowrap !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            letter-spacing: 0.3px !important;
+            border: none !important;
+        }}
+        
+        .marker-type-badge-default {{
+            background-color: {colors['badge_default_bg']} !important;
+            color: {colors['badge_default_text']} !important;
+        }}
+        
+        .marker-type-badge-priority {{
+            background-color: {colors['badge_bg']} !important;
+            color: {colors['badge_text']} !important;
+        }}
+
+        /* Стили для контейнера маркеров */
+        .markers-table-container {{
+            background-color: {colors['bg_secondary']} !important;
+            border: 1px solid {colors['border']} !important;
+            border-radius: 8px !important;
+            padding: 12px !important;
+            margin-bottom: 16px !important;
+        }}
+        
+        .section-header {{
+            color: {colors['text_secondary']} !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            padding: 6px 0 !important;
+            margin: 8px 0 !important;
+            border-bottom: 1px solid {colors['border']} !important;
+        }}
+
+        /* ========== ПОДСВЕТКА ЗАМЕН ========== */
         .replacement-highlight {{
             background-color: {colors['highlight_bg']} !important;
             padding: 2px 4px !important;
@@ -99,7 +161,7 @@ def load_css():
             box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
         }}
         
-        /* ========== КОНТЕЙНЕРЫ ДЛЯ ТЕКСТОВ (ДОБАВЛЕНО ИЗ PHASE6) ========== */
+        /* ========== КОНТЕЙНЕРЫ ДЛЯ ТЕКСТОВ ========== */
         .text-container {{
             background-color: {colors['bg_secondary']} !important;
             padding: 15px !important;
@@ -278,11 +340,8 @@ def render_theme_toggle():
 
     theme_icon = "🌙" if st.session_state.theme == 'light' else "☀️"
 
-    # Используем компонент button с правильным ключом
-    # Добавляем отступ сверху, чтобы кнопка не перекрывала контент
     st.markdown('<div style="height: 60px;"></div>', unsafe_allow_html=True)
 
-    # Создаем колонки для позиционирования
     col1, col2, col3 = st.columns([10, 1, 0.5])
 
     with col3:

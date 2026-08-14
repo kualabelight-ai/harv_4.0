@@ -369,7 +369,7 @@ class AIGenerator:
         """Вызов через agentplatform.ru (OpenAI-совместимый API)"""
         results = []
 
-        # ===== ЗАГРУЖАЕМ ДОМЕН ИЗ ФАЙЛА ПОЛЬЗОВАТЕЛЯ =====
+                # ===== ЗАГРУЖАЕМ ДОМЕН ИЗ ФАЙЛА ПОЛЬЗОВАТЕЛЯ =====
         site_name = "steelborg"
         domain_name = "default"
 
@@ -388,7 +388,7 @@ class AIGenerator:
             except Exception as e:
                 print(f"⚠️ Ошибка загрузки домена: {e}")
 
-        # Если не загрузился – пробуем из domain_manager
+        # Fallback только если из файла не получилось
         if domain_name == "default":
             try:
                 if 'domain_manager' in st.session_state:
@@ -400,27 +400,7 @@ class AIGenerator:
 
             # ... остальной код метода ...
 
-        # ПРИОРИТЕТ 1: Пытаемся получить из domain_manager
-        try:
-            if 'domain_manager' in st.session_state:
-                dm = st.session_state.domain_manager
-                site_name = dm.site_name
-                domain_name = dm.get_current_domain()
-        except:
-            pass
 
-        # ПРИОРИТЕТ 2: Если domain_manager не помог, пробуем из контекста (если есть)
-        if site_name == "unknown" or domain_name == "unknown":
-            try:
-                # Пытаемся получить context из параметров функции или из других источников
-                # В текущей версии context не передается в этот метод
-                # Используем session_state как fallback
-                if 'current_site' in st.session_state:
-                    site_name = st.session_state.get('current_site', 'steelborg')
-                if 'current_domain' in st.session_state:
-                    domain_name = st.session_state.get('current_domain', 'default')
-            except:
-                pass
 
         # ✅ ПОЛУЧАЕМ API КЛЮЧ (БЕЗ ДУБЛИРОВАНИЯ)
         key_manager = APIKeyManager()

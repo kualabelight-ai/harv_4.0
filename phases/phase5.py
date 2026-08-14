@@ -1313,39 +1313,27 @@ class GenerationManager:
 
 def _phase5_editor_changed():
     """Обрабатывает изменение checkbox в таблице Phase 5."""
-
     editor_key = st.session_state.get('_phase5_editor_current_key')
-
     if not editor_key:
         return
 
     editor_state = st.session_state.get(editor_key)
-
     if not editor_state:
         return
 
     edited_rows = editor_state.get('edited_rows', {})
-
     if not edited_rows:
         return
 
-    visible_prompt_ids = st.session_state.get(
-        '_phase5_editor_prompt_ids',
-        []
-    )
+    visible_prompt_ids = st.session_state.get('_phase5_editor_prompt_ids', [])
+    if not visible_prompt_ids:
+        return
 
-    selected_ids = set(
-        st.session_state.phase5.get(
-            'selected_prompt_ids',
-            []
-        )
-    )
-
+    selected_ids = set(st.session_state.phase5.get('selected_prompt_ids', []))
     if 'temp_selections' not in st.session_state:
         st.session_state.temp_selections = {}
 
     for row_index, changes in edited_rows.items():
-
         try:
             row_index = int(row_index)
         except (TypeError, ValueError):
@@ -1355,7 +1343,6 @@ def _phase5_editor_changed():
             continue
 
         prompt_id = visible_prompt_ids[row_index]
-
         if not prompt_id:
             continue
 
@@ -1363,7 +1350,6 @@ def _phase5_editor_changed():
             continue
 
         is_selected = bool(changes['Выбрать'])
-
         if is_selected:
             selected_ids.add(prompt_id)
             st.session_state.temp_selections[prompt_id] = True
@@ -1371,21 +1357,16 @@ def _phase5_editor_changed():
             selected_ids.discard(prompt_id)
             st.session_state.temp_selections[prompt_id] = False
 
+    # Обновляем выбранные ID
     st.session_state.phase5['selected_prompt_ids'] = list(selected_ids)
 
+    # Пересчитываем статистику
     results = st.session_state.phase5.get('results', {})
     prompts = st.session_state.get('phase5_prompts', [])
 
     total = len(prompts) if prompts else len(results)
-    success = sum(
-        1 for r in results.values()
-        if r.get('status') == 'success'
-    )
-    error = sum(
-        1 for r in results.values()
-        if r.get('status') == 'error'
-    )
-
+    success = sum(1 for r in results.values() if r.get('status') == 'success')
+    error = sum(1 for r in results.values() if r.get('status') == 'error')
     completed = success + error
     pending = max(0, total - completed)
 
@@ -1398,10 +1379,12 @@ def _phase5_editor_changed():
         'selected': len(selected_ids)
     }
 
-    print(
-        f"☑️ Изменение checkbox Phase 5: "
-        f"selected={len(selected_ids)}"
-    )
+    # FIX: Сохраняем изменения в файл
+    data_manager = Phase5DataManager()
+    data_manager.save_to_app_data()
+
+    # FIX: Принудительно обновляем интерфейс
+    st.rerun()
 # --- Компоненты интерфейса ---
 class Phase5UIComponents:
     """Компоненты пользовательского интерфейса фазы 5"""

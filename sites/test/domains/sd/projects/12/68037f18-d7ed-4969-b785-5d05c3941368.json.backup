@@ -1,113 +1,216 @@
 {
-  "project_id": "3d34132b-9b07-490f-a0bc-8ade018d8887",
-  "project_name": "кекус",
-  "category": "Экраны",
+  "project_id": "68037f18-d7ed-4969-b785-5d05c3941368",
+  "project_name": "6у5го6р",
+  "category": "Асбестоцементная труба",
   "current_phase": 4,
   "app_data": {
     "phase1": {
-      "category": "Экраны",
-      "project_name": "кекус",
+      "category": "Асбестоцементная труба",
+      "project_name": "6у5го6р",
       "characteristics": [
         {
-          "char_id": "9118681 01",
-          "char_name": "Вид",
-          "original_name": "Вид",
+          "char_id": "00001311",
+          "char_name": "Диаметр",
+          "original_name": "Диаметр",
           "is_unique": false,
-          "unit": "",
+          "unit": "мм",
           "values": [
             {
-              "value": "противоослепляющие",
-              "count": 5,
-              "offers": 5
+              "value": "200",
+              "count": 96,
+              "offers": 719
             },
             {
-              "value": "шумозащитные",
-              "count": 4,
-              "offers": 4
+              "value": "150",
+              "count": 86,
+              "offers": 653
+            },
+            {
+              "value": "100",
+              "count": 76,
+              "offers": 611
+            },
+            {
+              "value": "300",
+              "count": 93,
+              "offers": 611
+            },
+            {
+              "value": "400",
+              "count": 91,
+              "offers": 481
             }
           ]
         },
         {
-          "char_id": "9118681 02",
-          "char_name": "Размер",
-          "original_name": "Размер",
+          "char_id": "00001312",
+          "char_name": "Толщина стенки",
+          "original_name": "Толщина стенки",
           "is_unique": false,
-          "unit": "",
+          "unit": "мм",
           "values": [
             {
-              "value": "230х1200",
-              "count": 1,
-              "offers": 1
+              "value": "11",
+              "count": 45,
+              "offers": 121
             },
             {
-              "value": "230х900",
-              "count": 1,
-              "offers": 1
+              "value": "9",
+              "count": 34,
+              "offers": 106
             },
             {
-              "value": "240х1200",
-              "count": 1,
-              "offers": 1
+              "value": "14",
+              "count": 31,
+              "offers": 71
             },
             {
-              "value": "240х600",
-              "count": 1,
-              "offers": 1
+              "value": "16",
+              "count": 29,
+              "offers": 63
             },
             {
-              "value": "240х900",
-              "count": 1,
-              "offers": 1
+              "value": "13",
+              "count": 32,
+              "offers": 59
             }
           ]
         },
         {
-          "char_id": "9118681 03",
-          "char_name": "Перфорация",
-          "original_name": "Перфорация",
+          "char_id": "00004059",
+          "char_name": "Маркировка",
+          "original_name": "Маркировка",
           "is_unique": false,
           "unit": "",
           "values": [
             {
-              "value": "без перфорации",
-              "count": 1,
-              "offers": 1
+              "value": "БНТ",
+              "count": 191,
+              "offers": 1758
             },
             {
-              "value": "в виде жалюзи",
-              "count": 1,
-              "offers": 1
+              "value": "ВТ9",
+              "count": 78,
+              "offers": 664
             },
             {
-              "value": "в виде круглых отверстий 20%",
-              "count": 1,
-              "offers": 1
+              "value": "ВТ6",
+              "count": 81,
+              "offers": 467
             },
             {
-              "value": "в виде круглых отверстий 39%",
-              "count": 1,
-              "offers": 1
+              "value": "БНТТ",
+              "count": 33,
+              "offers": 185
+            },
+            {
+              "value": "ВТ",
+              "count": 28,
+              "offers": 132
+            }
+          ]
+        },
+        {
+          "char_id": "9112110 01",
+          "char_name": "Материал",
+          "original_name": "Материал",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "асбестоцементная",
+              "count": 720,
+              "offers": 4008
+            }
+          ]
+        },
+        {
+          "char_id": "9112110 02",
+          "char_name": "Назначение",
+          "original_name": "Назначение",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "водопроводная",
+              "count": 250,
+              "offers": 1390
+            },
+            {
+              "value": "теплопроводная",
+              "count": 19,
+              "offers": 31
+            }
+          ]
+        },
+        {
+          "char_id": "9112110 03",
+          "char_name": "Тип трубы",
+          "original_name": "Тип трубы",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "безнапорная",
+              "count": 224,
+              "offers": 1943
+            },
+            {
+              "value": "напорная",
+              "count": 269,
+              "offers": 1421
+            }
+          ]
+        },
+        {
+          "char_id": "9112110 04",
+          "char_name": "Форма",
+          "original_name": "Форма",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "круглая",
+              "count": 720,
+              "offers": 4008
+            }
+          ]
+        },
+        {
+          "char_id": "9112110 05",
+          "char_name": "Исполнение",
+          "original_name": "Исполнение",
+          "is_unique": false,
+          "unit": "",
+          "values": [
+            {
+              "value": "с муфтой",
+              "count": 32,
+              "offers": 1340
             }
           ]
         }
       ],
       "metadata": {
-        "source_file": "Экраны.json",
-        "original_category": "Экраны",
-        "total_items": 9,
-        "selected_characteristics_count": 3,
-        "export_timestamp": "2026-08-14T12:35:28.766007"
+        "source_file": "Асбестоцементная труба.json",
+        "original_category": "Асбестоцементная труба",
+        "total_items": 720,
+        "selected_characteristics_count": 8,
+        "export_timestamp": "2026-08-14T17:41:34.621778"
       }
     },
     "phase2": {
-      "category": "Экраны для радиаторов",
-      "original_category": "Экраны",
+      "category": "Асбестоцементная труба",
+      "original_category": "Асбестоцементная труба",
       "markers": [
-        "продукция"
+        "асбестовая труба",
+        "асбестовые трубы",
+        "трубы асбестоцементные",
+        "цементно асбестовая труба"
       ],
-      "source_category": "Экраны",
+      "source_category": "Асбестоцементная труба",
       "custom_category_mode": false,
-      "project_id": "3d34132b-9b07-490f-a0bc-8ade018d8887"
+      "project_id": "68037f18-d7ed-4969-b785-5d05c3941368"
     },
     "phase3": {
       "blocks": {
@@ -119,17 +222,17 @@
           "template": "Запрещены конструкции вида: \"... , что ...\" и тире между подлежащим и сказуемым.\n{стиль_текста}.\nОбъем текста: {объем_требование}.\n\n{контекст_категория}.\n{описание_вступление_ai}, один раз используй \"{маркер}\" и {описание_требование_ai}.\n\n{ограничение_повторы}.\n{требование_тошноты}.\n\nОбрати внимание: {стоп_слова}.",
           "variables": [
             "объем_требование",
-            "стиль_текста",
-            "описание_вступление",
-            "ограничение_повторы",
-            "описание_требование",
-            "контекст_категория",
-            "маркер",
-            "стоп_слова",
-            "описание_требование_ai",
-            "технический_тон",
             "описание_вступление_ai",
-            "требование_тошноты"
+            "технический_тон",
+            "описание_требование_ai",
+            "стиль_текста",
+            "требование_тошноты",
+            "описание_требование",
+            "ограничение_повторы",
+            "маркер",
+            "описание_вступление",
+            "контекст_категория",
+            "стоп_слова"
           ],
           "settings": {
             "добавлять_скобки_переменную": true,
@@ -2735,27 +2838,234 @@
       "characteristic_blocks": 2,
       "other_blocks": 15,
       "settings_saved": true,
-      "saved_at": "2026-08-14T12:35:15.766531",
+      "saved_at": "2026-08-14T17:41:51.284866",
       "phase3_generated": true,
       "ai_instructions": {}
     },
-    "phase4": {},
+    "phase4": {
+      "settings": {
+        "char_settings": {
+          "00001311": {
+            "prompts_per_value": 1,
+            "char_name": "Диаметр"
+          },
+          "00001312": {
+            "prompts_per_value": 1,
+            "char_name": "Толщина стенки"
+          },
+          "00004059": {
+            "prompts_per_value": 1,
+            "char_name": "Маркировка"
+          },
+          "9112110 01": {
+            "prompts_per_value": 1,
+            "char_name": "Материал"
+          },
+          "9112110 02": {
+            "prompts_per_value": 1,
+            "char_name": "Назначение"
+          },
+          "9112110 03": {
+            "prompts_per_value": 1,
+            "char_name": "Тип трубы"
+          },
+          "9112110 04": {
+            "prompts_per_value": 1,
+            "char_name": "Форма"
+          },
+          "9112110 05": {
+            "prompts_per_value": 1,
+            "char_name": "Исполнение"
+          }
+        },
+        "other_blocks_settings": {
+          "description_template": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779776713": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779778327": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779778598": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779778817": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779778987": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779779151": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779779413": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779780432": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779781080": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779963133": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1779963989": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1780481514": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "new_block_1780481860": {
+            "enabled": true,
+            "prompts_count": 1
+          },
+          "product_header_template": {
+            "enabled": true,
+            "prompts_count": 1
+          }
+        },
+        "selected_regular_block_id": "new_block_1771409674",
+        "selected_unique_block_id": "new_block_1769685883",
+        "global_prompts": 1,
+        "global_other_prompts": 1
+      },
+      "prompts": []
+    },
     "phase5": {},
     "phase6": {},
     "phase7": {},
-    "category": "Экраны",
-    "project_name": "кекус",
-    "created_at": "2026-08-14T12:24:58.291589",
-    "updated_at": "2026-08-14T12:36:13.800526",
+    "category": "Асбестоцементная труба",
+    "project_name": "6у5го6р",
+    "created_at": "2026-08-14T17:41:21.953828",
+    "updated_at": "2026-08-14T17:42:13.957624",
     "phase5_completed": false,
     "phase5_results": {},
     "phase4_generated_prompts": [],
     "site_name": "test",
     "domain_name": "sd",
-    "phase3_generated": true
+    "phase3_generated": true,
+    "phase4_settings": {
+      "char_settings": {
+        "00001311": {
+          "prompts_per_value": 1,
+          "char_name": "Диаметр"
+        },
+        "00001312": {
+          "prompts_per_value": 1,
+          "char_name": "Толщина стенки"
+        },
+        "00004059": {
+          "prompts_per_value": 1,
+          "char_name": "Маркировка"
+        },
+        "9112110 01": {
+          "prompts_per_value": 1,
+          "char_name": "Материал"
+        },
+        "9112110 02": {
+          "prompts_per_value": 1,
+          "char_name": "Назначение"
+        },
+        "9112110 03": {
+          "prompts_per_value": 1,
+          "char_name": "Тип трубы"
+        },
+        "9112110 04": {
+          "prompts_per_value": 1,
+          "char_name": "Форма"
+        },
+        "9112110 05": {
+          "prompts_per_value": 1,
+          "char_name": "Исполнение"
+        }
+      },
+      "other_blocks_settings": {
+        "description_template": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779776713": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778327": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778598": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778817": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779778987": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779779151": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779779413": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779780432": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779781080": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779963133": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1779963989": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1780481514": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "new_block_1780481860": {
+          "enabled": true,
+          "prompts_count": 1
+        },
+        "product_header_template": {
+          "enabled": true,
+          "prompts_count": 1
+        }
+      },
+      "selected_regular_block_id": "new_block_1771409674",
+      "selected_unique_block_id": "new_block_1769685883",
+      "global_prompts": 1,
+      "global_other_prompts": 1
+    },
+    "phase4_configured": true
   },
-  "created_at": "2026-08-14T12:24:58.291589",
-  "updated_at": "2026-08-14T12:36:33.128251",
+  "created_at": "2026-08-14T17:41:21.953828",
+  "updated_at": "2026-08-14T17:42:15.255465",
   "site_name": "test",
   "domain_name": "sd",
   "user_id": 12
