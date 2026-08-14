@@ -71779,3 +71779,52 @@ tornado.websocket.WebSocketClosedError
 2026-08-13 16:17:53,515 - INFO - Login attempt - User: info - Status: SUCCESS - IP: unknown
 2026-08-13 16:18:22,457 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
 2026-08-13 16:18:55,197 - INFO - Login attempt - User: mag66035 - Status: SUCCESS - IP: unknown
+2026-08-13 16:36:09,578 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-13 17:23:02,882 - INFO - Login attempt - User: info - Status: SUCCESS - IP: unknown
+2026-08-13 17:23:57,129 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 17:24:07,828 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 17:24:12,521 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 17:24:22,897 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 17:24:25,782 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 17:24:28,953 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 17:24:30,459 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 17:26:32,589 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-13 17:29:03,400 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 17:31:03,127 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 17:31:12,735 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 17:31:14,077 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 17:37:29,508 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 18:05:46,982 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-13 18:33:58,604 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-14 10:42:59,826 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-14 11:05:52,618 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-14 11:16:28,005 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-14 11:16:29,405 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-14 11:16:31,390 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-14 11:16:32,746 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-14 11:16:39,740 - INFO - HTTP Request: POST https://api.agentplatform.ru/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-14 11:16:55,320 - INFO - Loading dictionaries from C:\Users\reus\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pymorphy3_dicts_ru\data
+2026-08-14 11:16:55,359 - INFO - format: 2.4, revision: 417150, updated: 2022-01-08T22:09:24.565962
+2026-08-14 11:16:57,820 - INFO - Loading dictionaries from C:\Users\reus\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pymorphy3_dicts_ru\data
+2026-08-14 11:16:57,862 - INFO - format: 2.4, revision: 417150, updated: 2022-01-08T22:09:24.565962
+2026-08-14 11:17:00,187 - INFO - Loading dictionaries from C:\Users\reus\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pymorphy3_dicts_ru\data
+2026-08-14 11:17:00,212 - INFO - format: 2.4, revision: 417150, updated: 2022-01-08T22:09:24.565962
+2026-08-14 11:17:00,255 - INFO - Loading dictionaries from C:\Users\reus\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pymorphy3_dicts_ru\data
+2026-08-14 11:17:00,274 - INFO - format: 2.4, revision: 417150, updated: 2022-01-08T22:09:24.565962
+2026-08-14 11:17:00,895 - INFO - Loading dictionaries from C:\Users\reus\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pymorphy3_dicts_ru\data
+2026-08-14 11:17:00,924 - INFO - format: 2.4, revision: 417150, updated: 2022-01-08T22:09:24.565962
+2026-08-14 11:17:03,301 - INFO - Loading dictionaries from C:\Users\reus\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pymorphy3_dicts_ru\data
+2026-08-14 11:17:03,323 - INFO - format: 2.4, revision: 417150, updated: 2022-01-08T22:09:24.565962
+2026-08-14 11:33:24,398 - INFO - Login attempt - User: mag66035 - Status: SUCCESS - IP: unknown
+2026-08-14 11:40:47,517 - INFO - Login attempt - User: info - Status: SUCCESS - IP: unknown
+2026-08-14 11:41:39,622 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-14 11:56:50,144 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-14 11:58:19,277 - INFO - Login attempt - User: info - Status: SUCCESS - IP: unknown
+2026-08-14 11:58:36,673 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-14 11:59:12,685 - INFO - Login attempt - User: info - Status: SUCCESS - IP: unknown
+2026-08-14 11:59:27,363 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-14 12:00:13,769 - INFO - Login attempt - User: info - Status: SUCCESS - IP: unknown
+2026-08-14 12:05:53,314 - INFO - Login attempt - User: info - Status: SUCCESS - IP: unknown
+2026-08-14 12:06:15,738 - INFO - Login attempt - User: kek - Status: SUCCESS - IP: unknown
+2026-08-14 12:07:05,773 - INFO - Login attempt - User: info - Status: SUCCESS - IP: unknown
+2026-08-14 12:36:29,688 - INFO - Login attempt - User: info - Status: SUCCESS - IP: unknown

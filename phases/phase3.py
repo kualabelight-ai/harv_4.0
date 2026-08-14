@@ -1778,7 +1778,7 @@ def main(app_state=None, settings_mode=False, context=None, show_instructions_on
     print(f"   app_state: {app_state is not None}")
     # ✅ ЕСЛИ context - ЭТО СЛОВАРЬ - ПРЕВРАЩАЕМ В ОБЪЕКТ
     if isinstance(context, dict):
-        from project_context import ProjectContext
+
         context_obj = ProjectContext(
             project_id=context.get('project_id'),
             user_id=context.get('user_id'),
@@ -2314,17 +2314,19 @@ def show_ai_variables_overview():
         col_chk, col_var, col_block, col_type, col_status, col_action = st.columns([0.5, 2, 2, 1, 2, 3])
 
         with col_chk:
-            # Прямое присвоение через session_state
-            st.session_state[f"_temp_{checkbox_key}"] = unique_key in st.session_state.selected_ai_vars
-
-            if st.checkbox(
-                    "Показать переменные",
-                    key=f"_temp_{checkbox_key}",
-                    label_visibility="collapsed"
-            ):
-                st.session_state.selected_ai_vars.add(unique_key)
-            else:
-                st.session_state.selected_ai_vars.discard(unique_key)
+            is_checked = unique_key in st.session_state.selected_ai_vars
+            new_value = st.checkbox(
+                "",
+                value=is_checked,
+                key=checkbox_key,
+                label_visibility="collapsed"
+            )
+            if new_value != is_checked:
+                if new_value:
+                    st.session_state.selected_ai_vars.add(unique_key)
+                else:
+                    st.session_state.selected_ai_vars.discard(unique_key)
+                st.rerun()  # ← ОБНОВЛЯЕТ СЧЕТЧИК
 
         with col_var:
             st.write(f"`{var_name}`")
@@ -4172,10 +4174,20 @@ def show_ai_generation_for_other_blocks(block_id, var_name, var_data, block):
         return
 
     provider = var_data.get("ai_provider", "openai")
-    provider_config = st.session_state.ai_config_manager.get_provider_config(provider)
 
-    if not provider_config.get("api_key"):
-        st.error(f"❌ API ключ для провайдера '{provider}' не настроен!")
+    # ✅ ПРОВЕРЯЕМ ЧЕРЕЗ APIKeyManager
+    from api_key_manager import APIKeyManager
+    from domain_manager import DomainManager
+
+    if 'domain_manager' not in st.session_state:
+        st.session_state.domain_manager = DomainManager()
+    dm = st.session_state.domain_manager
+
+    key_manager = APIKeyManager()
+    api_key = key_manager.get_api_key(dm.site_name, dm.get_current_domain(), provider)
+
+    if not api_key:
+        st.error(f"❌ API ключ для провайдера '{provider}' не настроен для домена {dm.get_current_domain()}!")
         if st.button("⚙️ Настроить API ключ", use_container_width=True, key=f"setup_api_other_{block_id}_{var_name}"):
             st.session_state.show_ai_config = True
             st.rerun()

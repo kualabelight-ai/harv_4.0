@@ -233,12 +233,16 @@ class AIConfigManager:
                 return False
 
     def get_provider_config(self, provider: str) -> Dict:
-        """Возвращает конфигурацию для провайдера"""
-        return self.config["providers"].get(provider, {})
+        """Возвращает конфигурацию провайдера БЕЗ api_key"""
+        config = self.config["providers"].get(provider, {}).copy()
+        config.pop("api_key", None)
+        return config
 
     def update_provider_config(self, provider: str, config: Dict) -> bool:
-        """Обновляет конфигурацию провайдера"""
-        self.config["providers"][provider] = config
+        # ✅ Удаляем api_key из сохраняемого конфига
+        config_safe = config.copy()
+        config_safe.pop("api_key", None)
+        self.config["providers"][provider] = config_safe
         return self.save_config()
 
     def set_default_provider(self, provider: str) -> bool:

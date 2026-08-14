@@ -3208,11 +3208,14 @@ def render_auto_projects_list_improved(app_state, current_site: str, current_dom
     # После фильтров, перед списком проектов
     col_diag1, col_diag2 = st.columns([4, 1])
     with col_diag2:
-        if st.button("🔬 Диагностика JSON", use_container_width=True):
-            if st.session_state.get('current_project_id'):
-                debug_json_structure(st.session_state.get('current_project_id'))
-            else:
-                st.warning("Нет активного проекта")
+        # ✅ ДИАГНОСТИКА ТОЛЬКО ДЛЯ АДМИНИСТРАТОРОВ
+        from database_settings.database import is_admin
+        if is_admin(st.session_state.get('user_id')):
+            if st.button("🔬 Диагностика JSON", use_container_width=True):
+                if st.session_state.get('current_project_id'):
+                    debug_json_structure(st.session_state.get('current_project_id'))
+                else:
+                    st.warning("Нет активного проекта")
     # Получаем статусы для всех проектов
     projects_with_status = []
     for project in projects:
@@ -4378,17 +4381,12 @@ def render_module_selection():
 
     st.markdown("---")
 
-    try:
-        from database_settings.auth import is_admin
-        if is_admin(st.session_state.get('user_id')):
-            if st.button("⚙️ Управление сайтами и доменами (Админка)", use_container_width=True):
-                st.session_state.show_site_manager = True
-                st.rerun()
-    except Exception as e:
-        if st.button("⚙️ Управление сайтами и доменами", use_container_width=True):
+    # ✅ ТОЛЬКО ДЛЯ АДМИНИСТРАТОРОВ, БЕЗ УЯЗВИМОГО EXCEPT
+    from database_settings.database import is_admin
+    if is_admin(st.session_state.get('user_id')):
+        if st.button("⚙️ Управление сайтами и доменами (Админка)", use_container_width=True):
             st.session_state.show_site_manager = True
             st.rerun()
-
     with st.expander("ℹ️ Текущая конфигурация", expanded=False):
         st.write(f"**Сайт:** {site_display} ({selected_site})")
         st.write(f"**Домен:** {domain_display} ({selected_domain})")

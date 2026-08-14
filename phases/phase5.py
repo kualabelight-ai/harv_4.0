@@ -274,19 +274,31 @@ class Phase5DataManager:
         #self._load_from_current_project()
         # После force_load_phase5_from_file()
         if 'phase5' in st.session_state:
-            # Обновляем статистику без data_manager
             results = st.session_state.phase5.get('results', {})
-            total = len(st.session_state.phase5_prompts) if 'phase5_prompts' in st.session_state else 0
-            success = sum(1 for r in results.values() if r.get('status') == 'success')
-            error = sum(1 for r in results.values() if r.get('status') == 'error')
+            prompts = st.session_state.get('phase5_prompts', [])
+            selected_prompt_ids = st.session_state.phase5.get('selected_prompt_ids', [])
+
+            total = len(prompts) if prompts else len(results)
+            success = sum(
+                1 for r in results.values()
+                if r.get('status') == 'success'
+            )
+            error = sum(
+                1 for r in results.values()
+                if r.get('status') == 'error'
+            )
+
+            completed = success + error
+            pending = max(0, total - completed)
+            selected = len(selected_prompt_ids)
 
             st.session_state.phase5['statistics'] = {
                 'total': total,
                 'success': success,
                 'error': error,
-                'completed': success + error,
-                'pending': total - success - error,
-                'selected': st.session_state.phase5.get('statistics', {}).get('selected', total)
+                'completed': completed,
+                'pending': pending,
+                'selected': selected
             }
     def _log_prompts_stats(self, context=""):
         """Логирует статистику по промптам"""
@@ -665,16 +677,26 @@ class Phase5DataManager:
         return True
 
     def _update_statistics(self, context=None):
-        """Обновляет статистику из результатов в session_state"""
+        """Обновляет статистику из текущего состояния phase5."""
         results = st.session_state.phase5.get('results', {})
-        prompts = st.session_state.phase5_prompts if 'phase5_prompts' in st.session_state else []
+        prompts = st.session_state.get('phase5_prompts', [])
+        selected_prompt_ids = st.session_state.phase5.get('selected_prompt_ids', [])
 
         total = len(prompts) if prompts else len(results)
-        success = sum(1 for r in results.values() if r.get('status') == 'success')
-        error = sum(1 for r in results.values() if r.get('status') == 'error')
+
+        success = sum(
+            1 for r in results.values()
+            if r.get('status') == 'success'
+        )
+
+        error = sum(
+            1 for r in results.values()
+            if r.get('status') == 'error'
+        )
+
         completed = success + error
-        pending = total - completed
-        selected = st.session_state.phase5.get('statistics', {}).get('selected', 0)
+        pending = max(0, total - completed)
+        selected = len(selected_prompt_ids)
 
         st.session_state.phase5['statistics'] = {
             'total': total,
@@ -685,11 +707,14 @@ class Phase5DataManager:
             'selected': selected
         }
 
-        print(f"📊 Статистика обновлена: total={total}, success={success}, error={error}, pending={pending}")
-        print(f"   results={len(results)}, prompts={len(prompts)}")
-
-        # ❌ НЕ ВЫЗЫВАТЬ СОХРАНЕНИЕ ЗДЕСЬ!
-        # self.save_to_app_data()  ← УБРАТЬ!
+        print(
+            f"📊 Статистика обновлена: "
+            f"total={total}, "
+            f"selected={selected}, "
+            f"success={success}, "
+            f"error={error}, "
+            f"pending={pending}"
+        )
 
         return st.session_state.phase5['statistics']
 
@@ -1286,7 +1311,97 @@ class GenerationManager:
 
         return int((phase5['current_index'] / len(phase5['generation_queue'])) * 100)
 
+def _phase5_editor_changed():
+    """Обрабатывает изменение checkbox в таблице Phase 5."""
 
+    editor_key = st.session_state.get('_phase5_editor_current_key')
+
+    if not editor_key:
+        return
+
+    editor_state = st.session_state.get(editor_key)
+
+    if not editor_state:
+        return
+
+    edited_rows = editor_state.get('edited_rows', {})
+
+    if not edited_rows:
+        return
+
+    visible_prompt_ids = st.session_state.get(
+        '_phase5_editor_prompt_ids',
+        []
+    )
+
+    selected_ids = set(
+        st.session_state.phase5.get(
+            'selected_prompt_ids',
+            []
+        )
+    )
+
+    if 'temp_selections' not in st.session_state:
+        st.session_state.temp_selections = {}
+
+    for row_index, changes in edited_rows.items():
+
+        try:
+            row_index = int(row_index)
+        except (TypeError, ValueError):
+            continue
+
+        if row_index < 0 or row_index >= len(visible_prompt_ids):
+            continue
+
+        prompt_id = visible_prompt_ids[row_index]
+
+        if not prompt_id:
+            continue
+
+        if 'Выбрать' not in changes:
+            continue
+
+        is_selected = bool(changes['Выбрать'])
+
+        if is_selected:
+            selected_ids.add(prompt_id)
+            st.session_state.temp_selections[prompt_id] = True
+        else:
+            selected_ids.discard(prompt_id)
+            st.session_state.temp_selections[prompt_id] = False
+
+    st.session_state.phase5['selected_prompt_ids'] = list(selected_ids)
+
+    results = st.session_state.phase5.get('results', {})
+    prompts = st.session_state.get('phase5_prompts', [])
+
+    total = len(prompts) if prompts else len(results)
+    success = sum(
+        1 for r in results.values()
+        if r.get('status') == 'success'
+    )
+    error = sum(
+        1 for r in results.values()
+        if r.get('status') == 'error'
+    )
+
+    completed = success + error
+    pending = max(0, total - completed)
+
+    st.session_state.phase5['statistics'] = {
+        'total': total,
+        'success': success,
+        'error': error,
+        'completed': completed,
+        'pending': pending,
+        'selected': len(selected_ids)
+    }
+
+    print(
+        f"☑️ Изменение checkbox Phase 5: "
+        f"selected={len(selected_ids)}"
+    )
 # --- Компоненты интерфейса ---
 class Phase5UIComponents:
     """Компоненты пользовательского интерфейса фазы 5"""
@@ -1371,26 +1486,54 @@ class Phase5UIComponents:
         prompts = st.session_state.phase5_prompts
         print(f"\n📋 show_prompts_selection: загружено {len(prompts)} промптов")
 
-        # ===== ФИКС: ИНИЦИАЛИЗИРУЕМ selected_prompt_ids =====
-        if not st.session_state.phase5.get('selected_prompt_ids') and 'temp_selections' in st.session_state:
-            selected_ids = [pid for pid, val in st.session_state.temp_selections.items() if val]
-            if selected_ids:
-                st.session_state.phase5['selected_prompt_ids'] = selected_ids
-                st.session_state.phase5['statistics']['selected'] = len(selected_ids)
-                data_manager._update_statistics()
-                print(f"✅ Восстановлены selected_prompt_ids из temp_selections: {len(selected_ids)}")
+        # ===== ИНИЦИАЛИЗАЦИЯ selected_prompt_ids =====
+        # ВАЖНО:
+        # [] означает "ничего не выбрано".
+        # Поэтому нельзя использовать `if not selected_prompt_ids`
+        # для определения необходимости первичной инициализации.
 
-        if not st.session_state.phase5.get('selected_prompt_ids'):
-            all_ids = [p.get('phase5_id') for p in prompts if p.get('phase5_id')]
-            if all_ids:
-                st.session_state.phase5['selected_prompt_ids'] = all_ids
-                st.session_state.phase5['statistics']['selected'] = len(all_ids)
-                if 'temp_selections' not in st.session_state:
-                    st.session_state.temp_selections = {}
-                for pid in all_ids:
-                    st.session_state.temp_selections[pid] = True
-                data_manager._update_statistics()
-                print(f"✅ ВЫБРАНЫ ВСЕ ПРОМПТЫ: {len(all_ids)}")
+        if 'selected_prompt_ids' not in st.session_state.phase5:
+
+            all_ids = [
+                p.get('phase5_id')
+                for p in prompts
+                if p.get('phase5_id')
+            ]
+
+            st.session_state.phase5['selected_prompt_ids'] = list(all_ids)
+
+            if 'temp_selections' not in st.session_state:
+                st.session_state.temp_selections = {}
+
+            for pid in all_ids:
+                st.session_state.temp_selections[pid] = True
+
+            data_manager._update_statistics()
+
+            print(
+                f"✅ Первичная инициализация выбора: "
+                f"выбраны все {len(all_ids)} промптов"
+            )
+
+        else:
+
+            selected_ids = st.session_state.phase5.get(
+                'selected_prompt_ids',
+                []
+            )
+
+            if 'temp_selections' not in st.session_state:
+                st.session_state.temp_selections = {}
+
+            for prompt in prompts:
+                pid = prompt.get('phase5_id')
+
+                if pid:
+                    st.session_state.temp_selections[pid] = (
+                            pid in selected_ids
+                    )
+
+            data_manager._update_statistics()
 
         for i, p in enumerate(prompts[:5]):
             print(f"   {i}: phase5_id={p.get('phase5_id')}, char={p.get('characteristic_name', '')}")
@@ -1458,27 +1601,96 @@ class Phase5UIComponents:
 
         with col1:
             if st.button("✅ Выбрать все", key="select_all_prompts_btn"):
-                filtered_ids = [p.get('phase5_id') for p in filtered_prompts if p.get('phase5_id')]
-                for pid in filtered_ids:
-                    if pid not in st.session_state.phase5['selected_prompt_ids']:
-                        st.session_state.phase5['selected_prompt_ids'].append(pid)
+
+                filtered_ids = {
+                    p.get('phase5_id')
+                    for p in filtered_prompts
+                    if p.get('phase5_id')
+                }
+
+                selected_ids = set(
+                    st.session_state.phase5.get(
+                        'selected_prompt_ids',
+                        []
+                    )
+                )
+
+                selected_ids.update(filtered_ids)
+
+                st.session_state.phase5['selected_prompt_ids'] = list(
+                    selected_ids
+                )
+
+                if 'temp_selections' not in st.session_state:
+                    st.session_state.temp_selections = {}
+
                 for pid in filtered_ids:
                     st.session_state.temp_selections[pid] = True
-                st.session_state.phase5['statistics']['selected'] = len(st.session_state.phase5['selected_prompt_ids'])
-                print(f"✅ Выбрано все {len(filtered_ids)} промптов")
+
+                data_manager._update_statistics()
+
+                st.session_state.phase5_editor_version = (
+                        st.session_state.get(
+                            'phase5_editor_version',
+                            0
+                        ) + 1
+                )
+
+                data_manager.save_to_app_data()
+
+                print(
+                    f"✅ Выбрано все в фильтре: "
+                    f"{len(filtered_ids)}; "
+                    f"всего выбрано: {len(selected_ids)}"
+                )
+
                 st.rerun()
 
         with col2:
             if st.button("❌ Снять все", key="deselect_all_prompts_btn"):
-                filtered_ids = [p.get('phase5_id') for p in filtered_prompts if p.get('phase5_id')]
-                st.session_state.phase5['selected_prompt_ids'] = [
-                    pid for pid in st.session_state.phase5['selected_prompt_ids']
-                    if pid not in filtered_ids
-                ]
+
+                filtered_ids = {
+                    p.get('phase5_id')
+                    for p in filtered_prompts
+                    if p.get('phase5_id')
+                }
+
+                selected_ids = set(
+                    st.session_state.phase5.get(
+                        'selected_prompt_ids',
+                        []
+                    )
+                )
+
+                selected_ids.difference_update(filtered_ids)
+
+                st.session_state.phase5['selected_prompt_ids'] = list(
+                    selected_ids
+                )
+
+                if 'temp_selections' not in st.session_state:
+                    st.session_state.temp_selections = {}
+
                 for pid in filtered_ids:
                     st.session_state.temp_selections[pid] = False
-                st.session_state.phase5['statistics']['selected'] = len(st.session_state.phase5['selected_prompt_ids'])
-                print(f"❌ Снято все {len(filtered_ids)} промптов")
+
+                data_manager._update_statistics()
+
+                st.session_state.phase5_editor_version = (
+                        st.session_state.get(
+                            'phase5_editor_version',
+                            0
+                        ) + 1
+                )
+
+                data_manager.save_to_app_data()
+
+                print(
+                    f"❌ Снято все в фильтре: "
+                    f"{len(filtered_ids)}; "
+                    f"всего выбрано: {len(selected_ids)}"
+                )
+
                 st.rerun()
 
         with col3:
@@ -1503,10 +1715,7 @@ class Phase5UIComponents:
             if 'temp_selections' not in st.session_state:
                 st.session_state.temp_selections = {}
 
-            if st.session_state.get('last_filter_hash') != hash(
-                    str(filter_type) + filter_characteristic + filter_status):
-                st.session_state.temp_selections = {}
-                st.session_state.last_filter_hash = hash(str(filter_type) + filter_characteristic + filter_status)
+
 
             for prompt in filtered_prompts:
                 prompt_id = prompt.get('phase5_id')
@@ -1531,7 +1740,10 @@ class Phase5UIComponents:
                 display_id = prompt_id[:20] + "..." if len(prompt_id) > 20 else prompt_id
 
                 table_data.append({
-                    "Выбрать": st.session_state.temp_selections.get(prompt_id, False),
+                    "Выбрать": prompt_id in st.session_state.phase5.get(
+                        'selected_prompt_ids',
+                        []
+                    ),
                     "ID": display_id,
                     "Тип": prompt.get('type', prompt.get('block_type', 'unknown')),
                     "Характеристика": prompt.get('characteristic_name', prompt.get('block_name', 'N/A')),
@@ -1560,35 +1772,55 @@ class Phase5UIComponents:
                 "prompt_id": st.column_config.Column(disabled=True, width=None)
             }
 
+            # ---------------------------------------------------------
+            # DATA EDITOR: ЕДИНСТВЕННЫЙ UI ДЛЯ РУЧНОГО ВЫБОРА
+            # ---------------------------------------------------------
+
+            # Сохраняем соответствие:
+            # индекс строки data_editor -> phase5_id
+            visible_prompt_ids = [
+                prompt.get('phase5_id')
+                for prompt in filtered_prompts
+            ]
+
+            st.session_state['_phase5_editor_prompt_ids'] = visible_prompt_ids
+
+            # Версия редактора.
+            # При нажатии "Выбрать все" / "Снять все"
+            # увеличиваем её, чтобы Streamlit создал новый widget
+            # и не восстановил старое состояние data_editor.
+            if 'phase5_editor_version' not in st.session_state:
+                st.session_state.phase5_editor_version = 0
+
+            editor_key = (
+                f"prompts_selection_editor_phase5_"
+                f"{st.session_state.phase5_editor_version}"
+            )
+
+            st.session_state['_phase5_editor_current_key'] = editor_key
+
             edited_df = st.data_editor(
                 df,
                 column_config=column_config,
                 hide_index=True,
-                disabled=["ID", "Тип", "Характеристика", "Значение", "Промпт №", "Статус", "Токенов", "prompt_id"],
-                key="prompts_selection_editor_phase5"
+                disabled=[
+                    "ID",
+                    "Тип",
+                    "Характеристика",
+                    "Значение",
+                    "Промпт №",
+                    "Статус",
+                    "Токенов",
+                    "prompt_id"
+                ],
+                key=editor_key,
+                on_change=_phase5_editor_changed
             )
 
-            current_selected = set(st.session_state.phase5.get('selected_prompt_ids', []))
-            new_selected = set()
-
-            for idx, row in edited_df.iterrows():
-                prompt_id = row['prompt_id']
-                is_selected = row['Выбрать']
-
-                if prompt_id and is_selected:
-                    new_selected.add(prompt_id)
-                    st.session_state.temp_selections[prompt_id] = True
-                elif prompt_id and not is_selected:
-                    st.session_state.temp_selections[prompt_id] = False
-
-            if new_selected != current_selected:
-                st.session_state.phase5['selected_prompt_ids'] = list(new_selected)
-                st.session_state.phase5['statistics']['selected'] = len(new_selected)
-                data_manager._update_statistics()
-                data_manager.save_to_app_data()
-                print(f"✅ Обновлен выбор: {len(new_selected)} промптов")
-
-            st.caption("💡 Кликните на чекбоксы в колонке 'Выбрать', чтобы включить/исключить промпты из генерации")
+            st.caption(
+                "💡 Кликните на чекбоксы в колонке 'Выбрать', "
+                "чтобы включить/исключить промпты из генерации"
+            )
 
     @staticmethod
     def show_generation_settings():
@@ -1685,8 +1917,7 @@ class Phase5UIComponents:
     def show_generation_control(generation_manager: GenerationManager, data_manager: Phase5DataManager):
         init_phase5_structure()
 
-        # ✅ ПРИНУДИТЕЛЬНО ЗАГРУЖАЕМ ДАННЫЕ ИЗ ФАЙЛА
-        force_load_phase5_from_file()
+
 
         st.header("🚀 Управление генерацией")
 
@@ -1839,8 +2070,7 @@ class Phase5UIComponents:
     def show_results(data_manager: Phase5DataManager):
         st.header("📊 Результаты генерации")
 
-        # ✅ ПРИНУДИТЕЛЬНО ЗАГРУЖАЕМ ДАННЫЕ ИЗ ФАЙЛА
-        force_load_phase5_from_file()
+
 
         results = st.session_state.phase5.get('results', {})
         stats = st.session_state.phase5.get('statistics', {})
@@ -2170,25 +2400,86 @@ def force_load_phase5_from_file(context=None):
             st.session_state.phase5_prompts = loaded_prompts
             print(f"✅ Загружены промпты из phase4: {len(loaded_prompts)}")
 
-        # ✅ ЗАГРУЖАЕМ СТАТИСТИКУ
-        stats = phase5_data.get('statistics', {})
-        st.session_state.phase5['statistics'] = {
-            'total': len(prompts_from_phase4) if prompts_from_phase4 else len(results),
-            'success': sum(1 for r in results.values() if r.get('status') == 'success'),
-            'error': sum(1 for r in results.values() if r.get('status') == 'error'),
-            'completed': sum(1 for r in results.values() if r.get('status') in ['success', 'error']),
-            'pending': len(results) - sum(1 for r in results.values() if r.get('status') in ['success', 'error']),
-            'selected': len(results)
-        }
+            # ✅ ЗАГРУЖАЕМ СТАТИСТИКУ
+            stats = phase5_data.get('statistics', {})
 
-        # ✅ ВЫБИРАЕМ ВСЕ ПРОМПТЫ
-        all_ids = list(results.keys()) if results else []
-        st.session_state.phase5['selected_prompt_ids'] = all_ids
-        if all_ids and 'temp_selections' not in st.session_state:
-            st.session_state.temp_selections = {}
-            for pid in all_ids:
-                st.session_state.temp_selections[pid] = True
+            all_prompt_ids = [
+                p.get('phase5_id')
+                for p in prompts_from_phase4
+                if p.get('phase5_id')
+            ]
 
+            saved_selected_ids = phase5_data.get('selected_prompt_ids')
+
+            if saved_selected_ids is None:
+                # Первый вход в проект:
+                # дефолтное состояние — выбраны все промпты.
+                selected_ids = list(all_prompt_ids)
+            else:
+                # Уже существующий проект:
+                # восстанавливаем именно сохранённый выбор.
+                selected_ids = [
+                    pid
+                    for pid in saved_selected_ids
+                    if pid in all_prompt_ids
+                ]
+
+            success_count = sum(
+                1
+                for r in results.values()
+                if r.get('status') == 'success'
+            )
+
+            error_count = sum(
+                1
+                for r in results.values()
+                if r.get('status') == 'error'
+            )
+
+            completed_count = sum(
+                1
+                for r in results.values()
+                if r.get('status') in ['success', 'error']
+            )
+
+            total_count = (
+                len(prompts_from_phase4)
+                if prompts_from_phase4
+                else len(results)
+            )
+
+            pending_count = max(
+                0,
+                total_count - completed_count
+            )
+
+            st.session_state.phase5['selected_prompt_ids'] = selected_ids
+
+            st.session_state.phase5['statistics'] = {
+                'total': total_count,
+                'success': success_count,
+                'error': error_count,
+                'completed': completed_count,
+                'pending': pending_count,
+                'selected': len(selected_ids)
+            }
+
+            if 'temp_selections' not in st.session_state:
+                st.session_state.temp_selections = {}
+
+            for pid in all_prompt_ids:
+                st.session_state.temp_selections[pid] = (
+                        pid in selected_ids
+                )
+
+            print(
+                f"📊 Загружена статистика: "
+                f"total={total_count}, "
+                f"selected={len(selected_ids)}, "
+                f"success={success_count}, "
+                f"error={error_count}, "
+                f"pending={pending_count}"
+            )
         # ✅ ВОССТАНАВЛИВАЕМ СТАТУС ГЕНЕРАЦИИ
         # Если есть pending промпты и генерация не завершена - возобновляем
         pending_count = st.session_state.phase5['statistics']['pending']

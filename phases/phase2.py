@@ -234,7 +234,8 @@ def save_to_session_state(app_state=None, context=None):
         'original_category': original_category,
         'markers': st.session_state.get('phase2_markers', []).copy(),
         'source_category': st.session_state.get('loaded_data', {}).get('category', ''),
-        'custom_category_mode': st.session_state.get('custom_category_mode', False)
+        'custom_category_mode': st.session_state.get('custom_category_mode', False),
+        'project_id': st.session_state.get('current_project_id')  # ДОБАВИТЬ
     }
 
     # ========== СОХРАНЯЕМ ВО ВСЕ ИСТОЧНИКИ ==========
@@ -339,12 +340,23 @@ def main(app_state=None, settings_mode=False, site_config=None, task_config=None
         if key not in st.session_state:
             st.session_state[key] = value
 
+    # ДОБАВИТЬ: сбрасываем состояние при смене проекта
+    if st.session_state.get('current_project_id') != st.session_state.get('_phase2_last_project'):
+        st.session_state.phase2_markers = []
+        st.session_state.selected_category = ""
+        st.session_state.custom_category_mode = False
+        st.session_state.phase2_auto_loaded = False
+        st.session_state.new_markers_priority = {}
+        if 'app_data' in st.session_state and 'phase2' in st.session_state.app_data:
+            st.session_state.app_data['phase2'] = {}
+        st.session_state['_phase2_last_project'] = st.session_state.get('current_project_id')
+
         # === ЗАГРУЗКА КАТЕГОРИИ ИЗ ФАЗЫ 1 ===
     category_from_phase1 = ""
 
     # ========== ПОЛУЧАЕМ КОНТЕКСТ ==========
     ctx_data = _get_context_data(context, st.session_state)
-
+    phase2_loaded = False
     # ========== ПРИОРИТЕТ 1: ИЗ КОНТЕКСТА ==========
     if ctx_data['has_context'] and context is not None:
         phase1_data = context.get_phase_data(1)
@@ -356,15 +368,19 @@ def main(app_state=None, settings_mode=False, site_config=None, task_config=None
                 print(f"📌 Категория из контекста (фаза 1): {category_from_phase1}")
 
     # ========== ПРИОРИТЕТ 2: ИЗ APP_STATE ==========
-    if not category_from_phase1 and app_state:
-        phase1_data = app_state.get_phase_data(1)
-        if phase1_data and isinstance(phase1_data, dict):
-            category_from_phase1 = phase1_data.get('category', '')
-            if not category_from_phase1 and 'metadata' in phase1_data:
-                category_from_phase1 = phase1_data['metadata'].get('original_category', '')
-            if category_from_phase1:
-                print(f"📌 Категория из app_state (фаза 1): {category_from_phase1}")
-
+    if not phase2_loaded and app_state and 'phase2' in st.session_state.app_data:
+        saved_phase2 = st.session_state.app_data['phase2']
+        if saved_phase2 and isinstance(saved_phase2, dict) and not category_from_phase1:
+            # ДОБАВИТЬ ПРОВЕРКУ
+            if saved_phase2.get('project_id') == st.session_state.get('current_project_id'):
+                if saved_phase2.get('category'):
+                    st.session_state.selected_category = saved_phase2.get('category', '')
+                    st.session_state.phase2_markers = saved_phase2.get('markers', [])
+                    st.session_state.custom_category_mode = saved_phase2.get('custom_category_mode', False)
+                    if saved_phase2.get('source_category'):
+                        st.session_state.search_query = saved_phase2.get('source_category')
+                    phase2_loaded = True
+                    print(f"✅ Загружены данные фазы 2 из app_state")
     # ========== ПРИОРИТЕТ 3: ИЗ ST.SESSION_STATE ==========
     if not category_from_phase1 and 'app_data' in st.session_state:
         phase1_data = st.session_state.app_data.get('phase1', {})
@@ -831,11 +847,13 @@ def main(app_state=None, settings_mode=False, site_config=None, task_config=None
 
                     st.session_state.markers_data[st.session_state.selected_category] = new_objects
                     if save_markers(st.session_state.markers_data):
-                        st.success(f"✅ Маркеры для категории '{st.session_state.selected_category}' сохранены в файл {MARKERS_FILE}!")
+                        mode_text = " (ручной режим)" if st.session_state.custom_category_mode else ""
+                        st.success(f"✅ Маркеры для категории '{st.session_state.selected_category}' сохранены в базу{mode_text}!")
                         # Очищаем временные данные
                         st.session_state.new_markers_priority = {}
                         # Сохраняем в проект (фаза 2)
-                        save_to_session_state(app_state, context)
+                        if save_to_session_state(app_state, context):
+                            st.success(f"✅ Данные фазы 2 сохранены в проект{mode_text}!")
                         st.rerun()
                     else:
                         st.error("❌ Ошибка сохранения маркеров")
@@ -843,11 +861,13 @@ def main(app_state=None, settings_mode=False, site_config=None, task_config=None
         with col_save2:
             if st.button("💾 Сохранить в проект", use_container_width=True):
                 if save_to_session_state(app_state, context):
-                    st.success("✅ Данные сохранены в проект!")
-                    st.rerun()
+                    msg = "✅ Данные сохранены в проект!" if not st.session_state.custom_category_mode else "✅ Данные сохранены в проект (ручной режим)!"
+                    st.success(msg)
+
                 else:
                     st.error("❌ Ошибка сохранения")
 
+        # ========== КНОПКА ПЕРЕХОДА К ФАЗЕ 3 ==========
         # ========== КНОПКА ПЕРЕХОДА К ФАЗЕ 3 ==========
         with col_save3:
             # Проверяем, сохранены ли данные
@@ -862,12 +882,19 @@ def main(app_state=None, settings_mode=False, site_config=None, task_config=None
                 if phase2_data and phase2_data.get('markers'):
                     phase2_saved = True
 
-            if phase2_saved:
-                if st.button("➡️ Фаза 3", type="primary", use_container_width=True, help="Перейти к фазе 3"):
-                    st.session_state.current_phase = 3
-                    if app_state:
-                        app_state.current_phase = 3
-                    st.rerun()
+            # ДОБАВИТЬ: проверка на ручной режим
+            is_manual_mode = st.session_state.get('custom_category_mode', False)
+
+            if phase2_saved or is_manual_mode:
+                # В ручном режиме кнопка активна, но с предупреждением
+                if is_manual_mode and not phase2_saved:
+                    st.warning("⚠️ Ручной режим: сохраните маркеры в базу перед переходом")
+                if is_manual_mode:
+                    if st.button("➡️ Фаза 3", type="primary", use_container_width=True, help="Перейти к фазе 3"):
+                        st.session_state.current_phase = 3
+                        if app_state:
+                            app_state.current_phase = 3
+                        st.rerun()
             else:
                 st.button("➡️ Фаза 3", disabled=True, use_container_width=True, help="Сначала сохраните данные")
 

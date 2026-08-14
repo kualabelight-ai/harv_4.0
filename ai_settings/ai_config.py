@@ -47,12 +47,65 @@ def show_ai_config_interface():
         st.caption("Единый сервис для OpenAI, Anthropic, Google Gemini, Mistral и др. через https://api.agentplatform.ru/v1")
 
         # API ключ
-        api_key = st.text_input(
-            "API ключ AgentPlatform:",
-            value=provider_config.get("api_key", ""),
-            type="password",
-            key="agentplatform_api_key"
-        )
+        # ✅ ПРОВЕРЯЕМ НАЛИЧИЕ КЛЮЧА В БД
+        from api_key_manager import APIKeyManager, get_api_key_for_current_domain
+        from database_settings.auth import is_admin
+        from domain_manager import DomainManager
+
+        # Получаем текущий домен
+        if 'domain_manager' in st.session_state:
+            dm = st.session_state.domain_manager
+            site_name = dm.site_name
+            domain_name = dm.get_current_domain()
+        else:
+            dm = DomainManager()
+            site_name = dm.site_name
+            domain_name = dm.get_current_domain()
+
+        # Проверяем наличие ключа
+        key_manager = APIKeyManager()
+        has_key = key_manager.has_api_key(site_name, domain_name, provider)
+
+        if has_key:
+            st.success(f"✅ API ключ для {provider} настроен для домена {domain_name}")
+        else:
+            st.error(f"❌ API ключ для {provider} НЕ настроен для домена {domain_name}")
+
+        # ✅ ТОЛЬКО ДЛЯ АДМИНИСТРАТОРОВ
+        if is_admin(st.session_state.get('user_id')):
+            with st.expander("🔑 Управление API ключом (администратор)", expanded=False):
+                new_api_key = st.text_input(
+                    f"Новый API ключ для {provider}:",
+                    type="password",
+                    key=f"admin_key_{provider}"
+                )
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button(f"💾 Сохранить ключ", key=f"save_key_{provider}"):
+                        if new_api_key:
+                            if key_manager.set_api_key(
+                                    site_name=site_name,
+                                    domain_name=domain_name,
+                                    provider=provider,
+                                    api_key=new_api_key,
+                                    admin_id=st.session_state.user_id,
+                                    notes=f"Обновлен в UI {datetime.now().isoformat()}"
+                            ):
+                                st.success("✅ Ключ сохранен в БД!")
+                                st.rerun()
+                            else:
+                                st.error("❌ Ошибка сохранения")
+                        else:
+                            st.warning("Введите API ключ")
+                with col2:
+                    if st.button(f"🗑️ Удалить ключ", key=f"del_key_{provider}"):
+                        keys = key_manager.get_keys_for_domain(site_name, domain_name)
+                        for k in keys:
+                            if k['provider'] == provider:
+                                if key_manager.delete_api_key(k['id']):
+                                    st.success("✅ Ключ удален!")
+                                    st.rerun()
+                                break
 
         # Получаем список стандартных моделей
         default_models_dict = ai_gen.get_available_models(provider)  # {"openai/gpt-4o": "OpenAI GPT-4o", ...}
@@ -174,7 +227,7 @@ def show_ai_config_interface():
         # Кнопка сохранения
         if st.button("💾 Сохранить настройки AgentPlatform", key="save_agentplatform"):
             new_config = {
-                "api_key": api_key.strip(),
+
                 "model": model,
                 "system_prompt": system_prompt,  # <-- ДОБАВЛЕНО
                 "temperature": temperature,
@@ -189,6 +242,7 @@ def show_ai_config_interface():
                 st.error("Ошибка при сохранении настроек AgentPlatform")
 
     # --- Вкладка DeepSeek ---
+    # --- Вкладка DeepSeek ---
     with tabs[1]:
         provider = "deepseek"
         provider_config = config_manager.get_provider_config(provider) or {}
@@ -196,19 +250,72 @@ def show_ai_config_interface():
         st.subheader("Настройки DeepSeek")
         st.caption("Прямое API DeepSeek (https://api.deepseek.com)")
 
-        # API ключ
-        api_key = st.text_input(
-            "API ключ DeepSeek:",
-            value=provider_config.get("api_key", ""),
-            type="password",
-            key="deepseek_api_key"
-        )
+        # ✅ ПРОВЕРЯЕМ НАЛИЧИЕ КЛЮЧА В БД
+        from api_key_manager import APIKeyManager
+        from database_settings.auth import is_admin
+        from domain_manager import DomainManager
+
+        # Получаем текущий домен
+        if 'domain_manager' in st.session_state:
+            dm = st.session_state.domain_manager
+            site_name = dm.site_name
+            domain_name = dm.get_current_domain()
+        else:
+            dm = DomainManager()
+            site_name = dm.site_name
+            domain_name = dm.get_current_domain()
+
+        key_manager = APIKeyManager()
+        has_key = key_manager.has_api_key(site_name, domain_name, provider)
+
+        if has_key:
+            st.success(f"✅ API ключ для DeepSeek настроен для домена {domain_name}")
+        else:
+            st.error(f"❌ API ключ для DeepSeek НЕ настроен для домена {domain_name}. Обратитесь к администратору.")
+
+        # ✅ ТОЛЬКО ДЛЯ АДМИНИСТРАТОРОВ
+        if is_admin(st.session_state.get('user_id')):
+            with st.expander("🔑 Управление API ключом (администратор)", expanded=False):
+                new_api_key = st.text_input(
+                    "Новый API ключ DeepSeek:",
+                    type="password",
+                    key="deepseek_admin_key"
+                )
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button("💾 Сохранить ключ DeepSeek", key="save_deepseek_key"):
+                        if new_api_key:
+                            if key_manager.set_api_key(
+                                    site_name=site_name,
+                                    domain_name=domain_name,
+                                    provider=provider,
+                                    api_key=new_api_key,
+                                    admin_id=st.session_state.user_id,
+                                    notes=f"Обновлен в UI {datetime.now().isoformat()}"
+                            ):
+                                st.success("✅ Ключ сохранен в БД!")
+                                st.rerun()
+                            else:
+                                st.error("❌ Ошибка сохранения")
+                        else:
+                            st.warning("Введите API ключ")
+                with col2:
+                    if st.button("🗑️ Удалить ключ DeepSeek", key="del_deepseek_key"):
+                        keys = key_manager.get_keys_for_domain(site_name, domain_name)
+                        for k in keys:
+                            if k['provider'] == provider:
+                                if key_manager.delete_api_key(k['id']):
+                                    st.success("✅ Ключ удален!")
+                                    st.rerun()
+                                break
+
+        st.markdown("---")
 
         # Модели DeepSeek (фиксированный список)
         models = ["deepseek-chat", "deepseek-coder"]
         current_model = provider_config.get("model", "deepseek-chat")
         if current_model not in models:
-            models.append(current_model)  # добавляем нестандартную, если была
+            models.append(current_model)
         model = st.selectbox(
             "Модель:",
             models,
@@ -238,7 +345,6 @@ def show_ai_config_interface():
                 st.rerun()
 
         st.markdown("---")
-
 
         # Параметры генерации
         col1, col2 = st.columns(2)
@@ -279,12 +385,12 @@ def show_ai_config_interface():
                 key="deepseek_pres"
             )
 
-        # Кнопка сохранения
+        # Кнопка сохранения (БЕЗ api_key!)
         if st.button("💾 Сохранить настройки DeepSeek", key="save_deepseek"):
             new_config = {
-                "api_key": api_key.strip(),
+                # ❌ НЕТ api_key!
                 "model": model,
-                "system_prompt": system_prompt,  # <-- ДОБАВЛЕНО
+                "system_prompt": system_prompt,
                 "temperature": temperature,
                 "max_tokens": max_tokens,
                 "top_p": top_p,

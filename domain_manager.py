@@ -181,8 +181,19 @@ class DomainManager:
         return config
 
     def _create_domain_from_default(self, domain_name: str, copy_blocks: bool = False) -> Dict:
+        # ✅ ПРОВЕРКА ПРАВ АДМИНИСТРАТОРА
+        from database_settings.database import is_admin
+        if not is_admin(st.session_state.get('user_id')):
+            print(f"❌ Попытка создания домена не-администратором: {st.session_state.get('user_id')}")
+            return {}
+
         import re
         system_name = domain_name.lower().strip()
+        system_name = system_name.replace(' ', '_')
+        system_name = re.sub(r'[^a-z0-9_]', '', system_name)
+        if not system_name:
+            system_name = "new_domain"
+
         system_name = system_name.replace(' ', '_')
         system_name = re.sub(r'[^a-z0-9_]', '', system_name)
         if not system_name:
@@ -465,6 +476,12 @@ class DomainManager:
         return config.get('display_name', current_system.capitalize())
 
     def delete_domain(self, domain_name: str) -> bool:
+        # ✅ ПРОВЕРКА ПРАВ АДМИНИСТРАТОРА
+        from database_settings.database import is_admin
+        if not is_admin(st.session_state.get('user_id')):
+            print(f"❌ Попытка удаления домена не-администратором: {st.session_state.get('user_id')}")
+            return False
+
         if domain_name == 'default':
             return False
         domain_dir = self.domains_dir / domain_name
@@ -496,11 +513,24 @@ def render_domain_selector(phase: int = None, key_suffix: str = "") -> str:
         is_admin = user and user['is_admin'] == 1
 
     if not is_admin and user_id:
+        # ✅ ПРИНУДИТЕЛЬНО СБРАСЫВАЕМ КЭШ ПРАВ ДЛЯ ЭТОГО ПОЛЬЗОВАТЕЛЯ
+        if hasattr(perm_manager, '_cache'):
+            keys_to_remove = []
+            for key in perm_manager._cache.keys():
+                if key.startswith(f"{user_id}_"):
+                    keys_to_remove.append(key)
+            for key in keys_to_remove:
+                del perm_manager._cache[key]
+            print(f"🧹 Очищен кэш прав для пользователя {user_id}")
+
         # Фильтруем только те домены, к которым есть доступ
         filtered_domains = []
+        current_site = st.session_state.get('current_site', 'steelborg')
         for domain in all_domains:
-            if perm_manager.can_access(user_id, st.session_state.get('current_site', 'steelborg'), domain):
+            if perm_manager.can_access(user_id, current_site, domain):
                 filtered_domains.append(domain)
+            else:
+                print(f"⚠️ Нет доступа к домену {domain} для пользователя {user_id}")
         all_domains = filtered_domains
 
         # Если нет доступа ни к одному домену - показываем сообщение
@@ -510,8 +540,6 @@ def render_domain_selector(phase: int = None, key_suffix: str = "") -> str:
 
     current_site = st.session_state.get('current_site', 'steelborg')
     current_domain = st.session_state.get('current_domain', 'default')
-    # ... остальной код без изменений
-    user_id = st.session_state.get('user_id')
 
     domain_options = {}
     for d in all_domains:
@@ -568,7 +596,6 @@ def render_domain_selector(phase: int = None, key_suffix: str = "") -> str:
                 if dm.save_user_settings(user_id, settings_data):
                     print(f"   ✅ Настройки сохранены")
 
-                # ✅ ОБНОВЛЯЕМ session_state
                 st.session_state.current_domain = selected_domain
                 st.session_state.selected_domain = selected_domain
                 st.session_state.current_site = current_site
